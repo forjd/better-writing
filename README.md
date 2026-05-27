@@ -97,18 +97,15 @@ Use my writing sample below as the voice reference, then rewrite the article int
 
 ## What Is Inside
 
-```text
-better-writing/
-|-- SKILL.md
-|-- agents/
-|   `-- openai.yaml
-`-- references/
-    |-- ai-writing-patterns.md
-    |-- preflight.md
-    |-- sources.md
-    |-- structures-and-phrases.md
-    `-- voice-and-context.md
-```
+| Path | Purpose |
+| --- | --- |
+| [SKILL.md](./SKILL.md) | Core skill instructions and metadata. |
+| [agents/openai.yaml](./agents/openai.yaml) | UI metadata for compatible agent clients. |
+| [references/ai-writing-patterns.md](./references/ai-writing-patterns.md) | AI-writing tells and false-positive checks. |
+| [references/preflight.md](./references/preflight.md) | Final quality checks before delivery. |
+| [references/sources.md](./references/sources.md) | Source projects and attribution notes. |
+| [references/structures-and-phrases.md](./references/structures-and-phrases.md) | Slop phrase and structure audit. |
+| [references/voice-and-context.md](./references/voice-and-context.md) | Audience, genre, dials, and voice calibration. |
 
 `SKILL.md` stays concise so agents can load it quickly. The detailed audit material lives in `references/` and is loaded only when needed.
 
