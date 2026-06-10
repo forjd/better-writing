@@ -36,7 +36,7 @@ Use this skill when an agent needs to improve:
 
 ## Installation
 
-The [skills.sh CLI](https://www.skills.sh/docs/cli) is the easiest way to install the skill once the repository is public.
+The [skills.sh CLI](https://www.skills.sh/docs/cli) is the easiest way to install the skill.
 
 With `npx`:
 
@@ -120,10 +120,11 @@ Use my writing sample below as the voice reference, then rewrite the article int
 
 ## Validation
 
-Validate the skill with the standard skill creator checker:
+Validate the skill with the checker from Anthropic's [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) skill:
 
 ```bash
-python3 /path/to/skill-creator/scripts/quick_validate.py /path/to/better-writing
+git clone https://github.com/anthropics/skills.git
+python3 skills/skills/skill-creator/scripts/quick_validate.py /path/to/better-writing
 ```
 
 This checks the required skill metadata and naming rules.

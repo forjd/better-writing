@@ -81,7 +81,7 @@ Fix by using the simpler verb when it is accurate.
 
 ### Negative Parallelism
 
-The text uses a predictable contrast structure.
+The text uses a predictable contrast structure. The same pattern appears as "Binary Contrast" in `structures-and-phrases.md`; keep the two lists in sync.
 
 Watch for:
 
@@ -121,7 +121,7 @@ Fix by naming the actor when it matters. Keep passive voice when the actor is un
 
 AI prose often leans on em dashes and en dashes for rhythm and faux sophistication.
 
-Default fix: remove them in rewrites. Use a period, comma, colon, parentheses, or regular hyphen.
+In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns. In strict "humanise" or de-AI passes, remove em and en dashes by default, using a period, comma, colon, parentheses, or regular hyphen instead. Keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography, not an AI tell.
 
 ### Mechanical Bold and Inline Headers
 

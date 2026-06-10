@@ -48,7 +48,7 @@ Match the user's requested deliverable.
 
 When the user asks to "humanise", "de-AI", "remove slop", "make this sound less ChatGPT", or similar, use a stricter pass:
 
-- Remove em dashes and en dashes by default. Use sentence breaks, commas, colons, parentheses, or regular hyphens.
+- Remove em dashes and en dashes by default. Use sentence breaks, commas, colons, parentheses, or regular hyphens. Keep en dashes in numeric and date ranges.
 - Remove decorative emojis, mechanical bold labels, title-case headings, and inline-header bullet lists unless the target medium expects them.
 - Remove "let me know", "here is", "of course", knowledge-cutoff disclaimers, and other pasted chatbot artefacts.
 - Remove vague positive endings. End on the real point.
