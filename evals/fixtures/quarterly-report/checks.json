@@ -1,0 +1,25 @@
+{
+  "name": "quarterly-report",
+  "brief": "Rewrite this report paragraph so it is specific and direct. Do not invent figures; the churn numbers are not available.",
+  "required": [
+    "second",
+    "quarter",
+    "March pricing change",
+    "onboarding"
+  ],
+  "banned": [
+    "important to note",
+    "significant challenge",
+    "competitive landscape",
+    "observers",
+    "crucial",
+    "moving forward",
+    "underscor",
+    "proactive",
+    "implications are significant"
+  ],
+  "banned_regex": [
+    "\\d+(\\.\\d+)?\\s*%"
+  ],
+  "max_words_ratio": 1.1
+}

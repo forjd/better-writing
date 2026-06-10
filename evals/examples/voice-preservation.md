@@ -1,0 +1,1 @@
+I have rewritten this parser three times now, which is either dedication or a cry for help. Version three finally handles nested quotes, escaped backslashes, and the cursed Windows-1252 em dash that started this whole saga. I am not proud of the regex. It works.

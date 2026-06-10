@@ -1,0 +1,1 @@
+It is important to note that customer churn has become a significant challenge in today's competitive landscape, rising for the second consecutive quarter. Some internal observers suggest the March pricing change and onboarding drop-off may have contributed, underscoring the need for a proactive retention strategy moving forward. The implications are significant.
