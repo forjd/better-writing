@@ -1,0 +1,24 @@
+{
+  "name": "release-notes",
+  "brief": "Rewrite these release notes in a plain, technical register. Keep flags, filenames, version numbers, and exit codes exact.",
+  "required": [
+    "2.4.0",
+    "--dry-run",
+    "config.toml",
+    "code 2"
+  ],
+  "banned": [
+    "excited",
+    "amazing",
+    "🎉",
+    "be able to",
+    "significantly enhanced",
+    "under the hood",
+    "elevate",
+    "overall experience"
+  ],
+  "banned_regex": [
+    "—"
+  ],
+  "max_words_ratio": 1.1
+}

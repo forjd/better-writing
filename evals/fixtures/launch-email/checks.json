@@ -1,0 +1,28 @@
+{
+  "name": "launch-email",
+  "brief": "Humanise this launch email for existing customers. Direct and warm, not casual. Keep every fact.",
+  "required": [
+    "15 June",
+    "CSV",
+    "hour",
+    "Reports tab"
+  ],
+  "banned": [
+    "hope this email finds you well",
+    "thrilled",
+    "groundbreaking",
+    "game-changer",
+    "isn't just",
+    "not just",
+    "transform your workflow",
+    "empower",
+    "unlock",
+    "exciting",
+    "journey",
+    "simply navigate"
+  ],
+  "banned_regex": [
+    "—"
+  ],
+  "max_words_ratio": 1.1
+}

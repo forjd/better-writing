@@ -1,0 +1,19 @@
+{
+  "name": "voice-preservation",
+  "brief": "Light copy edit for a team blog post. Keep my voice.",
+  "required": [
+    "cry for help",
+    "Windows-1252",
+    "not proud of the regex"
+  ],
+  "banned": [
+    "several iterations",
+    "robust",
+    "streamlined",
+    "significantly",
+    "pleased to",
+    "we're excited"
+  ],
+  "max_words_ratio": 1.15,
+  "min_words_ratio": 0.85
+}
