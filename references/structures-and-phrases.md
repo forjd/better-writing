@@ -72,6 +72,8 @@ Name the implication, stake, reason, issue, or behaviour.
 
 ### Binary Contrast
 
+The same pattern appears as "Negative Parallelism" in `ai-writing-patterns.md`; keep the two lists in sync.
+
 These patterns feel pre-baked:
 
 - "Not because X. Because Y."

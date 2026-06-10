@@ -15,7 +15,7 @@ Run this before delivery.
 - No chatbot framing remains.
 - No generic "in conclusion" ending remains unless the genre requires it.
 - No decorative emoji or mechanical bold-label bullets remain unless appropriate.
-- No em dashes or en dashes remain in strict de-AI rewrites.
+- No em dashes or en dashes remain in strict de-AI rewrites, except en dashes in numeric and date ranges.
 - No "not just X but Y" scaffold remains.
 - No vague "experts say" claim remains without a named source.
 - No promotional language remains in neutral copy.
