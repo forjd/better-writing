@@ -20,6 +20,7 @@ Run this before delivery.
 - No vague "experts say" claim remains without a named source.
 - No promotional language remains in neutral copy.
 - No fake precision, invented anecdote, or made-up metric was added.
+- No leaked tool artefacts (such as `oaicite`, `contentReference`, raw `**` or `##` in a plain-text destination) and no unfilled placeholders (`[Your Name]`, `[Insert X]`) remain.
 
 ## Taste Check
 
@@ -46,6 +47,12 @@ Read the final text silently as if speaking it.
 - Where does a sentence exist only to make the piece feel complete?
 
 Fix those spots before sending.
+
+## Structure Check
+
+- Uniform cadence: do short and long sentences both appear, or does everything sit at the same 18 to 24 words? Vary the length; do not invent content to do it.
+- Paragraph-reshuffle test: could the paragraphs be reordered without breaking the flow? If so, the piece lacks connective tissue. Add the links between ideas; do not just relabel them.
+- Friction-free tone: is there any genuine spike of doubt, bluntness, humour, or irritation, or does every paragraph sit at the same pleasant altitude? Surface the tone that is already in the source or the brief. Never invent opinions, asides, or anecdotes the writer did not have.
 
 ## Delivery Check
 

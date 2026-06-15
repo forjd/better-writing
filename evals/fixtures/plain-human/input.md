@@ -1,0 +1,1 @@
+Last Tuesday I spent four hours trying to delve into why the night-shift export kept failing. Turned out the cron job ran at 2am — right when the backup locked the table. I moved it to 3:30am and it has run clean for nine days. Not elegant, but I will take it.

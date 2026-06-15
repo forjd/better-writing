@@ -22,7 +22,9 @@ Use this skill to make prose stronger without flattening the writer. The goal is
 3. Audit the text.
    - For AI-writing tells, use `references/ai-writing-patterns.md`.
    - For slop phrases and formulaic structures, use `references/structures-and-phrases.md`.
-   - Look for clusters of tells, not isolated quirks. Do not destroy valid style just because it is polished.
+   - For genre-specific fingerprints and exemptions, use `references/genre-tells.md`.
+   - Work in order: scan for near-conclusive artefacts first; then count clustered tells in context; then apply genre exemptions; never edit on a single feature.
+   - Look for clusters of tells, not isolated quirks. The most durable tell is uniform tone that never adapts to audience or genre. Do not destroy valid style just because it is polished.
 
 4. Rewrite.
    - Keep the meaning and coverage unless the user asks for cuts.
@@ -48,7 +50,7 @@ Match the user's requested deliverable.
 
 When the user asks to "humanise", "de-AI", "remove slop", "make this sound less ChatGPT", or similar, use a stricter pass:
 
-- Remove em dashes and en dashes by default. Use sentence breaks, commas, colons, parentheses, or regular hyphens. Keep en dashes in numeric and date ranges.
+- Remove em dashes and en dashes when this pass is requested, using sentence breaks, commas, colons, parentheses, or regular hyphens; keep en dashes in numeric and date ranges. This is a register choice, not detector-evasion. See `references/ai-writing-patterns.md` for the full dash policy, including the lighter touch in normal rewrites.
 - Remove decorative emojis, mechanical bold labels, title-case headings, and inline-header bullet lists unless the target medium expects them.
 - Remove "let me know", "here is", "of course", knowledge-cutoff disclaimers, and other pasted chatbot artefacts.
 - Remove vague positive endings. End on the real point.
@@ -73,8 +75,9 @@ When the user asks to "humanise", "de-AI", "remove slop", "make this sound less 
 
 ## References
 
-- `references/voice-and-context.md`: audience, genre, dials, and voice calibration.
-- `references/ai-writing-patterns.md`: AI-writing tells and false-positive checks.
+- `references/voice-and-context.md`: audience, genre, dials, voice calibration, and genre exemptions.
+- `references/ai-writing-patterns.md`: AI-writing tells, confidence tiers, near-conclusive artefacts, and false-positive checks.
 - `references/structures-and-phrases.md`: slop phrase and structure audit.
+- `references/genre-tells.md`: genre-specific phrase banks for email, social, marketing, academic, and code.
 - `references/preflight.md`: final delivery checks and scoring.
 - `references/sources.md`: source projects and attribution notes.

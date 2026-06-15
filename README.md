@@ -21,7 +21,8 @@ Better Writing is an agent skill for rewriting, drafting, and reviewing prose. M
 On top of that, it does the expected job well:
 
 - AI-sounding patterns such as significance inflation, vague attribution, promotional padding, and formulaic conclusions
-- slop structures such as throat-clearing, binary contrast, false agency, and manufactured drama
+- slop structures such as throat-clearing, binary contrast, false agency, over-signposting, and manufactured drama
+- confidence tiers and a near-conclusive-artefact check, so a single quirk never triggers an edit but leaked tool markup or an unfilled `[Your Name]` placeholder does
 - a final pre-flight check before delivery
 
 It also ships with an [evaluation harness](./evals/) so changes to the pattern lists can be regression-tested instead of vibe-checked.
@@ -145,11 +146,12 @@ Use my writing sample below as the voice reference, then rewrite the article int
 | --- | --- |
 | [SKILL.md](./SKILL.md) | Core skill instructions and metadata. |
 | [agents/openai.yaml](./agents/openai.yaml) | UI metadata for compatible agent clients. |
-| [references/ai-writing-patterns.md](./references/ai-writing-patterns.md) | AI-writing tells and false-positive checks. |
+| [references/ai-writing-patterns.md](./references/ai-writing-patterns.md) | AI-writing tells, confidence tiers, near-conclusive artefacts, and false-positive checks. |
 | [references/preflight.md](./references/preflight.md) | Final quality checks before delivery. |
 | [references/sources.md](./references/sources.md) | Source projects and attribution notes. |
 | [references/structures-and-phrases.md](./references/structures-and-phrases.md) | Slop phrase and structure audit. |
-| [references/voice-and-context.md](./references/voice-and-context.md) | Audience, genre, dials, and voice calibration. |
+| [references/genre-tells.md](./references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, and code. |
+| [references/voice-and-context.md](./references/voice-and-context.md) | Audience, genre, dials, voice calibration, and genre exemptions. |
 | [evals/](./evals/) | Fixture texts and a checker for regression-testing the skill. |
 | [CHANGELOG.md](./CHANGELOG.md) | Dated history of the pattern catalogue. |
 
@@ -202,8 +204,10 @@ See [evals/README.md](./evals/README.md) for the full workflow. Run it before an
 
 AI tells drift. "Delve" and "tapestry" marked 2023-era output; "it's not just X, it's Y" and dash dependence mark 2025-era output. The pattern lists in `references/` are treated as a dated catalogue, not a fixed rulebook:
 
+- The vocabulary list is era-stamped and tiered, so the skill leans on cluster density and structure rather than any single word. Distinctive markers, common-but-overused words, and ordinary English that only shows up across a corpus are flagged differently.
 - Additions, changes, and retirements are dated in [CHANGELOG.md](./CHANGELOG.md).
 - Patterns that fade from current model output get marked as legacy rather than deleted, so the skill still catches older drafts.
+- The false-positive guardrails carry the detector-bias evidence (non-native and neurodivergent over-flagging), and the `plain-human` eval fails if the skill over-edits clean human prose. Detector-evasion is explicitly a non-goal.
 - Pull requests adding newly observed tells are welcome. Bring at least one real example and a false-positive note.
 
 ## Compatibility

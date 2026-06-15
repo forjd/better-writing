@@ -1,0 +1,20 @@
+{
+  "name": "plain-human",
+  "brief": "Light copy edit for an internal note. Keep my voice.",
+  "required": [
+    "delve",
+    "Turned out",
+    "3:30",
+    "nine days",
+    "take it",
+    "—"
+  ],
+  "banned": [
+    "investigate why",
+    "robust",
+    "streamlined",
+    "in conclusion"
+  ],
+  "max_words_ratio": 1.1,
+  "min_words_ratio": 0.85
+}
