@@ -1,0 +1,21 @@
+{
+  "name": "over-signposting",
+  "brief": "Rewrite this as a short, normal email to the team. Keep all four facts.",
+  "required": [
+    "12 July",
+    "two hours",
+    "backups",
+    "rollback"
+  ],
+  "banned": [
+    "I wanted to reach out",
+    "Firstly",
+    "Secondly",
+    "Moreover",
+    "Furthermore",
+    "That being said",
+    "**Timing:**",
+    "**Backups:**"
+  ],
+  "max_words_ratio": 0.95
+}

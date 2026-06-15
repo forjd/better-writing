@@ -34,6 +34,16 @@ Set these mentally before rewriting. Adjust them from the brief rather than usin
 
 ## Genre Defaults
 
+This section sets the dials and the exemptions for each genre. For the concrete phrase banks per genre, see `genre-tells.md`.
+
+A tell in one genre is correct in another. Before applying the general lists, check these exemptions:
+
+- Passive voice is correct in a scientific methods section.
+- Hedging is correct, and sometimes should be added, in academic, legal, and medical prose.
+- Bullet lists, tables, and headers are correct in technical docs, release notes, reference material, and checklists.
+- Markdown is correct where the destination renders it.
+- Words like "robust" and "scalable" have precise technical meaning; keep them when accurate.
+
 ### Emails
 
 - Lead with the action or decision.
@@ -54,6 +64,7 @@ Set these mentally before rewriting. Adjust them from the brief rather than usin
 - Avoid "elevate", "seamless", "unlock", "next-gen", and vague "transform your workflow" language.
 - Do not invent social proof, customer names, usage metrics, awards, or benchmarks.
 - Use one clear promise rather than a pile of benefits.
+- See `genre-tells.md` for the fuller bank of booster verbs and SEO scaffolding.
 
 ### Essays, Posts, and Opinion
 

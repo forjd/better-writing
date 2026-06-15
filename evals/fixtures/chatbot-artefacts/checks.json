@@ -1,0 +1,20 @@
+{
+  "name": "chatbot-artefacts",
+  "brief": "Clean up this onboarding checklist a teammate drafted with a chatbot. Keep the steps and the link.",
+  "required": [
+    "app.example.com",
+    "verify your email",
+    "profile"
+  ],
+  "banned": [
+    "Certainly",
+    "simply follow",
+    "Rest assured",
+    "seamless",
+    "designed to be",
+    "Let me know if you need any modifications",
+    "[Your Name]",
+    "😊"
+  ],
+  "max_words_ratio": 0.9
+}
