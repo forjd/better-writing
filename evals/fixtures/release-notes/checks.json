@@ -17,8 +17,5 @@
     "elevate",
     "overall experience"
   ],
-  "banned_regex": [
-    "—"
-  ],
   "max_words_ratio": 1.1
 }

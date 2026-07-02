@@ -107,7 +107,7 @@ When a sentence feels vague, climb this ladder until it becomes useful:
 
 Concrete prose can tempt an agent to fabricate. Do not do that.
 
-- If a fact is missing, either ask for it, leave a placeholder only when the user wants a template, or write around it honestly.
+- If a fact is missing, ask for it, mark the gap with a clear placeholder such as `[figure needed from the Q1 report]`, or write around it honestly. Never fill the gap with an invented specific.
 - Mark uncertain claims as uncertain without using filler.
 - Do not turn "some people say" into named experts unless the source is available.
 - Do not add invented anecdotes to make a piece sound human.

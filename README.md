@@ -153,6 +153,8 @@ Use my writing sample below as the voice reference, then rewrite the article int
 | [references/genre-tells.md](./references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, and code. |
 | [references/voice-and-context.md](./references/voice-and-context.md) | Audience, genre, dials, voice calibration, and genre exemptions. |
 | [evals/](./evals/) | Fixture texts and a checker for regression-testing the skill. |
+| [skills/better-writing/](./skills/better-writing/) | Tap layout for managers that expect `skills/<name>/`; relative symlinks back to the root files. |
+| [scripts/validate.py](./scripts/validate.py) | Repo checks run by CI: frontmatter, fixtures, symlinks. |
 | [CHANGELOG.md](./CHANGELOG.md) | Dated history of the pattern catalogue. |
 
 `SKILL.md` stays concise so agents can load it quickly. The detailed audit material lives in `references/` and is loaded only when needed. The `evals/` directory is repo tooling; agents do not load it.
@@ -168,7 +170,14 @@ Use my writing sample below as the voice reference, then rewrite the article int
 
 ## Validation
 
-Validate the skill with the checker from Anthropic's [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) skill:
+CI runs two dependency-free checks on every push and pull request:
+
+```bash
+python3 scripts/validate.py                      # frontmatter, fixture, and symlink checks
+python3 evals/run_evals.py --all evals/examples  # checker self-test
+```
+
+You can also validate the skill with the checker from Anthropic's [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) skill:
 
 ```bash
 git clone https://github.com/anthropics/skills.git
@@ -218,13 +227,15 @@ The skill follows the standard agent-skill layout (`SKILL.md` plus lazily loaded
 - **OpenAI-compatible clients**: [agents/openai.yaml](./agents/openai.yaml) provides display metadata and allows implicit invocation.
 - **Other runtimes**: anything that reads `SKILL.md` frontmatter will pick it up; the references are plain Markdown loaded on demand.
 
+The `skills/better-writing/` directory is a tap layout for managers that expect `skills/<name>/`. It is built from relative symlinks back to the root files, which survive `git clone` but not GitHub's Download ZIP or a Windows checkout without symlink support. In those cases install from the repo root, which is the canonical copy.
+
 ## Contributing
 
 Keep the skill lean. Put core workflow guidance in [SKILL.md](./SKILL.md), and move detailed pattern lists or examples into [references/](./references/).
 
 Before opening a pull request:
 
-1. Run the skill validator.
+1. Run `python3 scripts/validate.py`. CI runs it on every pull request as well.
 2. Run the evals in [evals/](./evals/) if you touched the pattern lists or `SKILL.md`.
 3. Date any pattern addition, change, or retirement in [CHANGELOG.md](./CHANGELOG.md).
 4. Check that new prose uses British English.

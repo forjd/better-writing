@@ -48,12 +48,12 @@ def check_rewrite(checks, input_text, rewrite_text):
 
     max_ratio = checks.get("max_words_ratio")
     min_ratio = checks.get("min_words_ratio")
-    if max_ratio or min_ratio:
+    if max_ratio is not None or min_ratio is not None:
         ratio = word_count(rewrite_text) / max(word_count(input_text), 1)
-        if max_ratio:
+        if max_ratio is not None:
             results.append((ratio <= max_ratio,
                             f"length ratio {ratio:.2f} <= {max_ratio} (no padding)"))
-        if min_ratio:
+        if min_ratio is not None:
             results.append((ratio >= min_ratio,
                             f"length ratio {ratio:.2f} >= {min_ratio} (no over-cutting)"))
 
@@ -88,7 +88,7 @@ def main(argv):
         for fixture_dir in fixtures:
             rewrite_path = outputs_dir / f"{fixture_dir.name}.md"
             if not rewrite_path.exists():
-                print(f"{fixture_dir.name}: SKIP (no {rewrite_path})")
+                print(f"{fixture_dir.name}: FAIL (no rewrite at {rewrite_path})")
                 all_ok = False
                 continue
             all_ok &= run_one(fixture_dir, rewrite_path)

@@ -20,7 +20,7 @@ Run this before delivery.
 - No vague "experts say" claim remains without a named source.
 - No promotional language remains in neutral copy.
 - No fake precision, invented anecdote, or made-up metric was added.
-- No leaked tool artefacts (such as `oaicite`, `contentReference`, raw `**` or `##` in a plain-text destination) and no unfilled placeholders (`[Your Name]`, `[Insert X]`) remain.
+- No leaked tool artefacts (such as `oaicite`, `contentReference`, raw `**` or `##` in a plain-text destination) and no forgotten template placeholders (`[Your Name]`, `[Insert X]`) remain. A deliberate gap marker for a missing fact, such as `[figure needed from the Q1 report]`, is allowed; see the Preservation Check.
 
 ## Taste Check
 

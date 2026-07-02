@@ -28,6 +28,8 @@ The checker exits non-zero on any failure. Run it before and after any change to
 python3 evals/run_evals.py --all evals/examples
 ```
 
+CI runs this self-test, together with `scripts/validate.py`, on every push and pull request.
+
 ## What each fixture tests
 
 | Fixture | Tests |

@@ -2,6 +2,20 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-07-02
+
+### Added
+
+- CI (`.github/workflows/ci.yml`): every push and pull request runs `scripts/validate.py` (frontmatter, fixture, and symlink checks) plus the checker self-test against `evals/examples/`.
+- `agents/openai.yaml` is now linked into the `skills/better-writing/` tap, and the README documents the tap's symlink caveat for Windows checkouts and ZIP downloads.
+
+### Changed
+
+- The placeholder rule is now consistent across files. A template placeholder the writer forgot to fill (`[Your Name]`) stays a near-conclusive artefact; a deliberate gap marker for a missing fact (`[figure needed from the Q1 report]`) is explicitly allowed in `references/ai-writing-patterns.md`, `references/preflight.md`, and `references/voice-and-context.md`, matching the behaviour the `quarterly-report` fixture rewards.
+- `references/genre-tells.md` now points manufactured-insight hooks at Engagement Bait in `references/structures-and-phrases.md`, the section that lists them, instead of Emphasis Crutches.
+- The `release-notes` fixture no longer bans the em dash. Its brief asks for a plain technical register, not a strict de-AI pass, and the dash policy only strips dashes when that pass is requested.
+- `evals/run_evals.py` reports a missing rewrite in `--all` mode as FAIL rather than SKIP, and treats an explicit zero length ratio as set.
+
 ## 2026-06-15
 
 Catalogue refresh informed by 2024–2026 corpus research (Kobak, Liang, Zhao excess-vocabulary studies; the CMU/Reinhart grammar study; the current Wikipedia "Signs of AI writing" catalogue; detector false-positive research).

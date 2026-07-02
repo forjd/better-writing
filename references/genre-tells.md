@@ -17,7 +17,7 @@ Fix by leading with the reason for the message, the ask, the owner, and the date
 
 - broetry: one-line paragraphs stacked for drama, each on its own line.
 - engagement bait: "Agree?", "Thoughts?", "Who's with me?". See `structures-and-phrases.md`.
-- manufactured-insight hooks: "Here's what nobody tells you about", "Unpopular opinion:". See also Emphasis Crutches in `structures-and-phrases.md`.
+- manufactured-insight hooks: "Here's what nobody tells you about", "Unpopular opinion:". See Engagement Bait in `structures-and-phrases.md`.
 - themed-emoji bookending and emoji bullet markers.
 
 Fix by making one real claim and ending on it. Cut the performance.
