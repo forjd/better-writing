@@ -2,6 +2,24 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-08-19
+
+Additions drawn from `cursor/plugins` (`pstack/skills/unslop`), recorded in `references/sources.md`. Its em-dash, curly-quote, and untiered-wordlist rules were deliberately not adopted; the existing dash policy and confidence tiers stay as they are.
+
+### Added
+
+- "Abstract Metaphor Nouns" in `references/structures-and-phrases.md`: a second jargon table for the technical-sounding register (substrate, wedge, vector, nexus, primitive, north star, flywheel, load-bearing), with the exemption that the literal domain term is correct.
+- "Mood Instead of Mechanism" in `references/structures-and-phrases.md`, including the swap test: a sentence that could sit unchanged in another project's copy says nothing about this one. The test also appears in the Specificity Ladder in `references/voice-and-context.md` and in the anti-slop check in `references/preflight.md`.
+- "Colon as Connector" in `references/ai-writing-patterns.md`: the mid-sentence colon used as a hinge, flagged as a habit rather than a single instance.
+- "Flatness Is Also a Tell" in `references/voice-and-context.md`, plus a matching principle in `SKILL.md`. Removing tells is half the job; the guidance surfaces the position, rhythm, and detail already in the source and still forbids inventing them.
+- A backtrack test in `references/preflight.md` and a matching quick rewrite move: split any sentence the reader has to re-read.
+
+### Changed
+
+- The inline-header rule in `references/ai-writing-patterns.md` now identifies redundancy as the tell, not punctuation. "**Performance:** Performance improved" is the pattern; a bold lead-in followed by genuinely new detail is a normal documentation convention and is no longer flagged for ending in a full stop.
+- The passive-voice pattern now carries a mechanical detector ("is/are/was/were/been" plus a past participle) and worked examples.
+- The adverb list now diagnoses the verb: an adverb propping up a weak verb usually means the verb is wrong.
+
 ## 2026-07-02
 
 ### Added

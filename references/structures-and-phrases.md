@@ -90,6 +90,33 @@ Prefer plain alternatives when the word is filler. Some entries below (leverage,
 | bandwidth | time, capacity |
 | take it to the next level | improve |
 
+### Abstract Metaphor Nouns
+
+A technical-sounding register that reads as precision but usually has a plainer concrete word underneath. Common in engineering writing, product strategy, and AI-assisted technical prose. The rule is the same as the table above: swap the word when it is doing metaphorical work, keep it when it is the literal domain term. A substrate in semiconductor manufacturing, a vector in maths or security, and a primitive in a graphics API are all correct.
+
+| Avoid | Prefer |
+| --- | --- |
+| substrate | base, foundation, the layer underneath |
+| wedge in | add, insert |
+| vector | way, method, route |
+| locus | place, centre |
+| vantage | viewpoint, position |
+| nexus | link, meeting point |
+| primitive (as a noun) | building block, basic operation |
+| harness (as a metaphor) | use, put to work |
+| surface (as in "API surface") | the API, what the API exposes |
+| bedrock | foundation, what it rests on |
+| scaffolding (as a metaphor) | structure, temporary support |
+| modality | mode, form, channel |
+| paradigm | model, approach, way of working |
+| gold-plating | more than the job needs |
+| ratchet | the mechanism's real name, or "a limit that only tightens" |
+| evacuate (for moving code) | move out, remove |
+| endgame | the last phase, the goal |
+| north star | the goal, the main measure |
+| flywheel | the loop that compounds |
+| load-bearing | essential, what the argument rests on |
+
 ### Softening and Intensifying Adverbs
 
 Remove adverbs that add posture rather than meaning:
@@ -97,6 +124,8 @@ Remove adverbs that add posture rather than meaning:
 - really, just, literally, genuinely, honestly, simply, actually
 - deeply, truly, fundamentally, inherently, inevitably
 - interestingly, importantly, crucially
+
+An adverb propping up a weak verb usually means the verb is wrong: "runs quickly" becomes "is fast" or the measured number, "significantly improves" becomes the delta. Try the stronger verb before deleting the adverb.
 
 Keep adverbs that carry real meaning. In personal, conversational, or voice-sample writing these often carry tone; thin them only when they cluster as filler, never on sight.
 
@@ -111,6 +140,19 @@ Replace or cut sentences that only claim weight:
 - "This is what leadership looks like"
 
 Name the implication, stake, reason, issue, or behaviour.
+
+### Mood Instead of Mechanism
+
+The sentence names a feeling about the thing rather than what the thing does:
+
+- "the database stays close at hand"
+- "SQL you can actually read"
+- "types that follow your schema"
+- "a workflow that gets out of your way"
+
+Fix by naming the mechanism, a fact, or a number: "`.toSQL()` returns the exact string sent to the database", "renaming a column fails the build". Ask what the sentence tells the reader to do or know, then write that. If it cannot be restated as a concrete instruction, fact, or number, cut it.
+
+Then apply the swap test. If the sentence could sit unchanged in a different company's or project's copy, it says nothing about this one. Make it specific or delete it.
 
 ## Structures to Avoid
 
@@ -289,4 +331,6 @@ Fix by making a claim worth reacting to and ending on it.
 - Replace "there are" openings with a stronger subject.
 - Merge duplicate sentences rather than cycling synonyms.
 - Move the actor to the front of the sentence.
+- Split any sentence you have to backtrack to parse. One idea per sentence.
+- Replace a sentence that names a feeling with the mechanism, a number, or a date.
 - End on the concrete next step, not a flourish.

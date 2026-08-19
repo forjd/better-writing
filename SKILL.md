@@ -51,7 +51,7 @@ Match the user's requested deliverable.
 When the user asks to "humanise", "de-AI", "remove slop", "make this sound less ChatGPT", or similar, use a stricter pass:
 
 - Remove em dashes and en dashes when this pass is requested, using sentence breaks, commas, colons, parentheses, or regular hyphens; keep en dashes in numeric and date ranges. This is a register choice, not detector-evasion. See `references/ai-writing-patterns.md` for the full dash policy, including the lighter touch in normal rewrites.
-- Remove decorative emojis, mechanical bold labels, title-case headings, and inline-header bullet lists unless the target medium expects them.
+- Remove decorative emojis, title-case headings, and bold-label bullets whose text only restates the label, unless the target medium expects them.
 - Remove "let me know", "here is", "of course", knowledge-cutoff disclaimers, and other pasted chatbot artefacts.
 - Remove vague positive endings. End on the real point.
 
@@ -63,6 +63,7 @@ When the user asks to "humanise", "de-AI", "remove slop", "make this sound less 
 - Voice beats cleanliness. Preserve human asides, mixed feelings, unusual details, and defendable quirks.
 - Evidence beats authority theatre. Replace "experts say" with the named source or remove the claim.
 - Trust the reader. Cut hand-holding, moralising, and permission-giving unless the relationship calls for reassurance.
+- Flat is a tell too. After the cuts, check the piece still has a position, varied rhythm, and detail only this writer would use. Surface what the source has; never invent it. See `references/voice-and-context.md`.
 
 ## Guardrails
 

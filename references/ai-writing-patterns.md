@@ -171,6 +171,8 @@ Fix by naming the covered topics directly.
 
 The sentence hides who acted or drops the subject.
 
+Scan for "is", "are", "was", "were", or "been" followed by a past participle, then ask who did it: "queries are validated" becomes "the compiler validates queries"; "the file is parsed by the loader" becomes "the loader parses the file".
+
 Fix by naming the actor when it matters. Keep passive voice when the actor is unknown, irrelevant, legally sensitive, or where the genre expects it, such as a scientific methods section.
 
 ## Formatting and Style Patterns
@@ -181,11 +183,19 @@ AI prose can lean on em dashes and en dashes for rhythm and faux sophistication.
 
 In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns and clearly substitutes for sentence structure. In strict "humanise" or de-AI passes, removing em and en dashes is a register choice the user has asked for, not proof of AI origin: use a period, comma, colon, parentheses, or regular hyphen instead. Either way, keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography. Stripping dashes to beat a detector is not a quality goal.
 
+### Colon as Connector
+
+A colon is correct before a list, an example, or a definition. It becomes a tell when it works as a mid-sentence hinge that adds nothing: "If you're coming from traditional automation: instead of registering event handlers, you describe conditions." The colon stands in for a connection the sentence never makes.
+
+Fix by writing the sentence without the comparison framing, or by using a full stop. Flag the habit across a piece, not the single instance, the same caution as Dash Dependence.
+
 ### Mechanical Bold and Inline Headers
 
-Watch for bullet lists where every item starts with a bold label and colon.
+Watch for bullet lists where every item starts with a bold label and the text after it only restates the label: "**Performance:** Performance improved across the board."
 
-Fix by writing normal sentences, simpler bullets, or a table when comparison matters. A minor related tell: the bold label ending in a full stop instead of a colon, such as "**Speed.**" rather than "**Speed:**".
+The tell is the redundancy, not the punctuation. A bold lead-in that names the item and is followed by genuinely new detail is a normal documentation convention, whether it ends in a colon or a full stop: "**Schema in TypeScript.** Tables live in one file." Keep those.
+
+Fix the redundant kind by writing normal sentences, simpler bullets, or a table when comparison matters. The related tell is the whole list running on the same template when only two of its items need a label.
 
 ### Title-Case Headings
 

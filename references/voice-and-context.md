@@ -93,6 +93,21 @@ If the user provides a writing sample, read it before editing and note:
 
 Match patterns from the sample instead of replacing them with generic "good writing". Preserve recurring quirks when they feel intentional and do not hurt clarity.
 
+## Flatness Is Also a Tell
+
+Removing tells is half the job. Prose sanded down to a uniform finish reads as machine-made too: every sentence the same length, no position, no reaction, nothing only this writer would say.
+
+The fix is to surface what the source and brief already contain, never to manufacture it.
+
+- If the writer has a position, let the prose take it instead of listing balanced pros and cons.
+- If the writer is ambivalent, keep the ambivalence. "Impressive, and slightly unnerving" is more honest than "impressive".
+- Keep first person where the genre allows it. It is not unprofessional in most writing.
+- Vary sentence length. Let a short sentence land after a long one.
+- Keep the specific observation over the general one: not "this is concerning" but the thing that is concerning.
+- Leave a defendable rough edge rather than polishing the piece flat.
+
+Never invent an opinion, an anecdote, a feeling, or a quirk the writer did not have. Where the source holds no position, state what is true plainly rather than performing conviction. See the friction-free-tone check in `preflight.md`.
+
 ## Specificity Ladder
 
 When a sentence feels vague, climb this ladder until it becomes useful:
@@ -101,7 +116,8 @@ When a sentence feels vague, climb this ladder until it becomes useful:
 2. Name the object or system.
 3. Name the action.
 4. Add a number, date, place, example, source, or consequence.
-5. Cut the sentence if it still only says "this is important".
+5. Apply the swap test: if the sentence could sit unchanged in another company's or project's copy, it says nothing about this one.
+6. Cut the sentence if it still only says "this is important".
 
 ## Fact Safety
 

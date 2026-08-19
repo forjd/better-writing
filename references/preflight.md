@@ -19,6 +19,8 @@ Run this before delivery.
 - No "not just X but Y" scaffold remains.
 - No vague "experts say" claim remains without a named source.
 - No promotional language remains in neutral copy.
+- No sentence names a feeling where it could name a mechanism, a number, or a date.
+- Swap test: no sentence could sit unchanged in another company's or project's copy.
 - No fake precision, invented anecdote, or made-up metric was added.
 - No leaked tool artefacts (such as `oaicite`, `contentReference`, raw `**` or `##` in a plain-text destination) and no forgotten template placeholders (`[Your Name]`, `[Insert X]`) remain. A deliberate gap marker for a missing fact, such as `[figure needed from the Q1 report]`, is allowed; see the Preservation Check.
 
@@ -53,6 +55,7 @@ Fix those spots before sending.
 - Uniform cadence: do short and long sentences both appear, or does everything sit at the same 18 to 24 words? Vary the length; do not invent content to do it.
 - Paragraph-reshuffle test: could the paragraphs be reordered without breaking the flow? If so, the piece lacks connective tissue. Add the links between ideas; do not just relabel them.
 - Friction-free tone: is there any genuine spike of doubt, bluntness, humour, or irritation, or does every paragraph sit at the same pleasant altitude? Surface the tone that is already in the source or the brief. Never invent opinions, asides, or anecdotes the writer did not have.
+- Backtrack test: is there a sentence the reader has to re-read to parse? Split it. One idea per sentence.
 
 ## Delivery Check
 

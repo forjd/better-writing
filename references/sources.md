@@ -8,6 +8,8 @@ This skill is a new synthesis informed by these public sources:
   Sharper anti-slop checks for throat-clearing, binary contrast, false agency, filler phrases, and rhythm.
 - `Leonxlnx/taste-skill`: https://github.com/Leonxlnx/taste-skill
   Context-first brief reading, explicit quality dials, anti-default discipline, and pre-flight matrices.
+- `cursor/plugins` (`pstack/skills/unslop`): https://github.com/cursor/plugins/blob/main/pstack/skills/unslop/SKILL.md
+  Abstract metaphor nouns, the mechanism-not-mood rule and its swap test, colon-as-connector, the redundancy reading of inline-header bullets, and the reminder that voiceless prose is its own tell.
 - `Wikipedia:Signs of AI writing`: https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing
   Observed patterns in AI-generated prose, especially significance inflation, vague attribution, promotional tone, formulaic structure, and overused vocabulary.
 
