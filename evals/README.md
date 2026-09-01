@@ -43,10 +43,10 @@ CI runs this self-test, together with `scripts/validate.py`, on every push and p
 | `launch-email` | Slop removal with full fact preservation: date, feature names, and the UI label must survive. |
 | `quarterly-report` | Specificity without invention: the rewrite must keep the named causes and must not contain any percentage, because none was given. |
 | `release-notes` | Technical register: flags, filenames, version numbers, and exit codes stay exact while hype and diff-anchored wording go. |
-| `voice-preservation` | The inverse test: a quirky human draft must come back with its quirks intact, not flattened into a house style. |
+| `voice-preservation` | The inverse test: a quirky human draft must come back with its quirks intact, not flattened into a house style. Contraction, first-person, and hedge rates must not move. |
 | `chatbot-artefacts` | Near-conclusive cleanup: pasted chatbot scaffolding, an unfilled `[Your Name]` placeholder, and a decorative emoji must go while the steps and link survive. |
 | `over-signposting` | Structural slop: ordinal signposting, stacked connectives, list-itis, and bold-label bullets go; all four facts survive. |
-| `plain-human` | The false-positive regression: a plain human note with a single `delve` and one em dash must come back essentially unchanged, not over-edited. |
+| `plain-human` | The false-positive regression: a plain human note with a single `delve` and one em dash must come back essentially unchanged, not over-edited. Voice markers must not move. |
 | `marketing-copy` | Booster verbs, "isn't just", and template hooks go; the product name, the two features, and the price survive; no invented percentages, user counts, or awards appear. |
 | `academic-hedge` | Genre exemption: the passive methods sentence and the hedges ("suggest", "may inhibit", "sample size was small") must survive while "it is important to note" and the "future research" closer go. |
 | `linkedin-post` | Social-post habits: the hook, the rhetorical self-answer, the aphorism, and the engagement bait go, and the one-line broetry paragraphs collapse into prose; the facts and the opinion survive. |
@@ -60,6 +60,7 @@ CI runs this self-test, together with `scripts/validate.py`, on every push and p
 - `banned`: case-insensitive substrings that must not appear (tells and slop).
 - `banned_regex`: regular expressions that must not match (for example invented percentages).
 - `max_words_ratio` / `min_words_ratio`: rewrite length bounds relative to the input, to catch padding and over-cutting.
+- `voice_drift`: for keep-my-voice briefs, the largest change allowed per marker between input and rewrite. Markers are `contraction_rate`, `first_person_rate`, and `hedge_rate` (all per 100 words) and `mean_word_length`. These are the four markers rewrites move even under a voice-preserving prompt (van Nuenen, "Voice Under Revision", 2026): contractions, first person, and hedges fall, word length rises. The counts are rough (a possessive counts as a contraction), but only the change matters. A rewrite of `voice-preservation` that turned "I have" and "I am" into contractions passed every other check and fails this one.
 
 Every fixture also gets three well-formedness checks the checker applies itself: no doubled spaces inside a line, no space before punctuation, and no empty clause between punctuation marks. These catch a rewrite that only deleted the banned phrases and left the wreckage.
 

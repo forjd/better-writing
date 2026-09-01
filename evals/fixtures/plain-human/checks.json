@@ -16,5 +16,11 @@
     "in conclusion"
   ],
   "max_words_ratio": 1.1,
-  "min_words_ratio": 0.85
+  "min_words_ratio": 0.85,
+  "voice_drift": {
+    "contraction_rate": 1.0,
+    "first_person_rate": 2.0,
+    "hedge_rate": 1.0,
+    "mean_word_length": 0.3
+  }
 }

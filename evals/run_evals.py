@@ -39,6 +39,32 @@ WELL_FORMED = [
 ]
 
 
+# Voice markers a rewrite moves even when told to keep the writer's voice
+# (van Nuenen, "Voice Under Revision", 2026): contractions, first person, and
+# hedges fall, mean word length rises. Each is measured per 100 words on the
+# input and the rewrite; checks.json's "voice_drift" gives the largest change
+# allowed per marker.
+WORD = re.compile(r"[A-Za-z][A-Za-z'’-]*")
+CONTRACTION = re.compile(r"\b\w+(?:n['’]t|['’](?:s|re|ve|ll|d|m))\b", re.I)
+FIRST_PERSON = re.compile(r"\b(?:I|me|my|mine|myself|we|us|our|ours)\b")
+HEDGE = re.compile(
+    r"\b(?:I think|I suspect|I guess|probably|perhaps|maybe|sort of|kind of|"
+    r"seems|seemed|apparently|arguably|roughly|about|around|might|may|"
+    r"tends? to|not sure)\b", re.I)
+
+
+def voice_metrics(text):
+    words = WORD.findall(text)
+    n = max(len(words), 1)
+    per_100 = 100.0 / n
+    return {
+        "contraction_rate": len(CONTRACTION.findall(text)) * per_100,
+        "first_person_rate": len(FIRST_PERSON.findall(text)) * per_100,
+        "hedge_rate": len(HEDGE.findall(text)) * per_100,
+        "mean_word_length": sum(len(w) for w in words) / n,
+    }
+
+
 def check_rewrite(checks, input_text, rewrite_text):
     """Return a list of (passed, description) tuples."""
     results = []
@@ -70,6 +96,16 @@ def check_rewrite(checks, input_text, rewrite_text):
         if min_ratio is not None:
             results.append((ratio >= min_ratio,
                             f"length ratio {ratio:.2f} >= {min_ratio} (no over-cutting)"))
+
+    drift = checks.get("voice_drift")
+    if drift:
+        before = voice_metrics(input_text)
+        after = voice_metrics(rewrite_text)
+        for name, limit in drift.items():
+            delta = after[name] - before[name]
+            results.append((abs(delta) <= limit,
+                            f"voice kept: {name} {before[name]:.1f} -> {after[name]:.1f} "
+                            f"(change {delta:+.1f}, limit {limit})"))
 
     return results
 
