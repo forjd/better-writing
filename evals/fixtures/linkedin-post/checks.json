@@ -1,0 +1,23 @@
+{
+  "name": "linkedin-post",
+  "brief": "Rewrite this as a short paragraph for the company blog. Keep the stand-up, the billing rewrite, and the two weeks. Keep the opinion.",
+  "required": [
+    "stand-up",
+    "billing rewrite",
+    "two weeks"
+  ],
+  "banned": [
+    "Unpopular opinion",
+    "The result?",
+    "currency of",
+    "Agree?",
+    "👇",
+    "game-changer",
+    "productivity hack"
+  ],
+  "banned_regex": [
+    "\\n\\n[^\\n]+\\n\\n[^\\n]+\\n\\n[^\\n]+\\n\\n"
+  ],
+  "max_words_ratio": 1.3,
+  "min_words_ratio": 0.6
+}

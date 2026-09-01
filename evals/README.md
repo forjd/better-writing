@@ -1,24 +1,28 @@
 # Evals
 
-Regression tests for the skill. Each fixture is a text seeded with known AI tells and known facts. A passing rewrite removes the tells and keeps the facts. The checker is dependency-free Python.
+Regression tests for the skill. Each fixture is a text seeded with known AI tells and known facts. A passing rewrite removes the tells and keeps the facts. Both scripts are dependency-free Python.
 
 This directory is repo tooling. Agents using the skill do not load it.
 
 ## Workflow
 
-1. For each fixture in `fixtures/`, run the skill on `input.md` using the `brief` from its `checks.json` as the instruction.
-2. Save each rewrite to an output directory as `<fixture-name>.md`.
-3. Run the checker:
+Run every fixture through a real model with the skill loaded, then check the rewrites:
 
 ```bash
-# One fixture
-python3 evals/run_evals.py evals/fixtures/launch-email my-outputs/launch-email.md
+python3 evals/run_skill.py                       # all fixtures, claude-opus-5
+python3 evals/run_skill.py --model claude-sonnet-5 launch-email plain-human
+```
 
-# All fixtures
+The runner builds a system prompt from `SKILL.md` plus every file in `references/`, sends each fixture's `input.md` with its `brief` through `claude -p` with no tools, saves the rewrite to `evals/outputs/<fixture-name>.md` (gitignored), and runs the checker on it. It needs the Claude Code CLI on PATH with working credentials. Run it before and after any change to `SKILL.md` or the pattern lists and compare the reports, and read the outputs, since a pass count says nothing about whether the prose reads well.
+
+To check rewrites you produced some other way, save them as `<fixture-name>.md` and run the checker directly:
+
+```bash
+python3 evals/run_evals.py evals/fixtures/launch-email my-outputs/launch-email.md
 python3 evals/run_evals.py --all my-outputs
 ```
 
-The checker exits non-zero on any failure. Run it before and after any change to `SKILL.md` or the pattern lists in `references/`.
+The checker exits non-zero on any failure.
 
 ## Known-good outputs
 
@@ -41,6 +45,9 @@ CI runs this self-test, together with `scripts/validate.py`, on every push and p
 | `chatbot-artefacts` | Near-conclusive cleanup: pasted chatbot scaffolding, an unfilled `[Your Name]` placeholder, and a decorative emoji must go while the steps and link survive. |
 | `over-signposting` | Structural slop: ordinal signposting, stacked connectives, list-itis, and bold-label bullets go; all four facts survive. |
 | `plain-human` | The false-positive regression: a plain human note with a single `delve` and one em dash must come back essentially unchanged, not over-edited. |
+| `marketing-copy` | Booster verbs, "isn't just", and template hooks go; the product name, the two features, and the price survive; no invented percentages, user counts, or awards appear. |
+| `academic-hedge` | Genre exemption: the passive methods sentence and the hedges ("suggest", "may inhibit", "sample size was small") must survive while "it is important to note" and the "future research" closer go. |
+| `linkedin-post` | Social-post habits: the hook, the rhetorical self-answer, the aphorism, and the engagement bait go, and the one-line broetry paragraphs collapse into prose; the facts and the opinion survive. |
 
 ## Check format
 
@@ -51,6 +58,8 @@ CI runs this self-test, together with `scripts/validate.py`, on every push and p
 - `banned`: case-insensitive substrings that must not appear (tells and slop).
 - `banned_regex`: regular expressions that must not match (for example invented percentages).
 - `max_words_ratio` / `min_words_ratio`: rewrite length bounds relative to the input, to catch padding and over-cutting.
+
+Every fixture also gets three well-formedness checks the checker applies itself: no doubled spaces inside a line, no space before punctuation, and no empty clause between punctuation marks. These catch a rewrite that only deleted the banned phrases and left the wreckage.
 
 ## Adding a fixture
 

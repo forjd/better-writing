@@ -1,0 +1,30 @@
+{
+  "name": "marketing-copy",
+  "brief": "Rewrite this product-page paragraph so it makes one clear promise. Keep the price and the features. Do not invent metrics, customers, or awards.",
+  "required": [
+    "Nimbus Notes",
+    "sync",
+    "search",
+    "£4"
+  ],
+  "banned": [
+    "future of",
+    "isn't just",
+    "game-changer",
+    "supercharge",
+    "unlock",
+    "full potential",
+    "seamless",
+    "leverage",
+    "next level",
+    "whether you're",
+    "has you covered",
+    "elevate"
+  ],
+  "banned_regex": [
+    "\\d+(\\.\\d+)?\\s*%",
+    "\\d[\\d,]*\\+?\\s*(users|teams|customers|companies)",
+    "award|rated|trusted by"
+  ],
+  "max_words_ratio": 0.9
+}

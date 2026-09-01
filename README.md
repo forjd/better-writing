@@ -10,11 +10,11 @@ An agent skill for prose that sounds clear, specific, and human.
 
 </div>
 
-## What It Is
+## What it is
 
-Better Writing is an agent skill for rewriting, drafting, and reviewing prose. Most de-slop skills delete AI tells and converge everything toward one generic "casual human" register. This one is built around three commitments the others skip:
+Better Writing is an agent skill for rewriting, drafting, and reviewing prose. Most de-slop skills delete AI tells and converge everything toward one generic "casual human" register. This one adds what those skip:
 
-1. **Your voice, not a house style.** A user-provided writing sample is the style source of truth, and per-genre dials (directness, warmth, density, polish) replace blanket rules. A board memo and a personal essay get different treatment.
+1. **The writer's voice.** A user-provided writing sample is the style source of truth, and per-genre dials (directness, warmth, density, polish) replace blanket rules. A board memo and a personal essay get different treatment.
 2. **Specificity without invention.** "Make it concrete" prompts tempt models into fabricating numbers, anecdotes, and named experts. The guardrails and pre-flight preservation check forbid that: missing facts become placeholders or questions, never inventions.
 3. **Context beats blanket rules.** The same dash, hedge, or formal phrase can be a tell in one genre and correct in another. The audit looks for clusters of tells, with an explicit false-positive list so polished human writing survives the pass.
 
@@ -25,9 +25,9 @@ On top of that, it does the expected job well:
 - confidence tiers and a near-conclusive-artefact check, so a single quirk never triggers an edit but leaked tool markup or an unfilled `[Your Name]` placeholder does
 - a final pre-flight check before delivery
 
-It also ships with an [evaluation harness](./evals/) so changes to the pattern lists can be regression-tested instead of vibe-checked.
+It also ships with an [evaluation harness](./evals/): fixtures seeded with known tells and known facts, a checker, and a runner that sends each fixture through a real model with the skill loaded.
 
-## Before and After
+## Before and after
 
 Real input, real output, no cherry-picked single sentences. These pairs double as test fixtures in [evals/fixtures/](./evals/fixtures/).
 
@@ -39,7 +39,7 @@ Before:
 
 After:
 
-> The new analytics dashboard goes live on Monday 15 June. It replaces the weekly CSV export: data refreshes every hour instead of every seven days, and you can filter by team, project, or date range. Log in and open the Reports tab to try it. Reply here if anything looks wrong and I will take a look.
+> The new analytics dashboard goes live on Monday 15 June. It replaces the weekly CSV export. Data refreshes every hour instead of every seven days, and you can filter by team, project, or date range. Log in and open the Reports tab to try it. Reply here if anything looks wrong and I will take a look.
 
 Every fact survived (the date, the CSV export, the hourly refresh, the Reports tab). Everything else went.
 
@@ -67,7 +67,7 @@ What a generic humaniser pass produces:
 
 What this skill does: nothing. The draft has a voice, the details are specific, and "a cry for help" is a defendable quirk, not a tell. The skill's job here is to recognise that and leave it alone.
 
-## When To Use It
+## When to use it
 
 Use this skill when an agent needs to improve:
 
@@ -140,7 +140,7 @@ Review this landing-page copy for generic AI writing and give me a sharper versi
 Use my writing sample below as the voice reference, then rewrite the article intro.
 ```
 
-## What Is Inside
+## What is inside
 
 | Path | Purpose |
 | --- | --- |
@@ -152,14 +152,14 @@ Use my writing sample below as the voice reference, then rewrite the article int
 | [references/structures-and-phrases.md](./references/structures-and-phrases.md) | Slop phrase and structure audit. |
 | [references/genre-tells.md](./references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, and code. |
 | [references/voice-and-context.md](./references/voice-and-context.md) | Audience, genre, dials, voice calibration, and genre exemptions. |
-| [evals/](./evals/) | Fixture texts and a checker for regression-testing the skill. |
+| [evals/](./evals/) | Fixture texts, a checker, and a model runner for regression-testing the skill. |
 | [skills/better-writing/](./skills/better-writing/) | Tap layout for managers that expect `skills/<name>/`; relative symlinks back to the root files. |
 | [scripts/validate.py](./scripts/validate.py) | Repo checks run by CI: frontmatter, fixtures, symlinks. |
 | [CHANGELOG.md](./CHANGELOG.md) | Dated history of the pattern catalogue. |
 
 `SKILL.md` stays concise so agents can load it quickly. The detailed audit material lives in `references/` and is loaded only when needed. The `evals/` directory is repo tooling; agents do not load it.
 
-## Design Principles
+## Design principles
 
 - Specific beats impressive.
 - Direct beats announced.
@@ -177,6 +177,8 @@ python3 scripts/validate.py                      # frontmatter, fixture, and sym
 python3 evals/run_evals.py --all evals/examples  # checker self-test
 ```
 
+Neither exercises a model. The self-test proves the checker agrees with the hand-written known-good outputs, nothing more. To test the skill itself, run the model runner described under Evaluation; it needs credentials, so it is not part of CI.
+
 You can also validate the skill with the checker from Anthropic's [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) skill:
 
 ```bash
@@ -186,7 +188,7 @@ python3 skills/skills/skill-creator/scripts/quick_validate.py /path/to/better-wr
 
 This checks the required skill metadata and naming rules.
 
-## How It Differs from Its Influences
+## How it differs from its influences
 
 Better Writing started as a synthesis of three skills and one reference page. Each contributed something worth keeping, and each had a gap this skill closes.
 
@@ -201,22 +203,25 @@ See [references/sources.md](./references/sources.md) for fuller source notes.
 
 ## Evaluation
 
-Pattern lists are easy to break: one well-meaning edit and the skill starts flagging human writing or missing a new tell. The [evals/](./evals/) directory holds fixture texts seeded with known tells and known facts, plus a dependency-free checker that verifies a rewrite removed the tells *and* kept the facts.
+Pattern lists are easy to break: one well-meaning edit and the skill starts flagging human writing or missing a new tell. The [evals/](./evals/) directory holds ten fixture texts seeded with known tells and known facts, a dependency-free checker that verifies a rewrite removed the tells *and* kept the facts, and a runner that produces the rewrites with a real model.
 
 ```bash
-python3 evals/run_evals.py evals/fixtures/launch-email my-rewrite.md
+python3 evals/run_skill.py                                          # run every fixture through claude-opus-5, then check
+python3 evals/run_evals.py evals/fixtures/launch-email my-rewrite.md  # check a rewrite you produced some other way
 ```
 
-See [evals/README.md](./evals/README.md) for the full workflow. Run it before and after any change to the references.
+The runner needs the Claude Code CLI on PATH with working credentials. Run it before and after any change to `SKILL.md` or the references and compare the two reports.
 
-## A Living Pattern Catalogue
+The checker is a smoke test, not a judge. It matches substrings, bounds the length, and rejects the damage a search-and-replace leaves behind (doubled spaces, space before punctuation). A rewrite can pass it and still read badly, so read the outputs in `evals/outputs/` as well as the pass counts. See [evals/README.md](./evals/README.md) for the fixture list and check format.
+
+## A living pattern catalogue
 
 AI tells drift. "Delve" and "tapestry" marked 2023-era output; "it's not just X, it's Y" and dash dependence mark 2025-era output. The pattern lists in `references/` are treated as a dated catalogue, not a fixed rulebook:
 
 - The vocabulary list is era-stamped and tiered, so the skill leans on cluster density and structure rather than any single word. Distinctive markers, common-but-overused words, and ordinary English that only shows up across a corpus are flagged differently.
 - Additions, changes, and retirements are dated in [CHANGELOG.md](./CHANGELOG.md).
 - Patterns that fade from current model output get marked as legacy rather than deleted, so the skill still catches older drafts.
-- The false-positive guardrails carry the detector-bias evidence (non-native and neurodivergent over-flagging), and the `plain-human` eval fails if the skill over-edits clean human prose. Detector-evasion is explicitly a non-goal.
+- The false-positive guardrails carry the detector-bias evidence (non-native and neurodivergent over-flagging), and the `plain-human`, `voice-preservation`, and `academic-hedge` evals fail if the skill over-edits clean prose. Detector-evasion is explicitly a non-goal.
 - Pull requests adding newly observed tells are welcome. Bring at least one real example and a false-positive note.
 
 ## Compatibility
@@ -236,9 +241,9 @@ Keep the skill lean. Put core workflow guidance in [SKILL.md](./SKILL.md), and m
 Before opening a pull request:
 
 1. Run `python3 scripts/validate.py`. CI runs it on every pull request as well.
-2. Run the evals in [evals/](./evals/) if you touched the pattern lists or `SKILL.md`.
+2. Run `python3 evals/run_skill.py` before and after the change if you touched the pattern lists or `SKILL.md`, and say in the pull request what changed in the two reports.
 3. Date any pattern addition, change, or retirement in [CHANGELOG.md](./CHANGELOG.md).
-4. Check that new prose uses British English.
+4. Check that new prose uses British English and sentence-case headings. The repo's own docs follow the catalogue.
 5. Avoid adding bulky documentation that the agent does not need.
 6. Keep examples factual, concise, and easy to audit.
 

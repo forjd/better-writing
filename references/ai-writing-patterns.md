@@ -1,8 +1,8 @@
-# AI-Writing Patterns
+# AI-writing patterns
 
 Use this reference to find clusters of AI-generated prose. Do not treat any single pattern as proof. Many human writers use one or two of these naturally.
 
-## How to Use This Catalogue
+## How to use this catalogue
 
 One feature is never a verdict. The reliable signal is a cluster of tells plus the absence of genre adaptation. AI prose stays at one pleasant altitude no matter the audience; human prose shifts register, takes sides, and varies its rhythm. Treat uniform tone across a whole piece as the most durable tell of all.
 
@@ -19,7 +19,7 @@ Confidence tiers, used throughout this file:
 - Tier 2: common but overused. Flag only at higher density, and never replace a word on sight.
 - Tier 3: ordinary English whose elevated rate shows up only across a large corpus. Do not flag or "fix" these in a single document.
 
-## Near-Conclusive Artefacts
+## Near-conclusive artefacts
 
 These need no corroboration. A single instance is hard evidence that text was machine-generated or pasted unedited from a chatbot. Remove them.
 
@@ -30,9 +30,9 @@ These need no corroboration. A single instance is hard evidence that text was ma
 - Unfilled template placeholders the writer forgot to replace: `[Your Name]`, `[Insert X here]`, `[Company]`, `[Date]`. A deliberate editorial gap marker such as `[figure needed from the Q1 report]` is not one of these; keep it until the fact arrives.
 - Standalone model disclaimers: "As an AI language model", "As a large language model", "I don't have access to real-time information". These are 2022–2024-era and largely retired by current models, so their absence proves nothing, but their presence is conclusive.
 
-## Content Patterns
+## Content patterns
 
-### Significance Inflation
+### Significance inflation
 
 The text overstates importance instead of explaining what happened.
 
@@ -46,13 +46,13 @@ Watch for:
 
 Fix by naming the concrete event, effect, audience, or evidence.
 
-### Notability Padding
+### Notability padding
 
 The text lists media coverage, social presence, awards, or expert status without explaining why it matters.
 
 Fix by using the strongest relevant fact or cutting the padding.
 
-### Superficial Present-Participle Analysis
+### Superficial present-participle analysis
 
 The text appends "-ing" phrases to simulate depth. This is one of the most durable structural tells, not a vocabulary quirk: corpus studies measure present-participial clauses in LLM prose at roughly two to five times the human rate.
 
@@ -63,7 +63,7 @@ Watch for:
 
 Fix by splitting the sentence and saying the actual relationship, or remove the phrase.
 
-### Promotional Language
+### Promotional language
 
 The prose sounds like an advert when the genre needs plain description.
 
@@ -76,7 +76,7 @@ Watch for:
 
 Fix with observable facts, named features, or measured claims.
 
-### Vague Attribution
+### Vague attribution
 
 The text leans on faceless authority.
 
@@ -89,15 +89,15 @@ Fix by naming the source, narrowing the claim, or removing it.
 
 A 2025-era variant is more dangerous than vagueness: a *real* source cited for a claim it does not actually support. Current models name genuine papers, authors, and URLs but do not verify that the source backs the sentence. When a claim leans on a specific citation, check that the source says what the text says, or flag it.
 
-### Formulaic Challenges and Future Sections
+### Formulaic challenges and future sections
 
 The text adds a generic "challenges", "future outlook", or "despite these challenges" section.
 
 Fix by keeping only real constraints, dates, decisions, and next actions.
 
-## Language Patterns
+## Language patterns
 
-### Overused AI Vocabulary
+### Overused AI vocabulary
 
 Vocabulary tells are time-dependent, so lean on structure and cluster density over any fixed word list. The eras below show how the list drifts; the absence of an older word does not clear a text.
 
@@ -113,7 +113,7 @@ Read the list through the confidence tiers above:
 
 Fix Tier 1 and Tier 2 clusters by using plainer words or rewriting the sentence around a concrete noun and verb. Leave Tier 3 alone in normal prose. Some Tier 2 words, such as "robust" and "scalable", carry precise technical meaning in code and documentation; keep them when accurate. See `genre-tells.md`.
 
-### Nominalisation and Noun Density
+### Nominalisation and noun density
 
 AI prose buries actions inside abstract nouns, producing dense, noun-heavy sentences with weak verbs. Corpus studies find nominalisations at roughly 1.5 to 2 times the human rate.
 
@@ -125,7 +125,7 @@ Watch for:
 
 Fix by turning the noun back into a verb: "the implementation of X" becomes "we built X" or "implementing X". Name who did what.
 
-### Copula Avoidance
+### Copula avoidance
 
 The prose dodges simple "is", "are", or "has" constructions.
 
@@ -136,38 +136,29 @@ Watch for:
 
 Fix by using the simpler verb when it is accurate.
 
-### Negative Parallelism
+### Negative parallelism
 
-The text uses a predictable contrast structure. The same pattern appears as "Binary Contrast" in `structures-and-phrases.md`; keep the two lists in sync.
+The text uses a predictable contrast structure: "not only X but Y", "this is not about X, it is about Y". The full list, the escalating variant, and the fix are under Binary contrast in `structures-and-phrases.md`.
 
-Watch for:
-
-- "not only X but Y"
-- "not just X, it is Y"
-- "this is not about X, it is about Y"
-- the escalating variant that climbs to a grand abstraction: "X isn't just Y, it's [paradigm / engine / heartbeat]"
-
-Fix by stating the point directly.
-
-### Rule of Three
+### Rule of three
 
 The prose keeps packing ideas into threes.
 
 Fix by using the exact number the thought needs. Two is often enough. One strong example often beats a trio. A single tricolon is a normal rhetorical device, not a tell; the signal is the habit repeating across a piece.
 
-### Synonym Cycling
+### Synonym cycling
 
 The same thing gets renamed for variety: "the protagonist", "the central figure", "the hero".
 
 Fix by choosing the clearest term and repeating it when repetition helps.
 
-### False Ranges
+### False ranges
 
 The text uses "from X to Y" where the endpoints are not a real range.
 
 Fix by naming the covered topics directly.
 
-### Passive Voice and Subjectless Fragments
+### Passive voice and subjectless fragments
 
 The sentence hides who acted or drops the subject.
 
@@ -175,21 +166,21 @@ Scan for "is", "are", "was", "were", or "been" followed by a past participle, th
 
 Fix by naming the actor when it matters. Keep passive voice when the actor is unknown, irrelevant, legally sensitive, or where the genre expects it, such as a scientific methods section.
 
-## Formatting and Style Patterns
+## Formatting and style patterns
 
-### Dash Dependence
+### Dash dependence
 
 AI prose can lean on em dashes and en dashes for rhythm and faux sophistication. Treat this carefully: the em dash is the most-publicised tell and the least reliable. Many strong human writers use it heavily, frontier models reduced em-dash output through late 2025, and some writers now self-censor real punctuation to dodge suspicion. A single em dash, or em dashes in literary and editorial long-form, is not a tell.
 
-In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns and clearly substitutes for sentence structure. In strict "humanise" or de-AI passes, removing em and en dashes is a register choice the user has asked for, not proof of AI origin: use a period, comma, colon, parentheses, or regular hyphen instead. Either way, keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography. Stripping dashes to beat a detector is not a quality goal.
+In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns and clearly substitutes for sentence structure. In strict "humanise" or de-AI passes, removing em and en dashes is a register choice the user has asked for, not proof of AI origin. End the sentence or use a comma. Do not swap the dash for a colon or parentheses; see Colon as connector. Either way, keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography. Stripping dashes to beat a detector is not a quality goal.
 
-### Colon as Connector
+### Colon as connector
 
 A colon is correct before a list, an example, or a definition. It becomes a tell when it works as a mid-sentence hinge that adds nothing: "If you're coming from traditional automation: instead of registering event handlers, you describe conditions." The colon stands in for a connection the sentence never makes.
 
-Fix by writing the sentence without the comparison framing, or by using a full stop. Flag the habit across a piece, not the single instance, the same caution as Dash Dependence.
+Fix by writing the sentence without the comparison framing, or by using a full stop. Flag the habit across a piece, not the single instance, the same caution as Dash dependence.
 
-### Mechanical Bold and Inline Headers
+### Mechanical bold and inline headers
 
 Watch for bullet lists where every item starts with a bold label and the text after it only restates the label: "**Performance:** Performance improved across the board."
 
@@ -197,19 +188,19 @@ The tell is the redundancy, not the punctuation. A bold lead-in that names the i
 
 Fix the redundant kind by writing normal sentences, simpler bullets, or a table when comparison matters. The related tell is the whole list running on the same template when only two of its items need a label.
 
-### Title-Case Headings
+### Title-case headings
 
 Use sentence case unless the style guide says otherwise.
 
-### Decorative Emoji
+### Decorative emoji
 
 Remove decorative emoji in professional, technical, reference, and de-AI rewrites. Keep them only when the medium and voice clearly call for them. Section-heading emoji and emoji used as bullet markers are a strong chatbot tell.
 
-### Curly Quotes
+### Curly quotes
 
 Curly quotes alone are not an AI tell. Convert to straight quotes only when the output format, code context, or user preference requires it.
 
-## Communication Artefacts
+## Communication artefacts
 
 Remove pasted chatbot behaviour:
 
@@ -231,7 +222,7 @@ Watch for:
 
 This is a tell mainly in assistant-voiced output and in finished documents where a conversational acknowledgement makes no sense. Enthusiastic humans say these things too, so flag them when they precede the real content as filler, not when they carry genuine warmth in a message.
 
-## Filler, Hedging, and Fake Depth
+## Filler, hedging, and fake depth
 
 Watch for:
 
@@ -243,7 +234,7 @@ Watch for:
 
 Fix by cutting the phrase or writing the concrete claim.
 
-## Model Fingerprints (diagnostic only)
+## Model fingerprints (diagnostic only)
 
 For review and diagnosis tasks, not for verdicts. These date fast and a wrong attribution is worse than none, so never act on them alone.
 
@@ -251,7 +242,7 @@ For review and diagnosis tasks, not for verdicts. These date fast and a wrong at
 - Claude: long hedged multi-clause sentences, headers everywhere, first-person politeness, "you're absolutely right".
 - Gemini: verbose, corporate-flat, plain conversational vocabulary, list and header heavy.
 
-## False Positives
+## False positives
 
 Do not over-edit these without a cluster of other tells:
 
@@ -268,11 +259,11 @@ Why single features are unreliable, and why detector-evasion is a non-goal:
 - Detectors are biased and brittle. A Stanford study found that more than half of non-native English essays were misclassified as AI across seven detectors, while near-native essays passed. Detectors have flagged founding documents such as the US Constitution as AI-written. OpenAI retired its own classifier in 2023 after it correctly flagged only 26% of AI text. Light paraphrasing defeats most detectors.
 - Plain, predictable, low-variation prose is the normal style of fluent non-native, formal, and neurodivergent writers. Flagging it penalises people, not machines.
 - "delve" is an RLHF artefact, not, as sometimes claimed, a marker of Nigerian English; corpus work found it does not originate there. It is common in fluent Nigerian, Indian, and other non-native business English. One or two focal words mean nothing; only a dense cluster in a short passage is a signal.
-- The em dash is the least reliable single tell. See Dash Dependence.
+- The em dash is the least reliable single tell. See Dash dependence.
 
 Never strip a feature on a single signal. The job is to make the writing fit its purpose, not to make it pass a detector.
 
-## Human Signals to Preserve
+## Human signals to preserve
 
 Preserve:
 

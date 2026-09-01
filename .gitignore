@@ -8,16 +8,6 @@ Thumbs.db
 
 # Logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Dependencies and build output
-node_modules/
-dist/
-build/
-coverage/
 
 # Python
 __pycache__/
@@ -37,3 +27,6 @@ venv/
 # Local scratch
 tmp/
 temp/
+
+# Model-produced eval rewrites
+evals/outputs/

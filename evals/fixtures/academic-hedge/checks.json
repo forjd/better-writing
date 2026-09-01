@@ -1,0 +1,22 @@
+{
+  "name": "academic-hedge",
+  "brief": "Copy edit this methods-and-results excerpt for a journal submission. Keep the scientific register.",
+  "required": [
+    "were incubated",
+    "37",
+    "24",
+    "suggest",
+    "may",
+    "sample size"
+  ],
+  "banned": [
+    "important to note",
+    "future research should explore",
+    "we incubated",
+    "proves",
+    "clearly",
+    "demonstrates that the compound inhibits"
+  ],
+  "max_words_ratio": 1.1,
+  "min_words_ratio": 0.6
+}

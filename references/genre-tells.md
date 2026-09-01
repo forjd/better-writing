@@ -1,8 +1,8 @@
-# Genre Tells
+# Genre tells
 
 Concrete AI-writing fingerprints by genre, plus the exemptions that stop the general lists from over-editing a genre where a "tell" is actually correct. Apply the bank that matches the text. For dials, audience, and voice calibration, see `voice-and-context.md`.
 
-## Email and Business Messages
+## Email and business messages
 
 Cut the hollow openers and framing verbs that delay the point:
 
@@ -13,11 +13,11 @@ Cut the hollow openers and framing verbs that delay the point:
 
 Fix by leading with the reason for the message, the ask, the owner, and the date. Keep enough warmth for the relationship; direct does not mean cold.
 
-## LinkedIn and Social
+## LinkedIn and social
 
 - broetry: one-line paragraphs stacked for drama, each on its own line.
 - engagement bait: "Agree?", "Thoughts?", "Who's with me?". See `structures-and-phrases.md`.
-- manufactured-insight hooks: "Here's what nobody tells you about", "Unpopular opinion:". See Engagement Bait in `structures-and-phrases.md`.
+- manufactured-insight hooks: "Here's what nobody tells you about", "Unpopular opinion:". See Engagement bait in `structures-and-phrases.md`.
 - themed-emoji bookending and emoji bullet markers.
 
 Fix by making one real claim and ending on it. Cut the performance.
@@ -33,7 +33,7 @@ Replace booster verbs and reveal framing with proof, usage, and outcomes:
 
 Fix with one clear promise backed by a concrete feature, number, or example. Do not invent social proof, metrics, awards, or customer names.
 
-## Academic and Scientific
+## Academic and scientific
 
 Tells:
 
@@ -45,16 +45,16 @@ Fix by naming the specific study, dataset, method, or result.
 
 Exemptions, so the general lists do not damage correct scientific prose:
 
-- Hedging is bidirectional here. A genuine hedge ("these results suggest", "under these conditions") protects accuracy and should be kept, sometimes added. Do not strip it the way you would strip marketing hedging.
+- Hedging is bidirectional here. A genuine hedge ("these results suggest", "under these conditions") protects accuracy and should be kept, sometimes added. Do not strip it the way you would strip marketing hedging, and do not collapse a stacked hedge such as "suggest that X may" into one: the modal carries the claim's strength, and the genre expects both.
 - Passive voice is correct in a methods section. Do not force a human actor where the procedure is the subject.
 - A real citation for every claim is the genre norm, not padding.
 
-## Code, Pull Requests, and Documentation
+## Code, pull requests, and documentation
 
 Tells:
 
 - comments that restate the obvious: "// loop over the items", "This function is responsible for"
-- diff-anchored prose in docs and PRs: "we added", "now we handle", "this was changed to". Documentation should describe how the system works in the present tense. This overlaps with the Documentation note in `voice-and-context.md`; keep them consistent.
+- diff-anchored prose in docs and PRs: "we added", "now we handle", "this was changed to". Documentation should describe how the system works in the present tense.
 - verbose PR descriptions that narrate the diff line by line instead of stating intent and risk
 - gitmoji or emoji in commit messages where the project does not use them
 - over-defensive caveats and reimplementation of code that already exists

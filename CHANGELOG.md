@@ -2,6 +2,23 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-01
+
+### Added
+
+- `evals/run_skill.py`: runs every fixture through a real model with `SKILL.md` and the references loaded, then checks the rewrites. Before this the harness only checked hand-written outputs, so CI stayed green no matter what the pattern lists said. The README now says so.
+- Three well-formedness checks in `evals/run_evals.py` (doubled spaces, space before punctuation, empty clause between punctuation marks). A rewrite that only deleted the banned substrings from `launch-email` passed every check before this.
+- Three fixtures: `marketing-copy` (booster verbs and invented-proof bans), `academic-hedge` (a genre exemption that must keep the passive and the hedges), and `linkedin-post` (hook, rhetorical self-answer, aphorism, engagement bait, broetry).
+
+### Changed
+
+- The strict-pass dash policy in `SKILL.md` and `references/ai-writing-patterns.md` no longer offers a colon or parentheses as the replacement, since the catalogue flags the mid-sentence colon. The README and `launch-email` example now end the sentence instead.
+- Every heading in the repo is sentence case, matching the catalogue's own rule.
+- Negative parallelism in `references/ai-writing-patterns.md` is now a pointer to Binary contrast in `references/structures-and-phrases.md`, which holds the full list. The genre exemptions live only in `references/genre-tells.md`; `references/voice-and-context.md` points there. The "keep in sync" notes are gone with the duplicates.
+- The taste check in `references/preflight.md` is yes/no per dimension, with the failing sentence quoted, instead of a 1 to 10 score with a 38 out of 50 threshold.
+- The `SKILL.md` description is a third shorter with the same trigger words.
+- CI pins Python 3.12 with `actions/setup-python`. `.gitignore` drops the Node entries and ignores `evals/outputs/`.
+
 ## 2026-08-19
 
 Additions drawn from `cursor/plugins` (`pstack/skills/unslop`), recorded in `references/sources.md`. Its em-dash, curly-quote, and untiered-wordlist rules were deliberately not adopted; the existing dash policy and confidence tiers stay as they are.

@@ -1,8 +1,8 @@
-# Voice and Context
+# Voice and context
 
 Use this reference when the request is not just "fix grammar". It helps choose the right kind of good.
 
-## Brief Read
+## Brief read
 
 Before rewriting, identify:
 
@@ -32,17 +32,9 @@ Set these mentally before rewriting. Adjust them from the brief rather than usin
 | Evidence | common-sense, experiential | sourced, quantified, caveated |
 | Polish | rough human texture | publication-ready finish |
 
-## Genre Defaults
+## Genre defaults
 
-This section sets the dials and the exemptions for each genre. For the concrete phrase banks per genre, see `genre-tells.md`.
-
-A tell in one genre is correct in another. Before applying the general lists, check these exemptions:
-
-- Passive voice is correct in a scientific methods section.
-- Hedging is correct, and sometimes should be added, in academic, legal, and medical prose.
-- Bullet lists, tables, and headers are correct in technical docs, release notes, reference material, and checklists.
-- Markdown is correct where the destination renders it.
-- Words like "robust" and "scalable" have precise technical meaning; keep them when accurate.
+This section sets the dials for each genre. A tell in one genre is correct in another, so before applying the general lists check the exemptions listed per genre in `genre-tells.md`, which also holds the concrete phrase banks.
 
 ### Emails
 
@@ -51,14 +43,13 @@ A tell in one genre is correct in another. Before applying the general lists, ch
 - Use concrete asks, owners, dates, and next steps.
 - Preserve relationship context. Direct does not mean blunt.
 
-### Documentation and Technical Writing
+### Documentation and technical writing
 
-- Prefer present-tense descriptions of how the system works.
-- Remove diff-anchored wording such as "this was added to".
+- Prefer present-tense descriptions of how the system works. The tells, including diff-anchored wording, are in `genre-tells.md`.
 - Keep identifiers exact.
 - Use active voice where it clarifies ownership, but do not force a human actor where the system is the true actor.
 
-### Product and Marketing Copy
+### Product and marketing copy
 
 - Replace hype with proof, usage, contrast, and concrete outcomes.
 - Avoid "elevate", "seamless", "unlock", "next-gen", and vague "transform your workflow" language.
@@ -66,21 +57,21 @@ A tell in one genre is correct in another. Before applying the general lists, ch
 - Use one clear promise rather than a pile of benefits.
 - See `genre-tells.md` for the fuller bank of booster verbs and SEO scaffolding.
 
-### Essays, Posts, and Opinion
+### Essays, posts, and opinion
 
 - Let the writer have a position, uncertainty, or tension.
 - Keep strange details and lived examples.
 - Vary rhythm. A few short sentences are useful; a whole page of staccato lines feels manufactured.
 - Avoid tidy moral conclusions unless the piece has earned them.
 
-### Reference, Legal, Medical, Financial, and Policy Text
+### Reference, legal, medical, financial, and policy text
 
 - Keep the voice plain and neutral.
 - Preserve caveats that protect accuracy.
 - Do not add personality for its own sake.
 - Verify unstable facts if the answer depends on current law, prices, policy, availability, or research.
 
-## Voice Calibration
+## Voice calibration
 
 If the user provides a writing sample, read it before editing and note:
 
@@ -93,7 +84,7 @@ If the user provides a writing sample, read it before editing and note:
 
 Match patterns from the sample instead of replacing them with generic "good writing". Preserve recurring quirks when they feel intentional and do not hurt clarity.
 
-## Flatness Is Also a Tell
+## Flatness is also a tell
 
 Removing tells is half the job. Prose sanded down to a uniform finish reads as machine-made too: every sentence the same length, no position, no reaction, nothing only this writer would say.
 
@@ -108,7 +99,7 @@ The fix is to surface what the source and brief already contain, never to manufa
 
 Never invent an opinion, an anecdote, a feeling, or a quirk the writer did not have. Where the source holds no position, state what is true plainly rather than performing conviction. See the friction-free-tone check in `preflight.md`.
 
-## Specificity Ladder
+## Specificity ladder
 
 When a sentence feels vague, climb this ladder until it becomes useful:
 
@@ -119,7 +110,7 @@ When a sentence feels vague, climb this ladder until it becomes useful:
 5. Apply the swap test: if the sentence could sit unchanged in another company's or project's copy, it says nothing about this one.
 6. Cut the sentence if it still only says "this is important".
 
-## Fact Safety
+## Fact safety
 
 Concrete prose can tempt an agent to fabricate. Do not do that.
 

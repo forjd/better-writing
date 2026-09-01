@@ -1,10 +1,10 @@
-# Structures and Phrases
+# Structures and phrases
 
 Use this reference for the stricter "anti-slop" pass. Apply it with judgement. The point is to cut generic scaffolding, not to sand off every trace of style.
 
-## Phrases to Cut or Replace
+## Phrases to cut or replace
 
-### Throat-Clearing
+### Throat-clearing
 
 Cut openers that announce the point instead of making it:
 
@@ -19,7 +19,7 @@ Cut openers that announce the point instead of making it:
 - "Let's dive in"
 - "Let's break this down"
 
-### Stock Openers
+### Stock openers
 
 Cut the canned first lines that set a scene instead of starting the piece. These are among the most-cited AI openers across every source.
 
@@ -32,7 +32,7 @@ Cut the canned first lines that set a scene instead of starting the piece. These
 
 Start with the actual subject, claim, or action instead.
 
-### Mechanical Transitions
+### Mechanical transitions
 
 These connectives appear more often in LLM prose and tend to stack across consecutive sentences. Thin them out; most can be deleted.
 
@@ -43,7 +43,7 @@ These connectives appear more often in LLM prose and tend to stack across consec
 
 Keep a transition only when it marks a real turn in the argument.
 
-### Essay-Scaffold Closers
+### Essay-scaffold closers
 
 Cut the tell-them-what-you-told-them ending unless the genre genuinely needs a summary (a long report, a spec):
 
@@ -53,7 +53,7 @@ Cut the tell-them-what-you-told-them ending unless the genre genuinely needs a s
 
 End on the real point, the next step, or the strongest detail.
 
-### Emphasis Crutches
+### Emphasis crutches
 
 Cut manufactured emphasis:
 
@@ -64,7 +64,7 @@ Cut manufactured emphasis:
 - "This matters because"
 - "Here's why that matters"
 
-### Business Jargon
+### Business jargon
 
 Prefer plain alternatives when the word is filler. Some entries below (leverage, utilise, streamline, optimise) are Tier 2 in `ai-writing-patterns.md`: swap them when they cluster as jargon, not on sight, and keep them where they carry real meaning.
 
@@ -90,7 +90,7 @@ Prefer plain alternatives when the word is filler. Some entries below (leverage,
 | bandwidth | time, capacity |
 | take it to the next level | improve |
 
-### Abstract Metaphor Nouns
+### Abstract metaphor nouns
 
 A technical-sounding register that reads as precision but usually has a plainer concrete word underneath. Common in engineering writing, product strategy, and AI-assisted technical prose. The rule is the same as the table above: swap the word when it is doing metaphorical work, keep it when it is the literal domain term. A substrate in semiconductor manufacturing, a vector in maths or security, and a primitive in a graphics API are all correct.
 
@@ -117,7 +117,7 @@ A technical-sounding register that reads as precision but usually has a plainer 
 | flywheel | the loop that compounds |
 | load-bearing | essential, what the argument rests on |
 
-### Softening and Intensifying Adverbs
+### Softening and intensifying adverbs
 
 Remove adverbs that add posture rather than meaning:
 
@@ -129,7 +129,7 @@ An adverb propping up a weak verb usually means the verb is wrong: "runs quickly
 
 Keep adverbs that carry real meaning. In personal, conversational, or voice-sample writing these often carry tone; thin them only when they cluster as filler, never on sight.
 
-### Empty Importance
+### Empty importance
 
 Replace or cut sentences that only claim weight:
 
@@ -141,7 +141,7 @@ Replace or cut sentences that only claim weight:
 
 Name the implication, stake, reason, issue, or behaviour.
 
-### Mood Instead of Mechanism
+### Mood instead of mechanism
 
 The sentence names a feeling about the thing rather than what the thing does:
 
@@ -154,11 +154,9 @@ Fix by naming the mechanism, a fact, or a number: "`.toSQL()` returns the exact 
 
 Then apply the swap test. If the sentence could sit unchanged in a different company's or project's copy, it says nothing about this one. Make it specific or delete it.
 
-## Structures to Avoid
+## Structures to avoid
 
-### Binary Contrast
-
-The same pattern appears as "Negative Parallelism" in `ai-writing-patterns.md`; keep the two lists in sync.
+### Binary contrast
 
 These patterns feel pre-baked:
 
@@ -167,18 +165,20 @@ These patterns feel pre-baked:
 - "The answer is not X. It is Y."
 - "It feels like X. It is actually Y."
 - "Not just X, but Y."
+- "Not only X but Y."
+- "This is not about X, it is about Y."
 
 Fix by stating the point directly.
 
 A specific escalating variant climbs from a modest claim to a grand abstraction, often carried by an em dash: "Support isn't just a department, it's the heartbeat of the company." Watch for the jump to a lofty noun such as "paradigm", "engine", "revolution", or "heartbeat". Fix by making the plain claim and cutting the inflation.
 
-### Negative Listing
+### Negative listing
 
 Avoid building suspense by listing what something is not.
 
 Fix by naming what it is.
 
-### Dramatic Fragmentation
+### Dramatic fragmentation
 
 Watch for:
 
@@ -188,7 +188,7 @@ Watch for:
 
 Fix with complete sentences unless the fragment is clearly part of the writer's voice.
 
-### Rhetorical Setups
+### Rhetorical setups
 
 Cut prompts that pretend to discover an insight:
 
@@ -199,7 +199,7 @@ Cut prompts that pretend to discover an insight:
 
 Make the point. Let the reader react.
 
-### False Agency
+### False agency
 
 Inanimate nouns should not perform human decisions.
 
@@ -213,7 +213,7 @@ Watch for:
 
 Fix by naming the person, team, buyer, reader, or process where possible.
 
-### Narrator from a Distance
+### Narrator from a distance
 
 Avoid hovering above the scene:
 
@@ -224,28 +224,28 @@ Avoid hovering above the scene:
 
 Fix by putting the reader, actor, or specific situation in the sentence. Keep the distant narrator when it is a deliberate register in an essay or opinion piece.
 
-### Question-Answer Habit
+### Question-answer habit
 
 Repeated questions followed by immediate answers feel like a script.
 
 Fix by turning the answer into a statement, or keep the question only when it creates real tension.
 
-### Repetitive Paragraph Endings
+### Repetitive paragraph endings
 
 If every paragraph ends with a punchline, the rhythm becomes artificial.
 
 Fix by varying paragraph length, ending on details, and letting some paragraphs land quietly.
 
-### Countdown and Tail Negation
+### Countdown and tail negation
 
 A fixed marketing rhythm that lists negations before a payoff:
 
 - "No setup. No friction. Just results."
 - "Not X. Not Y. Just Z."
 
-Fix by naming the benefit plainly. Keep the rhythm only when it is clearly part of the writer's voice, the same caution as Dramatic Fragmentation.
+Fix by naming the benefit plainly. Keep the rhythm only when it is clearly part of the writer's voice, the same caution as Dramatic fragmentation.
 
-### Rhetorical Self-Answer
+### Rhetorical self-answer
 
 A one-line question fragment answered by a fragment, used as a fake transition. Common in LinkedIn and newsletter copy:
 
@@ -255,7 +255,7 @@ A one-line question fragment answered by a fragment, used as a fake transition. 
 
 Fix by writing the statement.
 
-### Over-Signposting
+### Over-signposting
 
 The text announces its own outline with ordinals and stacks formal connectives across paragraphs:
 
@@ -264,7 +264,7 @@ The text announces its own outline with ordinals and stacks formal connectives a
 
 Fix by letting the structure carry itself and deleting most connectives. Exempt genuinely sequential or instructional genres: steps in a recipe, an install guide, or a procedure can be numbered.
 
-### False Balance
+### False balance
 
 Reflexive both-sidesing that never resolves, plus stacked hedges:
 
@@ -273,19 +273,19 @@ Reflexive both-sidesing that never resolves, plus stacked hedges:
 
 Fix by taking a position where the genre allows confidence. Note the opposite duty in academic, legal, and medical prose, where a genuine hedge protects accuracy and should be kept or even added.
 
-### List-Itis
+### List-itis
 
 The model defaults to bullet lists in genres that expect connected prose, fragmenting an argument into eight full-sentence bullets with no connecting reasoning. A related form is the listicle in disguise: "The first reason is cost. The second reason is speed. The third reason is reliability."
 
 Fix by writing the argument as paragraphs with real connective tissue. Exempt technical docs, release notes, reference material, and checklists, where lists are correct.
 
-### Fractal Recap
+### Fractal recap
 
 The text previews itself and summarises itself at every level: an intro that lists what is coming, each section opening with its own preview and closing with its own recap, all around one thin idea.
 
 Fix by making the point once and cutting the scaffolding. Keep a single summary only in long documents that earn it.
 
-### Invented Compound Jargon
+### Invented compound jargon
 
 The model coins official-sounding terms to manufacture authority:
 
@@ -293,7 +293,7 @@ The model coins official-sounding terms to manufacture authority:
 
 Fix by describing the thing in plain words rather than naming a fake concept.
 
-### Aphorism Formula
+### Aphorism formula
 
 A fill-in-the-blanks faux-wisdom template:
 
@@ -301,7 +301,7 @@ A fill-in-the-blanks faux-wisdom template:
 
 Fix by cutting the slogan and stating what is true.
 
-### Meta-Commentary Joiners
+### Meta-commentary joiners
 
 Performative interjections that narrate the writing instead of advancing it:
 
@@ -310,7 +310,7 @@ Performative interjections that narrate the writing instead of advancing it:
 
 Fix by making the point and trusting the reader to register it.
 
-### Engagement Bait
+### Engagement bait
 
 Social-post habits that fish for a reaction:
 
@@ -320,7 +320,7 @@ Social-post habits that fish for a reaction:
 
 Fix by making a claim worth reacting to and ending on it.
 
-## Quick Rewrite Moves
+## Quick rewrite moves
 
 - Delete the first sentence if it only introduces the topic.
 - Replace abstract nouns with the object or action.

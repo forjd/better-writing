@@ -29,6 +29,16 @@ def word_count(text):
     return len(text.split())
 
 
+# Damage a search-and-replace rewrite leaves behind: doubled spaces mid-line,
+# a space before closing punctuation, or two punctuation marks with nothing
+# between them ("I !", "our  new", "to .", "update ,.").
+WELL_FORMED = [
+    (r"\S[^\S\n]{2,}\S", "no doubled spaces inside a line"),
+    (r"\s[,.;:!?]", "no space before punctuation"),
+    (r"[,;:!?]\s*[,;:!?]", "no empty clause between punctuation marks"),
+]
+
+
 def check_rewrite(checks, input_text, rewrite_text):
     """Return a list of (passed, description) tuples."""
     results = []
@@ -45,6 +55,10 @@ def check_rewrite(checks, input_text, rewrite_text):
     for pattern in checks.get("banned_regex", []):
         ok = re.search(pattern, rewrite_text) is None
         results.append((ok, f"banned pattern absent: /{pattern}/"))
+
+    for pattern, desc in WELL_FORMED:
+        ok = re.search(pattern, rewrite_text) is None
+        results.append((ok, f"well formed: {desc}"))
 
     max_ratio = checks.get("max_words_ratio")
     min_ratio = checks.get("min_words_ratio")

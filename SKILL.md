@@ -1,6 +1,6 @@
 ---
 name: better-writing
-description: Rewrite, draft, and review prose so it is clear, specific, human, and appropriate to context. Use this skill when improving emails, essays, documents, reports, UI copy, marketing copy, posts, or any text that may sound generic, AI-written, over-polished, verbose, salesy, evasive, or structurally formulaic. Supports voice calibration, anti-slop audits, context-aware taste decisions, and final pre-flight checks.
+description: Rewrite, draft, and review prose so it is clear, specific, human, and fits its context. Use when improving emails, reports, documentation, marketing copy, UI text, or posts that sound generic, AI-written, verbose, salesy, or formulaic. Covers voice calibration, anti-slop audits, and pre-flight checks.
 license: MIT
 ---
 
@@ -8,7 +8,7 @@ license: MIT
 
 Use this skill to make prose stronger without flattening the writer. The goal is not to make everything casual or punchy. The goal is to make the text fit its audience, purpose, and medium while removing generic AI tells, filler, fake authority, and formulaic structure.
 
-## Core Workflow
+## Core workflow
 
 1. Read the brief before editing.
    - Identify the audience, channel, purpose, stakes, relationship, and requested dialect.
@@ -32,13 +32,14 @@ Use this skill to make prose stronger without flattening the writer. The goal is
    - Prefer active voice and simple verbs when they make the sentence clearer.
    - Vary sentence length. Avoid a steady mid-length cadence.
    - Remove chatbot framing, throat-clearing, generic conclusions, and manufactured drama.
+   - When the brief asks for a light edit or to keep the writer's voice, change only what is wrong. A lone word or punctuation mark from a tell list, such as one "delve" or a single em dash, is the writer's choice and stays.
 
 5. Self-audit and revise.
    - Ask: "What still sounds generic, evasive, or AI-written?"
    - Fix the answer before delivering.
    - Run the pre-flight checklist in `references/preflight.md`.
 
-## Default Output
+## Default output
 
 Match the user's requested deliverable.
 
@@ -50,12 +51,12 @@ Match the user's requested deliverable.
 
 When the user asks to "humanise", "de-AI", "remove slop", "make this sound less ChatGPT", or similar, use a stricter pass:
 
-- Remove em dashes and en dashes when this pass is requested, using sentence breaks, commas, colons, parentheses, or regular hyphens; keep en dashes in numeric and date ranges. This is a register choice, not detector-evasion. See `references/ai-writing-patterns.md` for the full dash policy, including the lighter touch in normal rewrites.
+- Remove em dashes and en dashes when this pass is requested. End the sentence or use a comma; a colon or parentheses in the dash's place just swaps one tell for another. Keep en dashes in numeric and date ranges. This is a register choice, not detector-evasion. See `references/ai-writing-patterns.md` for the full dash policy, including the lighter touch in normal rewrites.
 - Remove decorative emojis, title-case headings, and bold-label bullets whose text only restates the label, unless the target medium expects them.
 - Remove "let me know", "here is", "of course", knowledge-cutoff disclaimers, and other pasted chatbot artefacts.
 - Remove vague positive endings. End on the real point.
 
-## Editing Principles
+## Editing principles
 
 - Specific beats impressive. Name the person, object, constraint, date, place, evidence, or trade-off.
 - Direct beats announced. Do the thing instead of saying "let's explore" or "here's what matters".
