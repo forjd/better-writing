@@ -68,6 +68,18 @@ These informed the hedging re-scope, the corrected dash and fingerprint entries,
 - Masrour, Emi, Spero, "DAMAGE", GenAIDetect at COLING 2025, and Pangram Labs, "How well does Pangram perform on humanizers?", August 2025.
   19 commercial humanisers all degraded the original; tortured phrases and non-standard Unicode as residue.
 - Wiki Education, January 2026: 178 of 3,078 reviewed articles flagged; 7% cited a fabricated source, over two-thirds failed verification.
+- Williams and Bizup, Style: Lessons in Clarity and Grace; Pinker, The Sense of Style; Zinsser, On Writing Well; Klinkenborg, Several Short Sentences About Writing; Orwell, Politics and the English Language; Graham, "Write like you talk"; Saunders, Story Club.
+  The sentence-craft checks: characters as subjects, old before new, the stress position, cohesion, the curse-of-knowledge pass, connectors only where order fails, the talk test, the per-sentence pass, and the stock-phrase diagnostic.
+- Gorrie, "Leave the em-dash alone", Dead Language Society, 2025: https://www.deadlanguagesociety.com/p/em-dash-ai-writing-panic
+  "AI prose has no sense of proportion"; the one-emphasised-sentence rule.
+- "Catch Me If You Can? Not Yet", EMNLP 2025 Findings, arXiv 2509.14543, and "Authorship impersonation via LLM prompting does not evade verification", arXiv 2603.29454.
+  Few-shot imitation copies surface features and fails on blogs and forums; lexical and syntactic features identify a writer. The basis for measure, edit less, measure again.
+- van Nuenen, "Voice Under Revision", arXiv 2604.22142, 2026.
+  Rewrites cut contractions, first person, and function words and raise word length even under a voice-preserving prompt (32% smaller effect, same direction). The basis for the voice check and the eval metrics.
+- Biber, Dimensions of English (Bamberg summary) and Basecamp, "How we communicate".
+  Involved versus informational markers per medium; the chat register.
+- River, "How ghostwriters capture client voice", and the ghost-writer skills by angelarose210, robertguss, gncll, and dannwaneri.
+  Sample size, negative samples, forbidden patterns, and the measured profile.
 - Wikipedia:Signs of AI writing, fetched 2026-09-01.
   Current vocabulary eras, the spaced-dash note, the Grok entries, and the "signs of human writing" list.
 

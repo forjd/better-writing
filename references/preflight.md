@@ -35,6 +35,7 @@ Answer yes or no. Do not score; a number here is fake precision.
 - Rhythm: do sentence and paragraph lengths vary?
 - Voice fit: does it match the genre, audience, and any sample?
 - Density: is nothing left that could be cut without losing meaning?
+- Restraint: is everything stated at its actual size, or has something been puffed up or talked down?
 
 Any "no" means revise that dimension before delivery. Quote the sentence that fails; if you cannot point to one, the answer is yes.
 
@@ -52,10 +53,26 @@ Fix those spots before sending.
 
 ## Structure check
 
-- Uniform cadence: do short and long sentences both appear, or does everything sit at the same 18 to 24 words? Vary the length; do not invent content to do it.
-- Paragraph-reshuffle test: could the paragraphs be reordered without breaking the flow? If so, the piece lacks connective tissue. Add the links between ideas; do not just relabel them.
+- Uniform cadence: do short and long sentences both appear, or does everything sit at the same 18 to 24 words? Vary the length; do not invent content to do it. Three consecutive sentences of the same length is the point to look at.
+- Paragraph-reshuffle test: could the paragraphs be reordered without breaking the flow? If so, the piece lacks an order. Fix the order, not the connectives: if the paragraphs already hold their sequence, delete the "however" and "in addition" that were added to fake one. Add a link only where the order fails.
+- Outline test: read the first sentence of every paragraph in order. If they form a clean summary of the piece, the structure is template-shaped. Exempt specs, runbooks, and other documents that are meant to be skimmed that way.
+- Proportion: count the emphasised sentences (figures of speech, intensifiers, tricolons, punchlines). More than one per paragraph, or a punchline closing every paragraph, is the model's habit. Strip the extras to plain statement.
 - Friction-free tone: is there any genuine spike of doubt, bluntness, humour, or irritation, or does every paragraph sit at the same pleasant altitude? Surface the tone that is already in the source or the brief. Never invent opinions, asides, or anecdotes the writer did not have.
+- Uniform confidence: is every sentence equally sure? A piece with no "I think" and no unresolved point reads as machine house style even with every tell removed. Keep the writer's uncertainty where they had it. Do not manufacture it.
 - Backtrack test: is there a sentence the reader has to re-read to parse? Split it. One idea per sentence.
+
+## Voice check
+
+For any brief that says keep my voice, light edit, or supplies a sample:
+
+- Contractions, first-person pronouns, and hedges: count them in the source and the rewrite. If the rewrite has fewer, put them back. This is the measured direction of drift and it happens under a voice-preserving instruction too.
+- Mean word length: if the rewrite's words are longer on average, the edit swapped plain words for formal ones. Reverse it.
+- Unity: person, tense, and stance match the first paragraph all the way through.
+- Recognition: would the writer read the rewrite and recognise it as theirs? If a sentence would make them say "I would never put it that way", it goes back to how they put it.
+
+## Per-sentence pass
+
+Before delivery, read the piece once as a first-time reader and mark each sentence plus, minus, or zero. Act only on the minuses. This is cheaper than another full rewrite and it catches the sentence that exists only to make the piece feel complete.
 
 ## Delivery check
 

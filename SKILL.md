@@ -18,6 +18,7 @@ Use this skill to make prose stronger without flattening the writer. The goal is
 2. Set the writing read.
    - State this internally unless the user wants a plan: "Reading this as: [genre] for [audience], with [tone], optimising for [outcome]."
    - Choose dials for directness, warmth, personality, density, evidence, and polish. See `references/voice-and-context.md`.
+   - If there is a voice sample, record its profile (sentence lengths, openers, contractions, person, hedges, punctuation, recurring words) before editing and recompute it after. The procedure is under Voice calibration in the same file.
 
 3. Audit the text.
    - For AI-writing tells, use `references/ai-writing-patterns.md`.

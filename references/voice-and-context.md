@@ -32,6 +32,18 @@ Set these mentally before rewriting. Adjust them from the brief rather than usin
 | Evidence | common-sense, experiential | sourced, quantified, caveated |
 | Polish | rough human texture | publication-ready finish |
 
+The dials have measurable markers. Register studies (Biber) separate involved prose (first and second person, contractions, present tense, private verbs such as "think" and "feel", emphatics) from informational prose (nouns, longer words, more distinct words, attributive adjectives). Personal letters sit on the involved side, professional letters near the middle, academic and official prose on the informational side. Use the markers to check a rewrite landed where the brief asked:
+
+| Medium | Markers to expect |
+| --- | --- |
+| Chat and messages | contractions, second person, questions, fragments allowed, no headings |
+| Email | contractions, first person, one ask, short paragraphs |
+| Memo and report | more nouns per sentence, fewer contractions, decisions before reasons |
+| Documentation | present tense, no first person unless the house style has it, identifiers exact |
+| Essay and opinion | first person, hedges as voice, at most one emphasised sentence per paragraph |
+
+Second person is a human marker the models under-use: a 2026 story corpus found humans address the reader in 28% of texts against 7% for AI. Where the genre allows it, keep it.
+
 ## Genre defaults
 
 This section sets the dials for each genre. A tell in one genre is correct in another, so before applying the general lists check the exemptions listed per genre in `genre-tells.md`, which also holds the concrete phrase banks.
@@ -42,6 +54,12 @@ This section sets the dials for each genre. A tell in one genre is correct in an
 - Keep goodwill, but cut servility.
 - Use concrete asks, owners, dates, and next steps.
 - Preserve relationship context. Direct does not mean blunt.
+
+### Chat and short messages
+
+- Writing solidifies and chat dissolves, so a chat message carries one thing: a question, an answer, a decision, or a link.
+- Contractions, second person, and fragments are the register. Headings, bold labels, and bullet lists are not, unless the platform is used that way.
+- If the words can be read two ways, they will be read the worse way. Say the thing, not the softened version.
 
 ### Documentation and technical writing
 
@@ -73,16 +91,48 @@ This section sets the dials for each genre. A tell in one genre is correct in an
 
 ## Voice calibration
 
-If the user provides a writing sample, read it before editing and note:
+Imitation from a sample has limits, and the procedure below is built around them. In a 2025 study, five sample texts beat none, but adding more changed little, and the models matched email and news while failing on blogs and forums: they copy the surface and default to their own habits underneath. The features that identify a writer are word choice and sentence construction, not tone adjectives. So the method is to measure the sample, edit as little as the brief allows, and measure again.
 
-- sentence length and paragraph rhythm
-- vocabulary level and favourite plain words
-- punctuation habits
-- transitions and paragraph openings
-- use of humour, asides, uncertainty, and first person
-- preferred level of compression
+### Before editing
 
-Match patterns from the sample instead of replacing them with generic "good writing". Preserve recurring quirks when they feel intentional and do not hurt clarity.
+1. Ask for one or two samples of 300 words or more that the writer produced without AI help. More than that changes little. Do not accept "write like [named author]" as a sample.
+2. Check the sample against the tell lists first. Human writing is drifting toward LLM style, and a sample that scores high on the catalogue may itself be AI-assisted. Ask before treating it as the source of truth.
+3. Record a profile. Rough counts are enough:
+   - median sentence length, and the share of sentences under 8 words and over 30
+   - how sentences open: the share starting with a pronoun, a noun, a conjunction ("And", "But"), an adverb, or a verb
+   - contractions per 100 words
+   - first-person and second-person pronouns per 100 words
+   - hedges per 100 words ("I think", "probably", "sort of", "maybe")
+   - punctuation inventory per 100 sentences: parentheses, colons, dashes, questions, exclamation marks
+   - median paragraph length in sentences
+   - five words or phrases used three or more times that are not on any slop list
+   - things the writer never does: no exclamation marks, no semicolons, no questions, no bold
+4. Decide the unity choices once from the sample and the brief: person, tense, and stance (certain, ambivalent, sceptical). Hold them for the whole piece.
+
+### While editing
+
+- Hedges, first-person markers, and idiosyncratic word choices from the sample survive unless one fails a clarity test you can quote. An unusual word that appears twice in the sample is the writer's, not a tell.
+- Match the sample's punctuation and openers rather than replacing them with generic "good writing". Preserve recurring quirks when they feel intentional and do not hurt clarity.
+- In informal genres (blog, forum, chat, personal email) edit less. The safer strategy is subtraction, because imitation fails there.
+
+### After editing
+
+Recompute the profile on the rewrite. Any figure that moved by more than a third is a voice break: either justify it from the brief or put the original back. Contractions, first person, and hedges falling while word length rises is the documented direction of drift, and it happens even under a "keep my voice" instruction, so check those four first.
+
+On outputs over about 600 words, or across several turns of editing, re-read the first paragraph and the last together. Drift toward formal, hedged, contraction-free prose is the failure to look for.
+
+## Sentence craft
+
+The checks that make a rewrite read as written rather than assembled. Each is a test, not a mood.
+
+- Characters as subjects, actions as verbs. Who did what. See the specificity ladder below.
+- Old before new. A sentence opens with what the reader already has from the previous sentence and ends on what is new. Test the last three words: they should carry the thing the reader did not yet know.
+- Cohesion. Read the grammatical subjects of a paragraph's sentences in order. They should name a small set of recurring topics. If every sentence has a fresh subject, the paragraph is not about anything.
+- Proportion. At most one emphasised sentence per paragraph: a figure of speech, an intensifier, a tricolon, or a short punchline. AI prose deploys the same level of special effects to every sentence regardless of importance. The last sentence is not automatically the emphasised one.
+- Connectors only where order fails. If the paragraphs already hold their order, "however", "therefore", and "in addition" are scaffolding. AI-assisted prose converges hardest on connective structure, so removing a connector is usually safe and adding one rarely is.
+- The talk test with a named reader. For any sentence the swap test flags, ask whether this writer would say it aloud to the audience in the brief. If not, write what they would say. For a draft from scratch, write the two-sentence spoken version first and build the draft from it.
+- Curse of knowledge. List every term, acronym, and internal name the text does not define. For each, decide whether the brief's audience knows it. Define or cut the ones they do not.
+- A stock phrase marks where the writer stopped thinking. The fix is to find the thought that was skipped, not to swap in a synonym.
 
 ## Flatness is also a tell
 
