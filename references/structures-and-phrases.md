@@ -18,6 +18,7 @@ Cut openers that announce the point instead of making it:
 - "I want to explore"
 - "Let's dive in"
 - "Let's break this down"
+- casual-register versions: "one thing that bit me hard, so pay attention to this part:", "okay so here's the bit that matters", "real talk:"
 
 ### Stock openers
 
@@ -141,6 +142,8 @@ Replace or cut sentences that only claim weight:
 
 Name the implication, stake, reason, issue, or behaviour.
 
+The numeric form is the invented baseline: "a healthy margin", "well within range", "a realistic target", "strong growth" with no stated comparison. Each one claims a norm the source never gave. Keep the number, cut the adjective, or name what it is compared against.
+
 ### Mood instead of mechanism
 
 The sentence names a feeling about the thing rather than what the thing does:
@@ -167,8 +170,9 @@ These patterns feel pre-baked:
 - "Not just X, but Y."
 - "Not only X but Y."
 - "This is not about X, it is about Y."
+- "X rather than Y" and "rather than X, Y" used as a reflex (common in Grok output).
 
-Fix by stating the point directly.
+Fix by stating the point directly. This is a Tier 1 structure when it repeats: see Negative parallelism in `ai-writing-patterns.md`.
 
 A specific escalating variant climbs from a modest claim to a grand abstraction, often carried by an em dash: "Support isn't just a department, it's the heartbeat of the company." Watch for the jump to a lofty noun such as "paradigm", "engine", "revolution", or "heartbeat". Fix by making the plain claim and cutting the inflation.
 
@@ -234,7 +238,32 @@ Fix by turning the answer into a statement, or keep the question only when it cr
 
 If every paragraph ends with a punchline, the rhythm becomes artificial.
 
-Fix by varying paragraph length, ending on details, and letting some paragraphs land quietly.
+Fix by varying paragraph length, ending on details, and letting some paragraphs land quietly. Two tests:
+
+- Aphorism budget: at most one punchy one-liner closing a paragraph in the whole piece. Count them.
+- Pull-quote test: if a sentence sounds like it was written to be quoted, rewrite it as a plain statement.
+
+### Stating the moral
+
+The paragraph ends by explaining what it meant, the section ends with its lesson, the story ends with its theme. A 2026 study of 61,000 stories found AI-written ones stated the moral 77% of the time against 52% for humans, and the habit carries into non-fiction as a closing "which is why X matters".
+
+Fix by ending on the last fact or event and trusting the reader.
+
+### Shadowboxing
+
+The text answers an objection nobody raised: "This isn't really about X", "I'm not saying that", "To be clear, I'm not arguing", "Don't get me wrong". If the objection does not appear in the piece or the brief, the defence is padding.
+
+Fix by cutting the defence, or by stating the objection and answering it if it is real.
+
+### Phantom alternatives
+
+The text sets up an option only to reject it: "A tempting approach would be", "One might be tempted to", "It would be easy to assume". The option was never on the table.
+
+Fix by stating the real constraint directly.
+
+### Editorial scar tissue
+
+Sentences that exist because of a previous edit rather than for the reader: a caveat added after a reviewer's comment, a clarification that only makes sense if you saw the earlier draft, a reassurance that answers a deleted sentence. Test: if you can explain which edit caused the sentence to exist, rather than what new information it contributes, cut it.
 
 ### Countdown and tail negation
 

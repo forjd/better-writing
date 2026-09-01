@@ -19,6 +19,10 @@ Fix by leading with the reason for the message, the ask, the owner, and the date
 - engagement bait: "Agree?", "Thoughts?", "Who's with me?". See `structures-and-phrases.md`.
 - manufactured-insight hooks: "Here's what nobody tells you about", "Unpopular opinion:". See Engagement bait in `structures-and-phrases.md`.
 - themed-emoji bookending and emoji bullet markers.
+- "As a [role], I..." openers that borrow authority from a job title.
+- hashtag stacks, thread markers such as "🧵" or "1/", and exclamation marks on every line. One exclamation mark in a long post is a person; one per sentence is a template.
+- ellipses that do not trail off, used as a beat.
+- markdown headings and bold labels in a post the platform renders as plain text.
 
 Fix by making one real claim and ending on it. Cut the performance.
 

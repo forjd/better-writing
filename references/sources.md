@@ -54,6 +54,20 @@ These informed the hedging re-scope, the corrected dash and fingerprint entries,
   Negative parallelism at about three times the human rate, rising in corporate filings. Second-hand until someone reads the article.
 - Anthropic, Claude Fable 5.1 system prompt and prompting guides, 2026: https://platform.claude.com/docs/en/release-notes/system-prompts/claude-fable-5-1
   "genuinely", "honestly", "straightforward" as disingenuous sincerity modifiers; the "mannered prose" definition.
+- blader/humanizer v2.10 to v2.11 (2026): https://github.com/blader/humanizer
+  Shadowboxing, phantom alternatives, the editorial scar-tissue test (PR #207), speculation from absence, hyphenated pairs, heading restated by its first sentence, casual-register signposting (PR #219).
+- asavvin-pixel/unslop (2026): https://github.com/asavvin-pixel/unslop
+  Aphorism budget, stating the moral, invented baselines, the outline test, slack, and the observation that cleaned GPT-isms leave uniform confidence and template-shaped structure behind.
+- hardikpandya/stop-slop: the pull-quote test.
+- Kendro, Maloney, Jarvis, International Journal of Applied Linguistics, 2025 (doi 10.1111/ijal.70115).
+  Lexical dispersion as the strongest predictor across six diversity measures; the close-repetition-avoidance habit strengthens in newer ChatGPT versions.
+- Gude et al., "More Aligned, Less Diverse?", arXiv 2605.06030, 2026.
+  2025 instruction-tuned models write sentences 15 to 30% longer than humans and over-use nominal modification and participial phrases.
+- Russell et al., "StoryScope", arXiv 2604.03136, 2026.
+  61,608 stories: AI stories state the moral (77% vs 52%) and render emotion through body metaphor (81% vs 38%).
+- Masrour, Emi, Spero, "DAMAGE", GenAIDetect at COLING 2025, and Pangram Labs, "How well does Pangram perform on humanizers?", August 2025.
+  19 commercial humanisers all degraded the original; tortured phrases and non-standard Unicode as residue.
+- Wiki Education, January 2026: 178 of 3,078 reviewed articles flagged; 7% cited a fabricated source, over two-thirds failed verification.
 - Wikipedia:Signs of AI writing, fetched 2026-09-01.
   Current vocabulary eras, the spaced-dash note, the Grok entries, and the "signs of human writing" list.
 

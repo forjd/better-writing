@@ -23,7 +23,9 @@ Confidence tiers, used throughout this file:
 
 These need no corroboration. A single instance is hard evidence that text was machine-generated or pasted unedited from a chatbot. Remove them.
 
-- Leaked tool and citation markup that no human types: `oaicite`, `oai_citation`, `contentReference`, `turn0search0`, `attributableIndex`, `grok_card`, `:::writing`, `【...】` citation brackets.
+- Leaked tool and citation markup that no human types: `oaicite`, `oai_citation`, `contentReference`, `turn0search0`, `attributableIndex`, `grok_card`, `:::writing`, `【...】` citation brackets, Gemini's `[cite: 1]` and `[span_1](start_span)`, Perplexity's `attached_file` and `ppl-ai-file-upload`, DeepSeek's lenticular brackets and dagger marks, ` ```wikitext ` fences, and links that point at a search-engine results page instead of a source.
+- Citations that do not resolve: a DOI or ISBN that is invalid, a DOI that resolves to an unrelated article, a book cited with no page number for a specific claim. A 2026 audit of flagged Wikipedia articles found only 7% cited a fabricated source but over two-thirds failed verification, so check the resolving ones too.
+- Humaniser residue. Commercial "humanisers" swap words for dictionary synonyms and damage the text: "counterfeit consciousness" for "artificial intelligence", tortured phrases in place of standard terms, non-standard Unicode look-alike characters, and a sudden drop to elementary register with random typos. A benchmark of 19 such tools found every one degraded the original. Treat the residue as conclusive and restore the plain term.
 - Raw markdown dropped into a destination that does not render it: literal `**bold**`, `##` headings, or escaped `\*` asterisks in an email, a plain-text field, or a CMS that expected HTML.
 - Tracking parameters left on pasted links, such as `?utm_source=chatgpt.com`.
 - Unedited assistant scaffolding: "Let me know if you need any modifications", "Here is the revised version", "I hope this helps", "Would you like me to".
@@ -89,6 +91,22 @@ Fix by naming the source, narrowing the claim, or removing it.
 
 A 2025-era variant is more dangerous than vagueness: a *real* source cited for a claim it does not actually support. Current models name genuine papers, authors, and URLs but do not verify that the source backs the sentence. When a claim leans on a specific citation, check that the source says what the text says, or flag it.
 
+### Speculation from absence
+
+The text turns a gap in the sources into a claim about the subject: "Information about her early life is not publicly available, suggesting she maintains a low profile." The second clause is invented.
+
+Fix by stating what is documented and stopping: "Her early life is not documented in the available sources."
+
+### Vague connection
+
+The text asserts a relationship without saying what it is: "associated with", "linked to", "in connection with", "has been involved in", "the system has been associated with residential water management applications".
+
+Fix by naming the relationship (built, sold, funded, tested, was sued over) or cutting the sentence.
+
+### Process narration
+
+The text narrates the research instead of reporting it: "after reviewing available sources", "upon examination of the record", "a closer look reveals". A 2026 Wikipedia cleanup candidate. Fix by giving the finding and, where the genre wants it, the citation.
+
 ### Formulaic challenges and future sections
 
 The text adds a generic "challenges", "future outlook", or "despite these challenges" section.
@@ -147,11 +165,19 @@ The prose keeps packing ideas into threes. LLM argumentative prose runs tricolon
 
 Fix by using the exact number the thought needs. Two is often enough. One strong example often beats a trio. A single tricolon is a normal rhetorical device, not a tell; the signal is the habit repeating across a piece.
 
-### Synonym cycling
+### Synonym cycling and close-repetition avoidance
 
-The same thing gets renamed for variety: "the protagonist", "the central figure", "the hero".
+The same thing gets renamed for variety: "the protagonist", "the central figure", "the hero". The underlying habit is avoiding a word close to its last use. Lexical dispersion is the strongest single predictor in a 2025 study of six diversity measures, and the habit is stronger in newer ChatGPT versions than older ones, so it is not fading.
 
-Fix by choosing the clearest term and repeating it when repetition helps.
+Fix by choosing the clearest term and repeating it when repetition helps. A human writer says "the parser" four times in a paragraph.
+
+### Sentence length
+
+2025-era instruction-tuned models write sentences 15 to 30% longer than human authors of comparable text, around 22 to 29 tokens against a human 22, and pack them with nominal modifiers, participial phrases, and coordinated nouns. 2023-era models ran short and choppy. Neither is a single-sentence tell; the signal is a whole piece that sits at one length with no short sentence anywhere. See the uniform-cadence check in `preflight.md`.
+
+### Mannered prose
+
+The sentence substitutes metaphor and flourish for direct statement: "the codebase groans under its own weight", "a symphony of microservices", "we set sail for a new architecture". The fix is to say what you mean. When a literal phrase is available, use it. This is the one-line instruction Anthropic recommends for its own models, and it works on drafts too.
 
 ### False ranges
 
@@ -194,6 +220,22 @@ Fix the redundant kind by writing normal sentences, simpler bullets, or a table 
 ### Title-case headings
 
 Use sentence case unless the style guide says otherwise.
+
+### Heading restated by its first sentence
+
+A heading followed by a sentence that only repeats it: "## Installation" then "This section covers how to install the tool." Delete the sentence and start with the first instruction.
+
+### Summary-shaped and paired headings
+
+Headings that do the section's work for it ("Why the reception was mixed" where "Reception" is the heading) and reflexive "X and Y" headings ("Awards and recognition", "Challenges and opportunities"). Use the plain noun and let the section say what it says.
+
+### Document skeleton tells
+
+Horizontal rules between every section, skipped heading levels, a heading that contains only sub-headings, and a small table for two or three facts that are not tabular. Fix by writing the structure the content needs, not the one the model's template produces.
+
+### Hyphenated pairs after the noun
+
+AI prose hyphenates compound modifiers everywhere. Keep the hyphen before a noun when grammar needs it ("a high-quality report") and drop it after the noun ("the report is high quality"). One stray hyphen is nothing; a piece where every pair is hyphenated in both positions is a habit.
 
 ### Decorative emoji
 
