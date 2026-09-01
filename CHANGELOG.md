@@ -2,6 +2,33 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-01, research refresh
+
+Eight commits from a survey of the 2026 humaniser and anti-slop skills, the 2025 to 2026 corpus and detector research, writing-craft sources, and vendor prompting guidance. Sources are listed in `references/sources.md`. The trigger was reading the skill's own eval outputs: two rewrites had invented content and one had contracted a writer's "I have" on a keep-my-voice brief, and the checker saw none of it.
+
+### Added
+
+- `SKILL.md` step 4: subtract and surface, never add, with the classes named (next steps, claims about what has happened since, jokes in the writer's manner, sensory detail, typos, slang, contractions). Guardrails against invented baselines and silent fact-correction. Rewrite rules restated as targets with an example each. In-place file editing keeps code, front matter, tables, links, and quotes byte for byte.
+- `references/voice-and-context.md`: voice calibration as a before, during, after procedure with a measured profile and a preserve list; a sentence-craft section (old before new, stress position, cohesion, proportion, connectors only where order fails, talk test, curse of knowledge); register markers per medium; a chat register.
+- `references/preflight.md`: outline test, proportion count, uniform-confidence check, a voice check for keep-my-voice briefs, a per-sentence pass, restraint in the taste check. The reshuffle test now fixes order instead of adding connectives.
+- `references/ai-writing-patterns.md`: speculation from absence, vague connection, process narration, sentence length, mannered prose, heading restated by its first sentence, summary-shaped and paired headings, document skeleton tells, hyphenated pairs; new leak artefacts (Gemini, Perplexity, DeepSeek, wikitext), non-resolving citations, and humaniser residue as near-conclusive classes.
+- `references/structures-and-phrases.md`: casual-register signposting, invented baselines, "X rather than Y", aphorism budget, pull-quote test, stating the moral, shadowboxing, phantom alternatives, editorial scar tissue.
+- `references/genre-tells.md`: social-post tells (role openers, hashtag stacks, thread markers, exclamation and ellipsis habits) and a fiction section from the Antislop and StoryScope data.
+- `evals/run_skill.py`: an added-claims judge (one listed claim fails the fixture; validated against all ten known-good examples and the three real inventions) and a `--no-skill` baseline. `evals/compare_outputs.py`: pairwise comparison in both orders, unlabelled. `evals/run_evals.py`: binary-contrast checks on every rewrite and voice-drift metrics (contractions, first person, hedges, word length) for keep-my-voice fixtures. `evals/README.md` explains why detector scores are not a check.
+
+### Changed
+
+- Hedging is split. Performed hesitancy stays a tell; stance hedges, boosters, and intensifiers ("I think", "really", "perhaps", "very") are human signals and are no longer stripped. "in order to" and other wordy constructions move to the human-signal list. "genuinely", "honestly", and "straightforward" join the posture adverbs.
+- Dash dependence carries per-model rates: GPT-5.4 below the human baseline, Claude Opus 4.6 and DeepSeek at triple it. Spaced dashes and the scientific-corpus rise are noted. The README's drift note matches.
+- Model fingerprints are dated and corrected. Claude is marked by minimal structure, not headers everywhere. Grok and DeepSeek lines added.
+- Detector-bias evidence updated to the ACL 2026 study; Liang 2023's 179-essay sample is caveated; the neurodivergent claim is marked reported, not measured.
+- Binary contrast is Tier 1 when repeated. Rule of three and the question-answer habit carry their measured rates; a lone rhetorical question is a human signal.
+- The launch-email and quarterly-report known-good outputs lose one sentence each that the added-claims judge correctly flagged as an addition.
+
+### Retired
+
+- Nothing retired. The 2023 vocabulary list stays legacy; it is losing power faster as humans adopt the words.
+
 ## 2026-09-01
 
 ### Added
