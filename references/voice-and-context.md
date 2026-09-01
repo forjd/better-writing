@@ -99,6 +99,10 @@ The fix is to surface what the source and brief already contain, never to manufa
 
 Never invent an opinion, an anecdote, a feeling, or a quirk the writer did not have. Where the source holds no position, state what is true plainly rather than performing conviction. See the friction-free-tone check in `preflight.md`.
 
+The failure this section causes when read too eagerly is a rewrite that adds material to sound alive: a next step the source never proposed, a line about what has or has not happened since, a joke in the writer's manner, a sensory detail. Each of these is a fabricated claim, and a joke in the writer's manner is a fabricated quote. The test for any sentence in the rewrite is whether the source states or directly implies it. If not, cut it, mark the gap, or ask.
+
+Faking texture is the same failure from the other side. Do not add typos, slang, self-interruptions, or contractions the source lacks. Commercial humanisers do this and their output reads as damaged, not human.
+
 ## Specificity ladder
 
 When a sentence feels vague, climb this ladder until it becomes useful:
@@ -118,3 +122,6 @@ Concrete prose can tempt an agent to fabricate. Do not do that.
 - Mark uncertain claims as uncertain without using filler.
 - Do not turn "some people say" into named experts unless the source is available.
 - Do not add invented anecdotes to make a piece sound human.
+- When the swap test flags a sentence that could sit in any article, the fix is a question to the writer or a gap marker such as `[what did you measure or observe here?]`, never a detail supplied by the editor.
+- Do not invent a baseline. "Healthy", "strong", "well within range", and "realistic" are claims about a comparison; keep them only when the source names what they are compared against.
+- Editing is not fact-checking. A fact in the source that looks wrong gets a note, not a silent correction.

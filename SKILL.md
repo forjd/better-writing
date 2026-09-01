@@ -32,7 +32,8 @@ Use this skill to make prose stronger without flattening the writer. The goal is
    - Prefer active voice and simple verbs when they make the sentence clearer.
    - Vary sentence length. Avoid a steady mid-length cadence.
    - Remove chatbot framing, throat-clearing, generic conclusions, and manufactured drama.
-   - When the brief asks for a light edit or to keep the writer's voice, change only what is wrong. A lone word or punctuation mark from a tell list, such as one "delve" or a single em dash, is the writer's choice and stays.
+   - Subtract and surface. Never add. Cut the tells, then let what the source already holds show through. Do not add a next step, a claim about what has or has not happened, a joke or aside in the writer's manner, a sensory detail, a typo, slang, or a contraction the source lacks. Where a gap needs filling, mark it or ask.
+   - When the brief asks for a light edit or to keep the writer's voice, change only what is wrong. A lone word or punctuation mark from a tell list, such as one "delve" or a single em dash, is the writer's choice and stays. So are the writer's contractions or lack of them, first-person sentences, and hedges: on a keep-my-voice brief none of these move.
 
 5. Self-audit and revise.
    - Ask: "What still sounds generic, evasive, or AI-written?"
@@ -68,7 +69,9 @@ When the user asks to "humanise", "de-AI", "remove slop", "make this sound less 
 
 ## Guardrails
 
-- Do not invent facts, quotes, names, studies, links, or statistics to make prose feel concrete.
+- Do not invent facts, quotes, names, studies, links, or statistics to make prose feel concrete. The same applies to next steps, claims about what has or has not happened, opinions, and jokes or asides in the writer's manner. Invented voice is fabrication.
+- Do not invent a baseline. "Healthy", "well within range", and "realistic" need a named comparison in the source.
+- Editing is not fact-checking. If a fact in the source looks wrong, flag it in a note. Do not silently correct it.
 - Do not make neutral reference, legal, medical, financial, or technical text more opinionated than the genre allows.
 - Do not remove nuance that protects accuracy.
 - Do not over-compress if it drops required coverage.

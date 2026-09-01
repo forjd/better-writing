@@ -39,7 +39,7 @@ Before:
 
 After:
 
-> The new analytics dashboard goes live on Monday 15 June. It replaces the weekly CSV export. Data refreshes every hour instead of every seven days, and you can filter by team, project, or date range. Log in and open the Reports tab to try it. Reply here if anything looks wrong and I will take a look.
+> The new analytics dashboard goes live on Monday 15 June. It replaces the weekly CSV export. Data refreshes every hour instead of every seven days, and you can filter by team, project, or date range. Log in and open the Reports tab to try it.
 
 Every fact survived (the date, the CSV export, the hourly refresh, the Reports tab). Everything else went.
 
@@ -51,7 +51,7 @@ Before:
 
 After:
 
-> Churn rose for the second quarter in a row [figure needed from the Q1 report]. Two causes have been flagged internally: the March pricing change and onboarding drop-off. The retention plan should start with those.
+> Churn rose for the second quarter in a row [figure needed from the Q1 report]. Two causes have been flagged internally: the March pricing change and onboarding drop-off. Both point to the need for a retention plan.
 
 Note the placeholder. The skill will not invent a churn figure to make the paragraph sound concrete. If the figure exists in the source material, it goes in; if not, the gap is marked honestly.
 

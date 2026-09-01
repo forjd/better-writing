@@ -9,6 +9,8 @@ Run this before delivery.
 - Have you kept exact wording where the user marked it as fixed?
 - If you cut content, was cutting part of the request?
 - If you added specificity, is it sourced by the user's material or clearly framed as a placeholder?
+- Does every sentence in the rewrite say something the source states or directly implies? A next step, a claim about what has happened since, an opinion, or a joke that the source does not contain is an invention, however natural it sounds.
+- Have qualifiers such as "may", "often", and "under these conditions" survived where they limit a claim?
 
 ## Anti-slop check
 

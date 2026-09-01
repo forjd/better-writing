@@ -13,7 +13,9 @@
     "Agree?",
     "👇",
     "game-changer",
-    "productivity hack"
+    "productivity hack",
+    "nobody has asked",
+    "nobody asked"
   ],
   "banned_regex": [
     "\\n\\n[^\\n]+\\n\\n[^\\n]+\\n\\n[^\\n]+\\n\\n"

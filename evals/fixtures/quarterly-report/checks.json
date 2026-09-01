@@ -16,7 +16,8 @@
     "moving forward",
     "underscor",
     "proactive",
-    "implications are significant"
+    "implications are significant",
+    "next step"
   ],
   "banned_regex": [
     "\\d+(\\.\\d+)?\\s*%"
