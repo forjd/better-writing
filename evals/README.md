@@ -26,6 +26,22 @@ python3 evals/run_evals.py --all my-outputs
 
 The checker exits non-zero on any failure.
 
+## Baseline and pairwise comparison
+
+A pass count shows the skill removed what the fixtures ban. It does not show the skill did better than the model would have done unaided. To check that, produce a baseline with the same briefs and no skill loaded, then compare the two sets pairwise:
+
+```bash
+python3 evals/run_skill.py --no-skill --no-judge --out evals/baseline
+python3 evals/run_skill.py
+python3 evals/compare_outputs.py evals/baseline evals/outputs
+```
+
+The comparison shows the judge the brief, the source, and both rewrites, unlabelled and in both orders, and counts a win only when the same rewrite wins both ways. Judges prefer low-perplexity text and the first item shown, and they agree with human writing preferences only about three quarters of the time, so treat a loss as a flag to read both outputs, not a verdict. Never label which output came from the skill: labelled authorship shifts judge preference by tens of points.
+
+## Why detector scores are not a check
+
+Do not add an AI-detector score to this harness. Three reasons. First, the target is wrong: Pangram's own analysis of humaniser output found that the more readable and fluent the text, the more likely it is to be detected, so optimising against a detector rewards worse prose. Second, the signal is unstable: a 2026 study found light AI edits flagged between 38% and 80% of the time while unmodified human abstracts were flagged 9% to 15% of the time, and adversarial paraphrasing cuts detection by around 88%. Third, the bias is real: a 2026 ACL study across 16 detectors found essays by English language learners over-flagged, and non-white learners more so. The skill's stated goal is fit and clarity, and the false-positive fixtures exist to keep it from behaving like a detector in reverse.
+
 ## Known-good outputs
 
 `examples/` contains one passing rewrite per fixture (the same texts shown in the main README). They double as a self-test for the checker:
@@ -62,7 +78,7 @@ CI runs this self-test, together with `scripts/validate.py`, on every push and p
 - `max_words_ratio` / `min_words_ratio`: rewrite length bounds relative to the input, to catch padding and over-cutting.
 - `voice_drift`: for keep-my-voice briefs, the largest change allowed per marker between input and rewrite. Markers are `contraction_rate`, `first_person_rate`, and `hedge_rate` (all per 100 words) and `mean_word_length`. These are the four markers rewrites move even under a voice-preserving prompt (van Nuenen, "Voice Under Revision", 2026): contractions, first person, and hedges fall, word length rises. The counts are rough (a possessive counts as a contraction), but only the change matters. A rewrite of `voice-preservation` that turned "I have" and "I am" into contractions passed every other check and fails this one.
 
-Every fixture also gets three well-formedness checks the checker applies itself: no doubled spaces inside a line, no space before punctuation, and no empty clause between punctuation marks. These catch a rewrite that only deleted the banned phrases and left the wreckage.
+Every fixture also gets three well-formedness checks the checker applies itself: no doubled spaces inside a line, no space before punctuation, and no empty clause between punctuation marks. These catch a rewrite that only deleted the banned phrases and left the wreckage. Four structure checks run on every rewrite as well: the binary-contrast scaffolds ("not just X but Y", "isn't just", "it's not about X, it's Y", "not because X but because Y"), which sam-paech's slop-score weights at a quarter of its total and which no fixture's ideal output needs.
 
 ## Adding a fixture
 

@@ -152,7 +152,7 @@ Use my writing sample below as the voice reference, then rewrite the article int
 | [references/structures-and-phrases.md](./references/structures-and-phrases.md) | Slop phrase and structure audit. |
 | [references/genre-tells.md](./references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, and code. |
 | [references/voice-and-context.md](./references/voice-and-context.md) | Audience, genre, dials, voice calibration, and genre exemptions. |
-| [evals/](./evals/) | Fixture texts, a checker, and a model runner for regression-testing the skill. |
+| [evals/](./evals/) | Fixture texts, a checker with voice-drift metrics, a model runner with an added-claims judge, and a pairwise comparison against a no-skill baseline. |
 | [skills/better-writing/](./skills/better-writing/) | Tap layout for managers that expect `skills/<name>/`; relative symlinks back to the root files. |
 | [scripts/validate.py](./scripts/validate.py) | Repo checks run by CI: frontmatter, fixtures, symlinks. |
 | [CHANGELOG.md](./CHANGELOG.md) | Dated history of the pattern catalogue. |
@@ -206,13 +206,15 @@ See [references/sources.md](./references/sources.md) for fuller source notes.
 Pattern lists are easy to break: one well-meaning edit and the skill starts flagging human writing or missing a new tell. The [evals/](./evals/) directory holds ten fixture texts seeded with known tells and known facts, a dependency-free checker that verifies a rewrite removed the tells *and* kept the facts, and a runner that produces the rewrites with a real model.
 
 ```bash
-python3 evals/run_skill.py                                          # run every fixture through claude-opus-5, then check
+python3 evals/run_skill.py                                          # run every fixture through claude-opus-5, check, then judge for added claims
 python3 evals/run_evals.py evals/fixtures/launch-email my-rewrite.md  # check a rewrite you produced some other way
+python3 evals/run_skill.py --no-skill --no-judge --out evals/baseline # the same briefs with no skill loaded
+python3 evals/compare_outputs.py evals/baseline evals/outputs         # pairwise judge, both orders, unlabelled
 ```
 
-The runner needs the Claude Code CLI on PATH with working credentials. Run it before and after any change to `SKILL.md` or the references and compare the two reports.
+The runner needs the Claude Code CLI on PATH with working credentials. Run it before and after any change to `SKILL.md` or the references and compare the two reports. The added-claims judge exists because the substring checker cannot see invention; a rewrite that added "nobody has asked to bring the stand-up back" to the LinkedIn fixture passed every substring check. The baseline and pairwise comparison exist because a pass count cannot show the skill beat the unaided model.
 
-The checker is a smoke test, not a judge. It matches substrings, bounds the length, and rejects the damage a search-and-replace leaves behind (doubled spaces, space before punctuation). A rewrite can pass it and still read badly, so read the outputs in `evals/outputs/` as well as the pass counts. See [evals/README.md](./evals/README.md) for the fixture list and check format.
+The checker is a smoke test, not a judge. It matches substrings, bounds the length, rejects the damage a search-and-replace leaves behind (doubled spaces, space before punctuation), catches binary-contrast scaffolds, and on keep-my-voice fixtures measures whether contractions, first person, hedges, and word length moved. A rewrite can pass it and still read badly, so read the outputs in `evals/outputs/` as well as the pass counts. Detector scores are deliberately not a check; `evals/README.md` says why. See [evals/README.md](./evals/README.md) for the fixture list and check format.
 
 ## A living pattern catalogue
 

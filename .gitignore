@@ -30,3 +30,4 @@ temp/
 
 # Model-produced eval rewrites
 evals/outputs/
+evals/baseline/

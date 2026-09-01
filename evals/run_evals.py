@@ -39,6 +39,20 @@ WELL_FORMED = [
 ]
 
 
+# Binary-contrast scaffolds, the structure sam-paech's slop-score weights at a
+# quarter of its total and 2026 reporting puts at three times the human rate.
+# Checked on every rewrite; no fixture's ideal output needs one.
+CONTRAST = [
+    (r"\bnot (?:just|only|merely|simply)\b[^.?!\n]{0,80}\bbut\b",
+     "no 'not just X but Y' scaffold"),
+    (r"\b(?:isn'?t|is not|wasn'?t|aren'?t|are not)\s+(?:just|only|merely|simply)\b",
+     "no 'isn't just X' scaffold"),
+    (r"\bit'?s not (?:about|that)\b[^.?!\n]{0,80}\b(?:it'?s|but)\b",
+     "no 'it's not about X, it's Y' scaffold"),
+    (r"\bnot because\b[^.?!\n]{0,80}\b(?:but )?because\b",
+     "no 'not because X but because Y' scaffold"),
+]
+
 # Voice markers a rewrite moves even when told to keep the writer's voice
 # (van Nuenen, "Voice Under Revision", 2026): contractions, first person, and
 # hedges fall, mean word length rises. Each is measured per 100 words on the
@@ -85,6 +99,10 @@ def check_rewrite(checks, input_text, rewrite_text):
     for pattern, desc in WELL_FORMED:
         ok = re.search(pattern, rewrite_text) is None
         results.append((ok, f"well formed: {desc}"))
+
+    for pattern, desc in CONTRAST:
+        ok = re.search(pattern, rewrite_text, re.I) is None
+        results.append((ok, f"structure: {desc}"))
 
     max_ratio = checks.get("max_words_ratio")
     min_ratio = checks.get("min_words_ratio")

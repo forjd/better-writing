@@ -12,6 +12,10 @@ rewrite makes that the input does not state or imply; one invented claim
 fails the fixture. Pass --no-judge to skip that call. Exits non-zero if
 any fixture fails.
 
+Pass --no-skill to produce a baseline with the same brief and no skill
+loaded, into a different --out directory, then compare the two with
+evals/compare_outputs.py.
+
 Requires the Claude Code CLI (`claude`) on PATH with working credentials.
 The model is claude-opus-5 unless --model says otherwise; --judge-model
 picks a different model for the claim check.
@@ -62,7 +66,16 @@ Reply with a JSON array of short strings, one per invented claim, and nothing
 else. Reply with [] if there are none."""
 
 
-def build_system_prompt():
+BASELINE_HEADER = """You are a careful editor. Apply the user's request to the text.
+
+Output rules for this run: return only the final rewritten text. No preamble,
+no change note, no diagnostic audit, no closing remark.
+"""
+
+
+def build_system_prompt(with_skill=True):
+    if not with_skill:
+        return BASELINE_HEADER
     parts = [SYSTEM_HEADER, (ROOT / "SKILL.md").read_text(encoding="utf-8")]
     for ref in sorted((ROOT / "references").glob("*.md")):
         parts.append(f"\n\n<!-- references/{ref.name} -->\n\n" + ref.read_text(encoding="utf-8"))
@@ -107,6 +120,8 @@ def main():
                         help="model for the added-claims check (default: --model)")
     parser.add_argument("--no-judge", action="store_true",
                         help="skip the added-claims check")
+    parser.add_argument("--no-skill", action="store_true",
+                        help="baseline: send the brief with no skill loaded")
     parser.add_argument("--out", default=str(ROOT / "evals" / "outputs"))
     parser.add_argument("fixtures", nargs="*", help="fixture names (default: all)")
     args = parser.parse_args()
@@ -114,7 +129,7 @@ def main():
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
     system_path = out_dir / "_system_prompt.md"
-    system_path.write_text(build_system_prompt(), encoding="utf-8")
+    system_path.write_text(build_system_prompt(not args.no_skill), encoding="utf-8")
 
     fixtures = sorted(p for p in FIXTURES_DIR.iterdir() if p.is_dir())
     if args.fixtures:
@@ -125,7 +140,8 @@ def main():
             return 2
 
     judge_model = args.judge_model or args.model
-    print(f"model: {args.model}" + ("" if args.no_judge else f", judge: {judge_model}"))
+    print(f"model: {args.model}" + ("" if args.no_judge else f", judge: {judge_model}")
+          + (", no skill loaded (baseline)" if args.no_skill else ""))
 
     all_ok = True
     for fixture_dir in fixtures:
