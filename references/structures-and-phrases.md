@@ -117,17 +117,17 @@ A technical-sounding register that reads as precision but usually has a plainer 
 | flywheel | the loop that compounds |
 | load-bearing | essential, what the argument rests on |
 
-### Softening and intensifying adverbs
+### Posture adverbs
 
 Remove adverbs that add posture rather than meaning:
 
-- really, just, literally, genuinely, honestly, simply, actually
 - deeply, truly, fundamentally, inherently, inevitably
-- interestingly, importantly, crucially
+- interestingly, importantly, crucially, notably
+- genuinely, honestly, straightforward, and "to be honest" when they vouch for the sentence rather than describe anything. Anthropic's own system prompt bans these for the same reason: a writer who is honest by default does not need to say so, and the modifier reads as the opposite.
 
 An adverb propping up a weak verb usually means the verb is wrong: "runs quickly" becomes "is fast" or the measured number, "significantly improves" becomes the delta. Try the stronger verb before deleting the adverb.
 
-Keep adverbs that carry real meaning. In personal, conversational, or voice-sample writing these often carry tone; thin them only when they cluster as filler, never on sight.
+Stance adverbs are not on this list. "really", "just", "actually", "very", "probably", "perhaps", and "I think" are how a person marks how much they mean something, and corpus work finds LLM prose has fewer of them than human prose, not more. Thin them only when they cluster as filler in formal copy. In personal, conversational, or voice-sample writing they stay, and on a keep-my-voice brief every one of them stays.
 
 ### Empty importance
 
@@ -228,7 +228,7 @@ Fix by putting the reader, actor, or specific situation in the sentence. Keep th
 
 Repeated questions followed by immediate answers feel like a script.
 
-Fix by turning the answer into a statement, or keep the question only when it creates real tension.
+Fix by turning the answer into a statement, or keep the question only when it creates real tension. The tell is the scripted pairing, not the question: humans ask rhetorical questions at more than double the LLM rate, so a lone question that the paragraph then explores is a human signal, and it stays.
 
 ### Repetitive paragraph endings
 

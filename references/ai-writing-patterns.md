@@ -103,7 +103,8 @@ Vocabulary tells are time-dependent, so lean on structure and cluster density ov
 
 - 2023 (GPT-4), peaked then declined through early 2024: delve, tapestry, testament, intricate, meticulous, pivotal, underscore, realm, showcase.
 - mid-2024 (GPT-4o) shift: align with, foster, highlight, enhance, garner, ensure.
-- mid-2025 onward, subtler and narrower: enhance, emphasising, highlighting, showcasing, leverage, robust.
+- mid-2025 onward, subtler and narrower: emphasising, enhance, highlighting, showcasing. Grok keeps "underscore" and adds causal, empirical, correlate.
+- Newer additions seen across skills and corpora in 2026: quietly (as in "quietly powerful"), gate / gated / gating used figuratively, interplay, enduring, valuable, "key" as an adjective.
 
 Read the list through the confidence tiers above:
 
@@ -138,11 +139,11 @@ Fix by using the simpler verb when it is accurate.
 
 ### Negative parallelism
 
-The text uses a predictable contrast structure: "not only X but Y", "this is not about X, it is about Y". The full list, the escalating variant, and the fix are under Binary contrast in `structures-and-phrases.md`.
+The text uses a predictable contrast structure: "not only X but Y", "this is not about X, it is about Y". Treat a repeated instance as Tier 1: reporting in 2026 put the construction at about three times the human rate, rising in corporate filings and public statements year on year, and it survives prompts that tell the model to stop. The full list, the escalating variant, and the fix are under Binary contrast in `structures-and-phrases.md`.
 
 ### Rule of three
 
-The prose keeps packing ideas into threes.
+The prose keeps packing ideas into threes. LLM argumentative prose runs tricolons at close to twice the rate of expert human writers.
 
 Fix by using the exact number the thought needs. Two is often enough. One strong example often beats a trio. A single tricolon is a normal rhetorical device, not a tell; the signal is the habit repeating across a piece.
 
@@ -170,7 +171,9 @@ Fix by naming the actor when it matters. Keep passive voice when the actor is un
 
 ### Dash dependence
 
-AI prose can lean on em dashes and en dashes for rhythm and faux sophistication. Treat this carefully: the em dash is the most-publicised tell and the least reliable. Many strong human writers use it heavily, frontier models reduced em-dash output through late 2025, and some writers now self-censor real punctuation to dodge suspicion. A single em dash, or em dashes in literary and editorial long-form, is not a tell.
+AI prose can lean on em dashes and en dashes for rhythm and faux sophistication. Treat this carefully: the em dash is the most-publicised tell and the least reliable. Many strong human writers use it heavily, and some writers now self-censor real punctuation to dodge suspicion. A single em dash, or em dashes in literary and editorial long-form, is not a tell.
+
+The rate depends on the model, not on "AI". Measured per 1,000 words in early 2026 (Freeburg): GPT-5.4 at 1.4, below a human essay baseline of 3.2; Claude Opus 4.6 at 9.1 and DeepSeek V3 at 7.0, roughly triple it; Gemini 2.5 Pro at 3.5; Llama at zero. OpenAI cut the habit, Claude and DeepSeek did not. Two secondary signals: machine em dashes are usually surrounded by spaces, and a rate of three or more per 1,000 words in a scientific discussion section is unusual for the genre, where a corpus study found prevalence rising from 4% of papers before ChatGPT to 20% in 2025. Neither is a single-document verdict.
 
 In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns and clearly substitutes for sentence structure. In strict "humanise" or de-AI passes, removing em and en dashes is a register choice the user has asked for, not proof of AI origin. End the sentence or use a comma. Do not swap the dash for a colon or parentheses; see Colon as connector. Either way, keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography. Stripping dashes to beat a detector is not a quality goal.
 
@@ -222,25 +225,31 @@ Watch for:
 
 This is a tell mainly in assistant-voiced output and in finished documents where a conversational acknowledgement makes no sense. Enthusiastic humans say these things too, so flag them when they precede the real content as filler, not when they carry genuine warmth in a message.
 
-## Filler, hedging, and fake depth
+## Filler, performed hedging, and fake depth
 
 Watch for:
 
-- "in order to", "due to the fact that", "at this point in time"
+- "due to the fact that", "at this point in time"
 - "it is important to note", "worth noting", "when it comes to"
-- "could potentially possibly be argued"
+- "could potentially possibly be argued", "may potentially in some cases"
 - "at its core", "the real question is", "the heart of the matter"
 - "the future looks bright", "exciting times lie ahead"
 
 Fix by cutting the phrase or writing the concrete claim.
 
+Hedging is two different things, and only one is a tell. Performed hesitancy ("it is important to note", stacked modals that hedge nothing in particular) runs at about twice the human rate in LLM argument. Stance hedges and boosters ("I think", "probably", "perhaps", "very", "tends to") are the opposite: corpus work on ChatGPT essays finds a significantly lower rate of hedges, boosters, and attitude markers than in human writing, which is what makes the prose impersonal. Strip the first kind. Keep the second, and never strip it on a keep-my-voice brief.
+
+Wordy constructions such as "in order to" and "as a result of" belong with the second kind. Humans write them; ChatGPT and Grammarly remove them. Cut them for concision when the brief asks for tight prose. Cutting them is not a de-AI fix, and on a keep-my-voice brief they stay.
+
 ## Model fingerprints (diagnostic only)
 
-For review and diagnosis tasks, not for verdicts. These date fast and a wrong attribution is worse than none, so never act on them alone.
+For review and diagnosis tasks, not for verdicts. These date fast and a wrong attribution is worse than none, so never act on them alone. Two cautions from the corpus work: instruction tuning, not the vendor, drives most of the shared tells, and successive models from one vendor often do not cluster together, so a fingerprint carries a model version and a date or it is worthless.
 
-- ChatGPT: tricolons, additive em dashes, aggressive bold, clinical vocabulary. GPT-5-era output is softer and less formal.
-- Claude: long hedged multi-clause sentences, headers everywhere, first-person politeness, "you're absolutely right".
-- Gemini: verbose, corporate-flat, plain conversational vocabulary, list and header heavy.
+- ChatGPT, GPT-4 to 4o era (2023 to 2024): tricolons, additive em dashes, bold inside enumerations, "such as", "certainly", "below is", "overall", academic register that shuns slang. GPT-5.x (late 2025 onward): em dashes below the human rate, softer register, a "Good question" or "Great start" opener that OpenAI added back on purpose.
+- Claude, 3.5 to Opus 4.6 (2024 to early 2026): minimal structure and less bold than ChatGPT, "here", "according to", "based on", em dashes at roughly triple the human rate, long hedged multi-clause sentences, "you're absolutely right".
+- Gemini, 2.5 era: verbose, corporate-flat, plain conversational vocabulary, more italics, list and header heavy, "[cite: 1]" leakage.
+- Grok, 2025 to 2026: superficially scientific vocabulary ("causal", "empirical", "correlate"), "X rather than Y" framing, and "underscore" long after other models dropped it.
+- DeepSeek: lenticular brackets and dagger marks leaking from its citation format.
 
 ## False positives
 
@@ -256,9 +265,9 @@ Do not over-edit these without a cluster of other tells:
 
 Why single features are unreliable, and why detector-evasion is a non-goal:
 
-- Detectors are biased and brittle. A Stanford study found that more than half of non-native English essays were misclassified as AI across seven detectors, while near-native essays passed. Detectors have flagged founding documents such as the US Constitution as AI-written. OpenAI retired its own classifier in 2023 after it correctly flagged only 26% of AI text. Light paraphrasing defeats most detectors.
-- Plain, predictable, low-variation prose is the normal style of fluent non-native, formal, and neurodivergent writers. Flagging it penalises people, not machines.
-- "delve" is an RLHF artefact, not, as sometimes claimed, a marker of Nigerian English; corpus work found it does not originate there. It is common in fluent Nigerian, Indian, and other non-native business English. One or two focal words mean nothing; only a dense cluster in a short passage is a signal.
+- Detectors vary enormously and the bias is documented. A 2023 Stanford study found more than half of non-native English essays misclassified as AI across seven detectors, on a sample of 179 essays. A 2026 ACL study of 16 detectors on about 41,700 essays confirmed the direction: essays by English language learners are more likely to be classified as machine-generated, and non-white learners more so than white ones. Human raters in the same study were no better than chance and showed no such bias. At the other end, commercial vendors report near-zero false-positive rates for their current products, figures that are vendor-relayed and unverified here. OpenAI retired its own classifier in 2023 after it correctly flagged only 26% of AI text. Light paraphrasing still defeats most detectors.
+- Plain, predictable, low-variation prose is the normal style of fluent non-native and formal writers. Flagging it penalises people, not machines. The same is widely reported for neurodivergent writers, and at least one university finding has been annulled on that basis, but as of 2026 no peer-reviewed study quantifies that false-positive rate.
+- "delve" is an RLHF artefact, not, as sometimes claimed, a marker of Nigerian English; corpus work found it does not originate there. It is common in fluent Nigerian, Indian, and other non-native business English. One or two focal words mean nothing; only a dense cluster in a short passage is a signal. Humans are also adopting these words: recordings of unscripted speech show "delve", "meticulous", and "underscore" rising since 2023, some more than doubling, so the 2023 list keeps losing power as a tell.
 - The em dash is the least reliable single tell. See Dash dependence.
 
 Never strip a feature on a single signal. The job is to make the writing fit its purpose, not to make it pass a detector.
@@ -273,5 +282,10 @@ Preserve:
 - first-person choices that fit the genre
 - genuine asides and self-corrections
 - varied sentence length
-- plain repeated terms that improve clarity
+- plain repeated terms that improve clarity. Newer models avoid repeating a word near its last use, so a writer who says "the parser" four times in a paragraph is showing a human habit, not a flaw
+- stance hedges and intensifiers: "I think", "probably", "very", "perhaps", "tends to"
+- rhetorical questions. Humans use them at more than double the LLM rate; the tell is the scripted question-and-answer habit, not the question
+- wordy constructions such as "in order to" and "as a result of"
+- superlatives and definitive statements the writer is willing to stand behind
+- simple "is" and "has" sentences and plain verbs ("wrote", not "authored")
 - a single em dash, a lone "delve", or one tricolon used naturally

@@ -216,12 +216,12 @@ The checker is a smoke test, not a judge. It matches substrings, bounds the leng
 
 ## A living pattern catalogue
 
-AI tells drift. "Delve" and "tapestry" marked 2023-era output; "it's not just X, it's Y" and dash dependence mark 2025-era output. The pattern lists in `references/` are treated as a dated catalogue, not a fixed rulebook:
+AI tells drift. "Delve" and "tapestry" marked 2023-era output; "it's not just X, it's Y" marks 2025-era output across vendors, while dash dependence now marks Claude and DeepSeek but not GPT-5. The pattern lists in `references/` are treated as a dated catalogue, not a fixed rulebook:
 
 - The vocabulary list is era-stamped and tiered, so the skill leans on cluster density and structure rather than any single word. Distinctive markers, common-but-overused words, and ordinary English that only shows up across a corpus are flagged differently.
 - Additions, changes, and retirements are dated in [CHANGELOG.md](./CHANGELOG.md).
 - Patterns that fade from current model output get marked as legacy rather than deleted, so the skill still catches older drafts.
-- The false-positive guardrails carry the detector-bias evidence (non-native and neurodivergent over-flagging), and the `plain-human`, `voice-preservation`, and `academic-hedge` evals fail if the skill over-edits clean prose. Detector-evasion is explicitly a non-goal.
+- The false-positive guardrails carry the detector-bias evidence (non-native over-flagging measured across 16 detectors in 2026; neurodivergent over-flagging widely reported but not yet measured), and the `plain-human`, `voice-preservation`, and `academic-hedge` evals fail if the skill over-edits clean prose. Detector-evasion is explicitly a non-goal.
 - Pull requests adding newly observed tells are welcome. Bring at least one real example and a false-positive note.
 
 ## Compatibility

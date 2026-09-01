@@ -28,4 +28,33 @@ These informed the 2026-06-15 refresh: confidence tiers, era stamping, the nomin
 - Liang et al., "GPT detectors are biased against non-native English writers", Patterns 2023: https://arxiv.org/abs/2304.02819
   Documented misclassification of non-native English writing; the basis for the false-positive guardrails and the anti-detector-evasion stance.
 
+## 2026-09-01 research refresh
+
+These informed the hedging re-scope, the corrected dash and fingerprint entries, the detector-bias update, and the Tier 1 promotion of binary contrast.
+
+- Jiang and Hyland, "Rhetorical distinctions", English for Specific Purposes 79, 2025.
+  ChatGPT essays show significantly less interactional metadiscourse (hedges, boosters, attitude markers) than human essays; the basis for treating stance hedges and intensifiers as human signals.
+- Bakhshi, "Saying More Than They Know", arXiv 2604.19768, 2026.
+  Tricolons at nearly twice the expert rate, performed hesitancy at twice the human density, rhetorical questions used by humans at more than double the LLM rate.
+- Freeburg, "The Last Fingerprint", arXiv 2603.27006, 2026.
+  Em dashes per 1,000 words by model (GPT-5.4 1.43, Claude Opus 4.6 9.09, DeepSeek V3 6.95, Gemini 2.5 Pro 3.53, human baseline 3.23 from eight essays).
+- Czuma, "Em-ergence of the em-dash", arXiv 2606.29540, 2026.
+  Pre-registered medRxiv study: em-dash prevalence in discussion sections rose from 4.23% pre-ChatGPT to 20.3% in 2025.
+- Sun et al., "Idiosyncrasies in Large Language Models", ICML 2025.
+  Per-vendor lexical fingerprints; Claude marked by minimal structure and less bold than ChatGPT.
+- Milička, Marklová, Cvrček, "Benchmark of stylistic variation", arXiv 2509.10179, 2025.
+  Biber multidimensional analysis over 16 models: instruction tuning drives the shared tells and models from one vendor do not cluster.
+- Stowe et al., "Identifying Bias in Machine-generated Text Detection", ACL 2026.
+  16 detectors, about 41,700 essays: English language learners over-flagged, non-white learners more so; human annotators near chance with no bias. Notes Liang 2023 rested on 179 essays.
+- Anderson, Galpin, Juzek, AIES 2025, and Matsui, Perspectives on Medical Education, 2025.
+  Humans adopting "delve", "meticulous", "underscore" in unscripted speech and medical writing since 2023.
+- Rudnicka, Scientific American, July 2025, and iMEdD, January 2026.
+  ChatGPT and Grammarly both remove "in order to"; the basis for treating wordy constructions as a human signal.
+- Oremus, The Atlantic, July 2026 (via Wikipedia's Negative parallelism entry; not read directly).
+  Negative parallelism at about three times the human rate, rising in corporate filings. Second-hand until someone reads the article.
+- Anthropic, Claude Fable 5.1 system prompt and prompting guides, 2026: https://platform.claude.com/docs/en/release-notes/system-prompts/claude-fable-5-1
+  "genuinely", "honestly", "straightforward" as disingenuous sincerity modifiers; the "mannered prose" definition.
+- Wikipedia:Signs of AI writing, fetched 2026-09-01.
+  Current vocabulary eras, the spaced-dash note, the Grok entries, and the "signs of human writing" list.
+
 Use these sources as diagnostic inspiration. Do not copy upstream examples or prose into user deliverables. When maintaining this skill, keep `SKILL.md` concise and move detailed pattern lists into references.
