@@ -80,6 +80,8 @@ These informed the hedging re-scope, the corrected dash and fingerprint entries,
   Involved versus informational markers per medium; the chat register.
 - River, "How ghostwriters capture client voice", and the ghost-writer skills by angelarose210, robertguss, gncll, and dannwaneri.
   Sample size, negative samples, forbidden patterns, and the measured profile.
+- Paech, "Antislop", ICLR 2026, arXiv 2510.15061, and https://github.com/sam-paech/slop-score
+  Over-representation ratios for LLM fiction vocabulary (some phrases at over a thousand times the human rate); the not-x-but-y weighting behind the eval contrast checks.
 - Wikipedia:Signs of AI writing, fetched 2026-09-01.
   Current vocabulary eras, the spaced-dash note, the Grok entries, and the "signs of human writing" list.
 

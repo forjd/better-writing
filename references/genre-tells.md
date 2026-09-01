@@ -53,6 +53,26 @@ Exemptions, so the general lists do not damage correct scientific prose:
 - Passive voice is correct in a methods section. Do not force a human actor where the procedure is the subject.
 - A real citation for every claim is the genre norm, not padding.
 
+## Fiction and creative writing
+
+The vocabulary tells here are the strongest in any genre. A 2026 study measured phrases over-represented in LLM fiction against human baselines and found some at more than a thousand times the human rate:
+
+- names: Elara, Elias, Kael, Lyra, Seraphina, Thorne
+- verbs and adjectives: shimmered, flickered, unsettlingly, palpable, sends shivers down your spine
+- body-metaphor emotion: "heart hammered against her ribs", "a tightening in the chest", "let out a breath she didn't know she was holding", "felt a profound sense of"
+- scene furniture: "the air was thick with", "a testament to", "dust motes danced", "the weight of"
+
+Structural tells from a 61,000-story corpus:
+
+- stating the theme: AI stories end with the moral 77% of the time, humans 52%
+- emotion through the body instead of through events and their cost (81% vs 38%). Humans more often name the fact and the consequence: "two of the five resigned the same day"
+- tidy single-track plots with clean resolution; human stories leave protagonists' choices morally ambiguous
+- per-model habits: Claude runs flat event escalation, GPT over-uses dream sequences, Gemini defaults to external character description
+
+Fix by cutting the over-represented phrase for the plain one, ending on the last event rather than its meaning, and letting a feeling show through what a character does or loses. Do not invent events or interiority the draft does not have; mark the gap for the writer.
+
+Exemptions: a writer's deliberate voice, including ornate or mannered prose, is theirs to keep. Flag it, do not strip it.
+
 ## Code, pull requests, and documentation
 
 Tells:

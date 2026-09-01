@@ -51,6 +51,7 @@ Match the user's requested deliverable.
 - For a draft-from-scratch request, deliver the finished draft, not an outline unless the user asked for one.
 - Include a short change note only when useful.
 - Do not expose a long diagnostic audit unless the user asks for it or the risk is high.
+- When editing a file in place, change prose only. Code blocks, inline code, YAML front matter, tables, link targets, image references, and quoted text stay byte for byte. Match the file's existing heading levels and list style. Judge the result by information kept, not by paragraph count matched.
 
 The formatting rules in this skill describe the source text. Current models already format lightly when asked for prose, so apply them to what you are editing, and use headings, lists, and tables in your own output wherever the medium reads better with them.
 
@@ -88,6 +89,6 @@ When the user asks to "humanise", "de-AI", "remove slop", "make this sound less 
 - `references/voice-and-context.md`: audience, genre, dials, voice calibration, and genre exemptions.
 - `references/ai-writing-patterns.md`: AI-writing tells, confidence tiers, near-conclusive artefacts, and false-positive checks.
 - `references/structures-and-phrases.md`: slop phrase and structure audit.
-- `references/genre-tells.md`: genre-specific phrase banks for email, social, marketing, academic, and code.
+- `references/genre-tells.md`: genre-specific phrase banks for email, social, marketing, academic, fiction, and code.
 - `references/preflight.md`: final delivery checks and scoring.
 - `references/sources.md`: source projects and attribution notes.

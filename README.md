@@ -150,7 +150,7 @@ Use my writing sample below as the voice reference, then rewrite the article int
 | [references/preflight.md](./references/preflight.md) | Final quality checks before delivery. |
 | [references/sources.md](./references/sources.md) | Source projects and attribution notes. |
 | [references/structures-and-phrases.md](./references/structures-and-phrases.md) | Slop phrase and structure audit. |
-| [references/genre-tells.md](./references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, and code. |
+| [references/genre-tells.md](./references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, fiction, and code. |
 | [references/voice-and-context.md](./references/voice-and-context.md) | Audience, genre, dials, voice calibration, and genre exemptions. |
 | [evals/](./evals/) | Fixture texts, a checker with voice-drift metrics, a model runner with an added-claims judge, and a pairwise comparison against a no-skill baseline. |
 | [skills/better-writing/](./skills/better-writing/) | Tap layout for managers that expect `skills/<name>/`; relative symlinks back to the root files. |
