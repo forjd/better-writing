@@ -199,7 +199,7 @@ Fix by naming the actor when it matters. Keep passive voice when the actor is un
 
 AI prose can lean on em dashes and en dashes for rhythm and faux sophistication. Treat this carefully: the em dash is the most-publicised tell and the least reliable. Many strong human writers use it heavily, and some writers now self-censor real punctuation to dodge suspicion. A single em dash, or em dashes in literary and editorial long-form, is not a tell.
 
-The rate depends on the model, not on "AI". Measured per 1,000 words in early 2026 (Freeburg): GPT-5.4 at 1.4, below a human essay baseline of 3.2; Claude Opus 4.6 at 9.1 and DeepSeek V3 at 7.0, roughly triple it; Gemini 2.5 Pro at 3.5; Llama at zero. OpenAI cut the habit, Claude and DeepSeek did not. Two secondary signals: machine em dashes are usually surrounded by spaces, and a rate of three or more per 1,000 words in a scientific discussion section is unusual for the genre, where a corpus study found prevalence rising from 4% of papers before ChatGPT to 20% in 2025. Neither is a single-document verdict.
+The rate depends on which model wrote the text, not on "AI"; the per-model figures are under Model fingerprints below, for diagnosis only. None of this is an instruction about the writer's dashes: a dash the writer put there stays unless the brief asks for the strict pass.
 
 In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns and clearly substitutes for sentence structure. In strict "humanise" or de-AI passes, removing em and en dashes is a register choice the user has asked for, not proof of AI origin. End the sentence or use a comma. Do not swap the dash for a colon or parentheses; see Colon as connector. Either way, keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography. Stripping dashes to beat a detector is not a quality goal.
 
@@ -292,6 +292,8 @@ For review and diagnosis tasks, not for verdicts. These date fast and a wrong at
 - Gemini, 2.5 era: verbose, corporate-flat, plain conversational vocabulary, more italics, list and header heavy, "[cite: 1]" leakage.
 - Grok, 2025 to 2026: superficially scientific vocabulary ("causal", "empirical", "correlate"), "X rather than Y" framing, and "underscore" long after other models dropped it.
 - DeepSeek: lenticular brackets and dagger marks leaking from its citation format.
+
+Em dashes per 1,000 words, measured in early 2026 (Freeburg) with no formatting instruction: GPT-5.4 at 1.4, below a human essay baseline of 3.2; Claude Opus 4.6 at 9.1 and DeepSeek V3 at 7.0, roughly triple it; Gemini 2.5 Pro at 3.5; Llama at zero. OpenAI cut the habit, Claude and DeepSeek did not. Two secondary signals: machine em dashes are usually surrounded by spaces, and in scientific discussion sections a corpus study found em-dash prevalence rising from 4% of papers before ChatGPT to 20% in 2025. Neither is a single-document verdict, and neither is a reason to touch a dash in a writer's draft.
 
 ## False positives
 

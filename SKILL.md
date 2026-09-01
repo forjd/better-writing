@@ -29,7 +29,7 @@ Use this skill to make prose stronger without flattening the writer. The goal is
 
 4. Rewrite. Each rule below is a target with an example of the sentence to write; the ban lists in `references/` are for the audit, not for the rewrite.
    - Keep the meaning and coverage unless the user asks for cuts.
-   - Every claim names its actor, object, and evidence. "The compiler rejects a renamed column at build time", not "type safety is improved".
+   - Every claim names its actor, object, and evidence. "The compiler rejects a renamed column at build time", not "type safety is improved". When the source is vague and gives no fact to name, keep it vague or mark the gap: "powerful search" does not become "search covers everything you have written". A concrete-sounding claim the source does not contain is worse than a vague one.
    - Sentences say what happens, in the order it happens, with the doer as subject. "The loader parses the file", not "the file is parsed".
    - Sentence length follows the idea: a short sentence for the point, a longer one for the reasoning behind it. "It works. The regex that makes it work took three rewrites and a Friday evening."
    - The first sentence makes the point and the last sentence is the strongest fact or the next action. "The migration runs on Saturday 12 July", not "I wanted to reach out about the migration".
