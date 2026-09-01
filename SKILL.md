@@ -27,17 +27,18 @@ Use this skill to make prose stronger without flattening the writer. The goal is
    - Work in order: scan for near-conclusive artefacts first; then count clustered tells in context; then apply genre exemptions; never edit on a single feature.
    - Look for clusters of tells, not isolated quirks. The most durable tell is uniform tone that never adapts to audience or genre. Do not destroy valid style just because it is polished.
 
-4. Rewrite.
+4. Rewrite. Each rule below is a target with an example of the sentence to write; the ban lists in `references/` are for the audit, not for the rewrite.
    - Keep the meaning and coverage unless the user asks for cuts.
-   - Replace vague claims with specific facts, examples, actors, numbers, or sources.
-   - Prefer active voice and simple verbs when they make the sentence clearer.
-   - Vary sentence length. Avoid a steady mid-length cadence.
-   - Remove chatbot framing, throat-clearing, generic conclusions, and manufactured drama.
+   - Every claim names its actor, object, and evidence. "The compiler rejects a renamed column at build time", not "type safety is improved".
+   - Sentences say what happens, in the order it happens, with the doer as subject. "The loader parses the file", not "the file is parsed".
+   - Sentence length follows the idea: a short sentence for the point, a longer one for the reasoning behind it. "It works. The regex that makes it work took three rewrites and a Friday evening."
+   - The first sentence makes the point and the last sentence is the strongest fact or the next action. "The migration runs on Saturday 12 July", not "I wanted to reach out about the migration".
+   - The literal phrase wins over the figurative one. "Three services call the same endpoint", not "a symphony of microservices".
    - Subtract and surface. Never add. Cut the tells, then let what the source already holds show through. Do not add a next step, a claim about what has or has not happened, a joke or aside in the writer's manner, a sensory detail, a typo, slang, or a contraction the source lacks. Where a gap needs filling, mark it or ask.
    - When the brief asks for a light edit or to keep the writer's voice, change only what is wrong. A lone word or punctuation mark from a tell list, such as one "delve" or a single em dash, is the writer's choice and stays. So are the writer's contractions or lack of them, first-person sentences, and hedges: on a keep-my-voice brief none of these move.
 
 5. Self-audit and revise.
-   - Ask: "What still sounds generic, evasive, or AI-written?"
+   - Ask: "What still sounds generic, evasive, or AI-written?" and "Does every word mean something different and additive?"
    - Fix the answer before delivering.
    - Run the pre-flight checklist in `references/preflight.md`.
 
@@ -51,12 +52,15 @@ Match the user's requested deliverable.
 - Include a short change note only when useful.
 - Do not expose a long diagnostic audit unless the user asks for it or the risk is high.
 
-When the user asks to "humanise", "de-AI", "remove slop", "make this sound less ChatGPT", or similar, use a stricter pass:
+The formatting rules in this skill describe the source text. Current models already format lightly when asked for prose, so apply them to what you are editing, and use headings, lists, and tables in your own output wherever the medium reads better with them.
 
-- Remove em dashes and en dashes when this pass is requested. End the sentence or use a comma; a colon or parentheses in the dash's place just swaps one tell for another. Keep en dashes in numeric and date ranges. This is a register choice, not detector-evasion. See `references/ai-writing-patterns.md` for the full dash policy, including the lighter touch in normal rewrites.
-- Remove decorative emojis, title-case headings, and bold-label bullets whose text only restates the label, unless the target medium expects them.
-- Remove "let me know", "here is", "of course", knowledge-cutoff disclaimers, and other pasted chatbot artefacts.
-- Remove vague positive endings. End on the real point.
+When the user asks to "humanise", "de-AI", "remove slop", "make this sound less ChatGPT", or similar, use a stricter pass. The target is text that reads as if one person wrote it in one sitting for one reader:
+
+- Sentences end with full stops or commas. Where the source has an em dash or en dash, end the sentence or use a comma; a colon or parentheses in the dash's place swaps one tell for another. En dashes stay in numeric and date ranges. This is a register choice, not detector-evasion. See `references/ai-writing-patterns.md` for the full dash policy, including the lighter touch in normal rewrites.
+- Headings are sentence case, bullets carry new information rather than restating a label, and emoji appear only where the medium expects them.
+- The text speaks to its reader and never to a chat user: no "let me know", "here is", "of course", knowledge-cutoff disclaimers, or other pasted chatbot artefacts.
+- Every sentence is literal. "Please remove all mannered prose" is the one-line version: where a plain phrase is available, use it.
+- The last sentence is the real point. No vague positive ending.
 
 ## Editing principles
 
