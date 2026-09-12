@@ -10,21 +10,21 @@ Work in this order:
 
 1. Scan for near-conclusive artefacts. If one is present, the text is almost certainly machine-generated or pasted from a chatbot. See below.
 2. Otherwise count clustered tells in context. A passage needs several, not one. Use the confidence tiers when reading the vocabulary list.
-3. Apply genre exemptions. Passive voice in a methods section, bullet lists in release notes, hedging in legal text, and markdown in a README are correct, not tells. See `voice-and-context.md` and `genre-tells.md`.
+3. Apply genre exemptions. Passive voice in a methods section, bullet lists in release notes, hedging in legal text, and markdown in a README are correct, not tells. See Genre defaults in `voice-and-context.md` and the per-genre Exemptions in `genre-tells.md`.
 4. Never trigger an edit on a single feature. Detector-evasion is not the goal; clarity and fit are.
 
 Confidence tiers, used throughout this file:
 
 - Tier 1: distinctive markers. Flag when two or more appear in the same passage.
 - Tier 2: common but overused. Flag only at higher density, and never replace a word on sight.
-- Tier 3: ordinary English whose elevated rate shows up only across a large corpus. Do not flag or "fix" these in a single document.
+- Tier 3: ordinary English whose elevated rate shows up only across a large corpus. A single instance is never a tell. Stacked connectives are actionable — see Over-signposting in `structures-and-phrases.md`. Other Tier 3 words are actionable only inside Significance inflation or Notability padding below, otherwise leave them alone.
 
 ## Near-conclusive artefacts
 
 These need no corroboration. A single instance is hard evidence that text was machine-generated or pasted unedited from a chatbot. Remove them.
 
 - Leaked tool and citation markup that no human types: `oaicite`, `oai_citation`, `contentReference`, `turn0search0`, `attributableIndex`, `grok_card`, `:::writing`, `【...】` citation brackets, Gemini's `[cite: 1]` and `[span_1](start_span)`, Perplexity's `attached_file` and `ppl-ai-file-upload`, DeepSeek's lenticular brackets and dagger marks, ` ```wikitext ` fences, and links that point at a search-engine results page instead of a source.
-- Citations that do not resolve: a DOI or ISBN that is invalid, a DOI that resolves to an unrelated article, a book cited with no page number for a specific claim. A 2026 audit of flagged Wikipedia articles found only 7% cited a fabricated source but over two-thirds failed verification, so check the resolving ones too.
+- Citations that do not resolve: a DOI or ISBN that is invalid, or a DOI that resolves to an unrelated article. A 2026 audit of flagged Wikipedia articles found only 7% cited a fabricated source but over two-thirds failed verification, so check the resolving ones too.
 - Humaniser residue. Commercial "humanisers" swap words for dictionary synonyms and damage the text: "counterfeit consciousness" for "artificial intelligence", tortured phrases in place of standard terms, non-standard Unicode look-alike characters, and a sudden drop to elementary register with random typos. A benchmark of 19 such tools found every one degraded the original. Treat the residue as conclusive and restore the plain term.
 - Raw markdown dropped into a destination that does not render it: literal `**bold**`, `##` headings, or escaped `\*` asterisks in an email, a plain-text field, or a CMS that expected HTML.
 - Tracking parameters left on pasted links, such as `?utm_source=chatgpt.com`.
@@ -74,7 +74,7 @@ Watch for:
 - "boasts", "vibrant", "rich", "profound", "renowned", "groundbreaking", "stunning", "must-visit", "breathtaking"
 - "in the heart of", "nestled", "commitment to excellence", "rich cultural heritage"
 - abundance metaphors: "a rich tapestry of", "woven into the tapestry", "a treasure trove of", "a myriad of", "a plethora of"
-- booster verbs in marketing copy: "supercharge", "unlock", "unleash", "empower", "elevate", "revolutionise", "transform". See `genre-tells.md`.
+- booster verbs in marketing copy such as "supercharge" and "unlock". See the canonical bank under Marketing and SEO in `genre-tells.md`.
 
 Fix with observable facts, named features, or measured claims.
 
@@ -86,6 +86,7 @@ Watch for:
 
 - "experts argue", "observers note", "industry reports suggest", "some critics say"
 - "studies have shown", "research suggests", "it is widely believed" with no named source
+- a book cited with no page number for a specific claim — weak on its own, so ask for the page or narrow the claim
 
 Fix by naming the source, narrowing the claim, or removing it.
 
@@ -128,9 +129,9 @@ Read the list through the confidence tiers above:
 
 - Tier 1, distinctive (flag a cluster of two or more): delve, tapestry, testament, intricate, meticulous, pivotal, underscore, realm, showcase, multifaceted, myriad, plethora, commendable, paramount, burgeoning, quintessential, cornerstone, beacon, nuanced.
 - Tier 2, common but overused (flag at higher density, never replace on sight): enhance, foster, leverage, utilise, facilitate, streamline, bolster, amplify, cultivate, garner, surpass, exemplify, encompass, align with, ensure, robust, seamless, comprehensive, holistic, scalable.
-- Tier 3, ordinary English (an aggregate corpus signal only, never a single-document tell): potential, significant, crucial, key, vital, notable, important, additionally, moreover, furthermore, subsequently.
+- Tier 3, ordinary English (an aggregate corpus signal only, never a single-document tell): potential, significant, crucial, key, vital, notable, important, additionally, moreover, furthermore, subsequently. Single instances are never a tell. Flag stacked "additionally, moreover, furthermore, subsequently" only as Over-signposting in `structures-and-phrases.md`, and flag the rest only inside Significance inflation or Notability padding below.
 
-Fix Tier 1 and Tier 2 clusters by using plainer words or rewriting the sentence around a concrete noun and verb. Leave Tier 3 alone in normal prose. Some Tier 2 words, such as "robust" and "scalable", carry precise technical meaning in code and documentation; keep them when accurate. See `genre-tells.md`.
+Fix Tier 1 and Tier 2 clusters by using plainer words or rewriting the sentence around a concrete noun and verb. Leave Tier 3 alone except for stacked connectives and Significance inflation or Notability padding as above. Keep any Tier 2 word that carries precise technical meaning in code and documentation, such as "robust" and "scalable", when accurate. See Exemptions under Code, pull requests, and documentation in `genre-tells.md`.
 
 ### Nominalisation and noun density
 
@@ -157,7 +158,7 @@ Fix by using the simpler verb when it is accurate.
 
 ### Negative parallelism
 
-The text uses a predictable contrast structure: "not only X but Y", "this is not about X, it is about Y". Treat a repeated instance as Tier 1: reporting in 2026 put the construction at about three times the human rate, rising in corporate filings and public statements year on year, and it survives prompts that tell the model to stop. The full list, the escalating variant, and the fix are under Binary contrast in `structures-and-phrases.md`.
+The text uses a predictable contrast structure: "not only X but Y", "this is not about X, it is about Y". Treat repeated instances as Tier 1: one 2026 report hypothesised the construction at about three times the human rate, rising in corporate filings and public statements year on year, and surviving prompts that tell the model to stop; treat this as a diagnostic hypothesis reported second-hand, not a verified rate. The full list, the escalating variant, and the fix are under Binary contrast in `structures-and-phrases.md`.
 
 ### Rule of three
 
@@ -173,11 +174,11 @@ Fix by choosing the clearest term and repeating it when repetition helps. A huma
 
 ### Sentence length
 
-2025-era instruction-tuned models write sentences 15 to 30% longer than human authors of comparable text, around 22 to 29 tokens against a human 22, and pack them with nominal modifiers, participial phrases, and coordinated nouns. 2023-era models ran short and choppy. Neither is a single-sentence tell; the signal is a whole piece that sits at one length with no short sentence anywhere. See the uniform-cadence check in `preflight.md`.
+2025-era instruction-tuned models write sentences 15 to 30% longer than human authors of comparable text, and pack them with nominal modifiers, participial phrases, and coordinated nouns. 2023-era models ran short and choppy. Neither is a single-sentence tell; the signal is a whole piece that sits at one length with no short sentence anywhere. See Uniform cadence under Structure check in `preflight.md`.
 
 ### Mannered prose
 
-The sentence substitutes metaphor and flourish for direct statement: "the codebase groans under its own weight", "a symphony of microservices", "we set sail for a new architecture". The fix is to say what you mean. When a literal phrase is available, use it. This is the one-line instruction Anthropic recommends for its own models, and it works on drafts too.
+The sentence substitutes metaphor and flourish for direct statement: "the codebase groans under its own weight", "a symphony of microservices", "we set sail for a new architecture". The fix is to say what you mean. When a literal phrase is available, use it. This is similar to Anthropic's guidance for its own models, and it works on drafts too.
 
 ### False ranges
 
@@ -201,13 +202,13 @@ AI prose can lean on em dashes and en dashes for rhythm and faux sophistication.
 
 The rate depends on which model wrote the text, not on "AI"; the per-model figures are under Model fingerprints below, for diagnosis only. None of this is an instruction about the writer's dashes: a dash the writer put there stays unless the brief asks for the strict pass.
 
-In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns and clearly substitutes for sentence structure. In strict "humanise" or de-AI passes, removing em and en dashes is a register choice the user has asked for, not proof of AI origin. End the sentence or use a comma. Do not swap the dash for a colon or parentheses; see Colon as connector. Either way, keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography. Stripping dashes to beat a detector is not a quality goal.
+In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns and clearly substitutes for sentence structure. In strict "humanise" or de-AI passes, removing em and en dashes is a register choice the user has asked for, not proof of AI origin. End the sentence or use a comma. Do not swap the dash for a colon or parentheses; see Colon as connector in `structures-and-phrases.md`. Either way, keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography. Stripping dashes to beat a detector is not a quality goal.
 
 ### Colon as connector
 
 A colon is correct before a list, an example, or a definition. It becomes a tell when it works as a mid-sentence hinge that adds nothing: "If you're coming from traditional automation: instead of registering event handlers, you describe conditions." The colon stands in for a connection the sentence never makes.
 
-Fix by writing the sentence without the comparison framing, or by using a full stop. Flag the habit across a piece, not the single instance, the same caution as Dash dependence.
+Fix by writing the sentence without the comparison framing, or by using a full stop. Flag the habit across a piece, not the single instance, the same caution as Dash dependence above.
 
 ### Mechanical bold and inline headers
 
@@ -219,7 +220,7 @@ Fix the redundant kind by writing normal sentences, simpler bullets, or a table 
 
 ### Title-case headings
 
-Use sentence case unless the style guide says otherwise.
+Use sentence case unless the style guide says otherwise. Exempt outlet headings where the publication's house style requires title case.
 
 ### Heading restated by its first sentence
 
@@ -287,13 +288,13 @@ Wordy constructions such as "in order to" and "as a result of" belong with the s
 
 For review and diagnosis tasks, not for verdicts. These date fast and a wrong attribution is worse than none, so never act on them alone. Two cautions from the corpus work: instruction tuning, not the vendor, drives most of the shared tells, and successive models from one vendor often do not cluster together, so a fingerprint carries a model version and a date or it is worthless.
 
-- ChatGPT, GPT-4 to 4o era (2023 to 2024): tricolons, additive em dashes, bold inside enumerations, "such as", "certainly", "below is", "overall", academic register that shuns slang. GPT-5.x (late 2025 onward): em dashes below the human rate, softer register, a "Good question" or "Great start" opener that OpenAI added back on purpose.
+- ChatGPT, GPT-4 to 4o era (2023 to 2024): tricolons, additive em dashes, bold inside enumerations, "such as", "certainly", "below is", "overall", academic register that shuns slang. GPT-5.x (late 2025 onward): em dashes below the human rate, softer register, a "Good question" or "Great start" opener reintroduced by OpenAI.
 - Claude, 3.5 to Opus 4.6 (2024 to early 2026): minimal structure and less bold than ChatGPT, "here", "according to", "based on", em dashes at roughly triple the human rate, long hedged multi-clause sentences, "you're absolutely right".
 - Gemini, 2.5 era: verbose, corporate-flat, plain conversational vocabulary, more italics, list and header heavy, "[cite: 1]" leakage.
 - Grok, 2025 to 2026: superficially scientific vocabulary ("causal", "empirical", "correlate"), "X rather than Y" framing, and "underscore" long after other models dropped it.
 - DeepSeek: lenticular brackets and dagger marks leaking from its citation format.
 
-Em dashes per 1,000 words, measured in early 2026 (Freeburg) with no formatting instruction: GPT-5.4 at 1.4, below a human essay baseline of 3.2; Claude Opus 4.6 at 9.1 and DeepSeek V3 at 7.0, roughly triple it; Gemini 2.5 Pro at 3.5; Llama at zero. OpenAI cut the habit, Claude and DeepSeek did not. Two secondary signals: machine em dashes are usually surrounded by spaces, and in scientific discussion sections a corpus study found em-dash prevalence rising from 4% of papers before ChatGPT to 20% in 2025. Neither is a single-document verdict, and neither is a reason to touch a dash in a writer's draft.
+Em dashes per 1,000 words, measured in early 2026 (Freeburg) with no formatting instruction (rounded figures): GPT-5.4 at 1.4, below a human essay baseline of 3.2; Claude Opus 4.6 at 9.1 and DeepSeek V3 at 7.0, roughly triple it; Gemini 2.5 Pro at 3.5; Llama at zero. OpenAI cut the habit, Claude and DeepSeek did not. Two secondary signals: machine em dashes are usually surrounded by spaces, and in scientific discussion sections a corpus study found em-dash prevalence rising from 4% of papers before ChatGPT to 20% in 2025. Neither is a single-document verdict, and neither is a reason to touch a dash in a writer's draft.
 
 ## False positives
 
@@ -312,7 +313,7 @@ Why single features are unreliable, and why detector-evasion is a non-goal:
 - Detectors vary enormously and the bias is documented. A 2023 Stanford study found more than half of non-native English essays misclassified as AI across seven detectors, on a sample of 179 essays. A 2026 ACL study of 16 detectors on about 41,700 essays confirmed the direction: essays by English language learners are more likely to be classified as machine-generated, and non-white learners more so than white ones. Human raters in the same study were no better than chance and showed no such bias. At the other end, commercial vendors report near-zero false-positive rates for their current products, figures that are vendor-relayed and unverified here. OpenAI retired its own classifier in 2023 after it correctly flagged only 26% of AI text. Light paraphrasing still defeats most detectors.
 - Plain, predictable, low-variation prose is the normal style of fluent non-native and formal writers. Flagging it penalises people, not machines. The same is widely reported for neurodivergent writers, and at least one university finding has been annulled on that basis, but as of 2026 no peer-reviewed study quantifies that false-positive rate.
 - "delve" is an RLHF artefact, not, as sometimes claimed, a marker of Nigerian English; corpus work found it does not originate there. It is common in fluent Nigerian, Indian, and other non-native business English. One or two focal words mean nothing; only a dense cluster in a short passage is a signal. Humans are also adopting these words: recordings of unscripted speech show "delve", "meticulous", and "underscore" rising since 2023, some more than doubling, so the 2023 list keeps losing power as a tell.
-- The em dash is the least reliable single tell. See Dash dependence.
+- The em dash is the least reliable single tell. See Dash dependence above.
 
 Never strip a feature on a single signal. The job is to make the writing fit its purpose, not to make it pass a detector.
 

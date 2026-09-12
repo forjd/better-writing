@@ -42,11 +42,11 @@ The dials have measurable markers. Register studies (Biber) separate involved pr
 | Documentation | present tense, no first person unless the house style has it, identifiers exact |
 | Essay and opinion | first person, hedges as voice, at most one emphasised sentence per paragraph |
 
-Second person is a human marker the models under-use: a 2026 story corpus found humans address the reader in 28% of texts against 7% for AI. Where the genre allows it, keep it.
+Second person is a human marker the models under-use: one 2026 story corpus reported humans address the reader more often than AI, figures unverified here. Where the genre allows it, keep it.
 
 ## Genre defaults
 
-This section sets the dials for each genre. A tell in one genre is correct in another, so before applying the general lists check the exemptions listed per genre in `genre-tells.md`, which also holds the concrete phrase banks.
+This section sets the dials for each genre. A tell in one genre is correct in another, so before applying the general lists check the per-genre Exemptions in `genre-tells.md`, which also holds the concrete phrase banks.
 
 ### Emails
 
@@ -63,17 +63,17 @@ This section sets the dials for each genre. A tell in one genre is correct in an
 
 ### Documentation and technical writing
 
-- Prefer present-tense descriptions of how the system works. The tells, including diff-anchored wording, are in `genre-tells.md`.
+- Prefer present-tense descriptions of how the system works. The tells, including diff-anchored wording, are under Code, pull requests, and documentation in `genre-tells.md`.
 - Keep identifiers exact.
 - Use active voice where it clarifies ownership, but do not force a human actor where the system is the true actor.
 
 ### Product and marketing copy
 
 - Replace hype with proof, usage, contrast, and concrete outcomes.
-- Avoid "elevate", "seamless", "unlock", "next-gen", and vague "transform your workflow" language.
+- Avoid booster verbs and vague "transform your workflow" language. See the canonical bank under Marketing and SEO in `genre-tells.md`.
 - Do not invent social proof, customer names, usage metrics, awards, or benchmarks.
 - Use one clear promise rather than a pile of benefits.
-- See `genre-tells.md` for the fuller bank of booster verbs and SEO scaffolding.
+- See Marketing and SEO in `genre-tells.md` for SEO scaffolding.
 
 ### Essays, posts, and opinion
 
@@ -147,7 +147,7 @@ The fix is to surface what the source and brief already contain, never to manufa
 - Keep the specific observation over the general one: not "this is concerning" but the thing that is concerning.
 - Leave a defendable rough edge rather than polishing the piece flat.
 
-Never invent an opinion, an anecdote, a feeling, or a quirk the writer did not have. Where the source holds no position, state what is true plainly rather than performing conviction. See the friction-free-tone check in `preflight.md`.
+Never invent an opinion, an anecdote, a feeling, or a quirk the writer did not have. Where the source holds no position, state what is true plainly rather than performing conviction. See Friction-free tone under Structure check in `preflight.md`.
 
 The failure this section causes when read too eagerly is a rewrite that adds material to sound alive: a next step the source never proposed, a line about what has or has not happened since, a joke in the writer's manner, a sensory detail. Each of these is a fabricated claim, and a joke in the writer's manner is a fabricated quote. The test for any sentence in the rewrite is whether the source states or directly implies it. If not, cut it, mark the gap, or ask.
 

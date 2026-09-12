@@ -167,10 +167,11 @@ Use my writing sample below as the voice reference, then rewrite the article int
 - Voice beats cleanliness.
 - Evidence beats authority theatre.
 - Trust the reader.
+- Flat is a tell too.
 
 ## Validation
 
-CI runs two dependency-free checks on every push and pull request:
+CI runs two dependency-free checks on every push to main and every pull request:
 
 ```bash
 python3 scripts/validate.py                      # frontmatter, fixture, and symlink checks
@@ -218,7 +219,7 @@ The checker is a smoke test, not a judge. It matches substrings, bounds the leng
 
 ## A living pattern catalogue
 
-AI tells drift. "Delve" and "tapestry" marked 2023-era output; "it's not just X, it's Y" marks 2025-era output across vendors, while dash dependence now marks Claude and DeepSeek but not GPT-5. The pattern lists in `references/` are treated as a dated catalogue, not a fixed rulebook:
+AI tells drift. "Delve" and "tapestry" marked 2023-era output; "it's not just X, it's Y" marks 2025-era output across vendors, while per-model dash rates are diagnostic-only (see Model fingerprints in `references/ai-writing-patterns.md`), not a reason to edit a writer's dash. The pattern lists in `references/` are treated as a dated catalogue, not a fixed rulebook:
 
 - The vocabulary list is era-stamped and tiered, so the skill leans on cluster density and structure rather than any single word. Distinctive markers, common-but-overused words, and ordinary English that only shows up across a corpus are flagged differently.
 - Additions, changes, and retirements are dated in [CHANGELOG.md](./CHANGELOG.md).
