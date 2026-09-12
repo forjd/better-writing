@@ -1,6 +1,6 @@
 # Genre tells
 
-Concrete AI-writing fingerprints by genre, plus the exemptions that stop the general lists from over-editing a genre where a "tell" is actually correct. Apply the bank that matches the text. For dials, audience, and voice calibration, see `voice-and-context.md`.
+Concrete AI-writing fingerprints by genre, plus the exemptions that stop the general lists from over-editing a genre where a "tell" is actually correct. Apply the bank that matches the text. For dials, audience, and voice calibration, see Dials and Voice calibration in `voice-and-context.md`.
 
 ## Email and business messages
 
@@ -16,7 +16,7 @@ Fix by leading with the reason for the message, the ask, the owner, and the date
 ## LinkedIn and social
 
 - broetry: one-line paragraphs stacked for drama, each on its own line.
-- engagement bait: "Agree?", "Thoughts?", "Who's with me?". See `structures-and-phrases.md`.
+- engagement bait: "Agree?", "Thoughts?", "Who's with me?". See Engagement bait in `structures-and-phrases.md`.
 - manufactured-insight hooks: "Here's what nobody tells you about", "Unpopular opinion:". See Engagement bait in `structures-and-phrases.md`.
 - themed-emoji bookending and emoji bullet markers.
 - "As a [role], I..." openers that borrow authority from a job title.
@@ -30,7 +30,7 @@ Fix by making one real claim and ending on it. Cut the performance.
 
 Replace booster verbs and reveal framing with proof, usage, and outcomes:
 
-- booster verbs: "supercharge", "elevate your", "unlock the power / potential / secrets of", "harness the power of", "take it to the next level", "revolutionise the way"
+- booster verbs (canonical bank): "supercharge", "elevate your", "unlock the power / potential / secrets of", "harness the power of", "take it to the next level", "revolutionise the way"
 - urgency: "stay ahead of the curve", "future-proof your", "look no further", "now more than ever"
 - SEO scaffolding: "Welcome to our comprehensive guide", "The Ultimate Guide to", "Everything You Need to Know About", "Here's a breakdown of everything you need to know", keyword-stuffed headings, padded FAQ sections
 - corporate data-speak: "deliver actionable insights", "drive data-driven decisions", "leverage complex datasets"
@@ -62,7 +62,7 @@ The vocabulary tells here are the strongest in any genre. A 2026 study measured 
 - body-metaphor emotion: "heart hammered against her ribs", "a tightening in the chest", "let out a breath she didn't know she was holding", "felt a profound sense of"
 - scene furniture: "the air was thick with", "a testament to", "dust motes danced", "the weight of"
 
-Structural tells from a 61,000-story corpus:
+Structural tells from a corpus of about 61,600 stories:
 
 - stating the theme: AI stories end with the moral 77% of the time, humans 52%
 - emotion through the body instead of through events and their cost (81% vs 38%). Humans more often name the fact and the consequence: "two of the five resigned the same day"
@@ -89,4 +89,4 @@ Exemptions:
 
 - Bullet lists, tables, and headers are correct in reference docs and release notes.
 - Markdown is correct where the destination renders it.
-- "robust", "scalable", and similar words have precise technical meaning; keep them when used accurately.
+- "robust", "scalable", and any other Tier 2 term have precise technical meaning; keep them when used accurately. See Overused AI vocabulary in `ai-writing-patterns.md`.

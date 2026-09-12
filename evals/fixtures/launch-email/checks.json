@@ -22,7 +22,9 @@
     "simply navigate"
   ],
   "banned_regex": [
-    "—"
+    "—",
+    "\\d+(\\.\\d+)?\\s*%",
+    "\\d[\\d,]*\\+?\\s*(users|teams|customers|companies)"
   ],
   "max_words_ratio": 1.1
 }

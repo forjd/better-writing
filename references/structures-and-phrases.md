@@ -67,7 +67,7 @@ Cut manufactured emphasis:
 
 ### Business jargon
 
-Prefer plain alternatives when the word is filler. Some entries below (leverage, utilise, streamline, optimise) are Tier 2 in `ai-writing-patterns.md`: swap them when they cluster as jargon, not on sight, and keep them where they carry real meaning.
+Prefer plain alternatives when the word is filler. Some entries below (leverage, utilise, streamline) are Tier 2 in Overused AI vocabulary in `ai-writing-patterns.md`: swap them when they cluster as jargon, not on sight, and keep them where they carry real meaning.
 
 | Avoid | Prefer |
 | --- | --- |
@@ -128,7 +128,7 @@ Remove adverbs that add posture rather than meaning:
 
 An adverb propping up a weak verb usually means the verb is wrong: "runs quickly" becomes "is fast" or the measured number, "significantly improves" becomes the delta. Try the stronger verb before deleting the adverb.
 
-Stance adverbs are not on this list. "really", "just", "actually", "very", "probably", "perhaps", and "I think" are how a person marks how much they mean something, and corpus work finds LLM prose has fewer of them than human prose, not more. Thin them only when they cluster as filler in formal copy. In personal, conversational, or voice-sample writing they stay, and on a keep-my-voice brief every one of them stays.
+Stance adverbs are not on this list. "really", "just", "actually", "very", "probably", "perhaps", and "I think" are how a person marks how much they mean something, and corpus work finds LLM prose has fewer of them than human prose, not more. Thin them only when they cluster as filler in formal copy. In personal, conversational, or voice-sample writing they stay, and on a keep-my-voice brief every one of them stays. Exempt academic adverbs where the discipline expects them.
 
 ### Empty importance
 
@@ -190,7 +190,7 @@ Watch for:
 - "X. And Y. And Z."
 - "This unlocks something. [Single abstract word]."
 
-Fix with complete sentences unless the fragment is clearly part of the writer's voice.
+Fix with complete sentences unless the fragment is clearly part of the writer's voice. Exempt speech and fiction where fragments are voice.
 
 ### Rhetorical setups
 
@@ -232,7 +232,7 @@ Fix by putting the reader, actor, or specific situation in the sentence. Keep th
 
 Repeated questions followed by immediate answers feel like a script.
 
-Fix by turning the answer into a statement, or keep the question only when it creates real tension. The tell is the scripted pairing, not the question: humans ask rhetorical questions at more than double the LLM rate, so a lone question that the paragraph then explores is a human signal, and it stays.
+Fix by turning the answer into a statement, or keep the question only when it creates real tension. The tell is the scripted pairing, not the question: humans ask rhetorical questions at more than double the LLM rate, so a lone question that the paragraph then explores is a human signal, and it stays. Exempt FAQ, help, and support pages where the question-answer form is the genre.
 
 ### Repetitive paragraph endings
 
@@ -245,7 +245,7 @@ Fix by varying paragraph length, ending on details, and letting some paragraphs 
 
 ### Stating the moral
 
-The paragraph ends by explaining what it meant, the section ends with its lesson, the story ends with its theme. A 2026 study of 61,000 stories found AI-written ones stated the moral 77% of the time against 52% for humans, and the habit carries into non-fiction as a closing "which is why X matters".
+The paragraph ends by explaining what it meant, the section ends with its lesson, the story ends with its theme. A 2026 study of about 61,600 stories found AI-written ones stated the moral 77% of the time against 52% for humans, and the habit carries into non-fiction as a closing "which is why X matters".
 
 Fix by ending on the last fact or event and trusting the reader.
 
@@ -272,7 +272,7 @@ A fixed marketing rhythm that lists negations before a payoff:
 - "No setup. No friction. Just results."
 - "Not X. Not Y. Just Z."
 
-Fix by naming the benefit plainly. Keep the rhythm only when it is clearly part of the writer's voice, the same caution as Dramatic fragmentation.
+Fix by naming the benefit plainly. Keep the rhythm only when it is clearly part of the writer's voice, the same caution as Dramatic fragmentation above.
 
 ### Rhetorical self-answer
 
@@ -320,7 +320,7 @@ The model coins official-sounding terms to manufacture authority:
 
 - "the supervision paradox", "the acceleration trap", "workload creep", "what I call the productivity paradox"
 
-Fix by describing the thing in plain words rather than naming a fake concept.
+Fix by describing the thing in plain words rather than naming a fake concept. Exempt a defined term the piece uses consistently.
 
 ### Aphorism formula
 
@@ -353,7 +353,7 @@ Fix by making a claim worth reacting to and ending on it.
 
 - Delete the first sentence if it only introduces the topic.
 - Replace abstract nouns with the object or action.
-- Replace three-item lists with the strongest one or two items.
+- When threes repeat across a piece, replace three-item lists with the strongest one or two items.
 - Replace "can help" with the actual outcome.
 - Replace "is designed to" with what it does.
 - Replace "users are able to" with "users can".

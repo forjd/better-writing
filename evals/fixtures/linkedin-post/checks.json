@@ -4,7 +4,8 @@
   "required": [
     "stand-up",
     "billing rewrite",
-    "two weeks"
+    "two weeks",
+    "waste of time"
   ],
   "banned": [
     "Unpopular opinion",
@@ -18,7 +19,7 @@
     "nobody asked"
   ],
   "banned_regex": [
-    "\\n\\n[^\\n]+\\n\\n[^\\n]+\\n\\n[^\\n]+\\n\\n"
+    "[^\\n]{1,80}(\\n\\s*\\n[^\\n]{1,80}){2,}"
   ],
   "max_words_ratio": 1.3,
   "min_words_ratio": 0.6

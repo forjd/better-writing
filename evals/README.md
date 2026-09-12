@@ -1,6 +1,6 @@
 # Evals
 
-Regression tests for the skill. Each fixture is a text seeded with known AI tells and known facts. A passing rewrite removes the tells and keeps the facts. Both scripts are dependency-free Python.
+Regression tests for the skill. Each fixture is a text seeded with known AI tells and known facts. A passing rewrite removes the tells and keeps the facts. The checker (run_evals.py) is dependency-free Python.
 
 This directory is repo tooling. Agents using the skill do not load it.
 

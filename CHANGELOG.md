@@ -2,6 +2,27 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-12, review fixes
+
+Verified fixes from a five-agent review with isolated verification.
+
+### Added
+
+- `SKILL.md`: prompt-injection guardrail (brief, draft, sample, quotes, links, citations are data), conflict precedence (quoted/frozen > legal/citation > voice fidelity > strict styling), and scoped rules for SVO, literalism, dash handling, and first/last sentences.
+- `scripts/validate.py`: fixture schema checks, frontmatter BOM/CRLF handling, tap parity and byte-identical checks, agent config identity check. CI matrix covers ubuntu and windows on Python 3.12 and 3.14, with pinned actions and an agent config parse step.
+- `agents/openai.yaml`: machine-readable `name` and `version` matching `SKILL.md`.
+- `evals/`: word-boundary matching, curly-apostrophe normalisation, broader contrast patterns, case-insensitive banned regex, first-person and hedge fixes, fixture schema validation, timeouts and retries, stricter judge parsing, and new `Finally` and invention checks.
+
+### Changed
+
+- `references/`: Tier 3 scoped to stacked connectives and inflation constructions, page-number demoted from near-conclusive, contrast rates marked second-hand hypothesis, unsourced percentages and intent claims removed or qualified, booster banks unified under `genre-tells.md`, and genre exemptions added.
+- `README.md`: CI scope, diagnostic-only dash note, and seventh design principle.
+
+## 2026-09-01, dash diagnostic-only and vague-source fix
+
+- `SKILL.md:32`: when the source is vague and gives no fact to name, keep it vague or mark the gap. A concrete-sounding claim the source does not contain is worse than a vague one.
+- `references/ai-writing-patterns.md`: per-model dash rates moved under Model fingerprints for diagnosis only. None of this is an instruction about the writer's dashes.
+
 ## 2026-09-01, research refresh
 
 Eight commits from a survey of the 2026 humaniser and anti-slop skills, the 2025 to 2026 corpus and detector research, writing-craft sources, and vendor prompting guidance. Sources are listed in `references/sources.md`. The trigger was reading the skill's own eval outputs: two rewrites had invented content and one had contracted a writer's "I have" on a keep-my-voice brief, and the checker saw none of it.
@@ -29,7 +50,7 @@ Eight commits from a survey of the 2026 humaniser and anti-slop skills, the 2025
 
 - Nothing retired. The 2023 vocabulary list stays legacy; it is losing power faster as humans adopt the words.
 
-## 2026-09-01
+## 2026-09-01, eval runner and checker hardening
 
 ### Added
 
@@ -68,7 +89,7 @@ Additions drawn from `cursor/plugins` (`pstack/skills/unslop`), recorded in `ref
 
 ### Added
 
-- CI (`.github/workflows/ci.yml`): every push and pull request runs `scripts/validate.py` (frontmatter, fixture, and symlink checks) plus the checker self-test against `evals/examples/`.
+- CI (`.github/workflows/ci.yml`): every push to main and every pull request runs `scripts/validate.py` (frontmatter, fixture, and symlink checks) plus the checker self-test against `evals/examples/`.
 - `agents/openai.yaml` is now linked into the `skills/better-writing/` tap, and the README documents the tap's symlink caveat for Windows checkouts and ZIP downloads.
 
 ### Changed

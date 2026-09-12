@@ -17,14 +17,14 @@ Run this before delivery.
 - No chatbot framing remains.
 - No generic "in conclusion" ending remains unless the genre requires it.
 - No decorative emoji or mechanical bold-label bullets remain unless appropriate.
-- No em dashes or en dashes remain in strict de-AI rewrites, except en dashes in numeric and date ranges.
-- No "not just X but Y" scaffold remains.
+- No em dashes or en dashes remain in strict de-AI rewrites, except en dashes in numeric and date ranges. End the sentence or use a comma; do not swap the dash for a colon or parentheses. Exempt literary and editorial long-form where dashes are the writer's voice — see Dash dependence in `ai-writing-patterns.md`.
+- No repeated 'not X but Y'/'not just X but Y' scaffold remains; single contrast used once is not a tell — see Binary contrast in `structures-and-phrases.md`.
 - No vague "experts say" claim remains without a named source.
 - No promotional language remains in neutral copy.
 - No sentence names a feeling where it could name a mechanism, a number, or a date.
 - Swap test: no sentence could sit unchanged in another company's or project's copy.
 - No fake precision, invented anecdote, or made-up metric was added.
-- No leaked tool artefacts (such as `oaicite`, `contentReference`, raw `**` or `##` in a plain-text destination) and no forgotten template placeholders (`[Your Name]`, `[Insert X]`) remain. A deliberate gap marker for a missing fact, such as `[figure needed from the Q1 report]`, is allowed; see the Preservation check.
+- No leaked tool artefacts, citation markup, tracking parameters, unedited assistant scaffolding, model disclaimers, or unfilled placeholders remain — see Near-conclusive artefacts in `ai-writing-patterns.md`. Examples include `oaicite`, `contentReference`, raw `**` or `##` in a plain-text destination, `?utm_source=chatgpt.com`, and `[Your Name]`. A deliberate gap marker for a missing fact, such as `[figure needed from the Q1 report]`, is allowed; see the Preservation check.
 
 ## Taste check
 
@@ -53,7 +53,7 @@ Fix those spots before sending.
 
 ## Structure check
 
-- Uniform cadence: do short and long sentences both appear, or does everything sit at the same 18 to 24 words? Vary the length; do not invent content to do it. Three consecutive sentences of the same length is the point to look at.
+- Uniform cadence: do short and long sentences both appear, or does everything sit at the same 18 to 24 words (count words, not tokens)? Vary the length; do not invent content to do it. Three consecutive sentences of the same length is the point to look at.
 - Paragraph-reshuffle test: could the paragraphs be reordered without breaking the flow? If so, the piece lacks an order. Fix the order, not the connectives: if the paragraphs already hold their sequence, delete the "however" and "in addition" that were added to fake one. Add a link only where the order fails.
 - Outline test: read the first sentence of every paragraph in order. If they form a clean summary of the piece, the structure is template-shaped. Exempt specs, runbooks, and other documents that are meant to be skimmed that way.
 - Proportion: count the emphasised sentences (figures of speech, intensifiers, tricolons, punchlines). More than one per paragraph, or a punchline closing every paragraph, is the model's habit. Strip the extras to plain statement.
