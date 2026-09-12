@@ -171,10 +171,10 @@ Use my writing sample below as the voice reference, then rewrite the article int
 
 ## Validation
 
-CI runs two dependency-free checks on every push to main and every pull request:
+CI runs three checks on every push to main and every pull request:
 
 ```bash
-python3 scripts/validate.py                      # frontmatter, fixture, and symlink checks
+python3 scripts/validate.py                      # frontmatter, fixture, symlink, and agent config checks
 python3 evals/run_evals.py --all evals/examples  # checker self-test
 ```
 

@@ -94,10 +94,15 @@ def ask(model, prompt, timeout=CLAUDE_TIMEOUT, retries=MAX_RETRIES):
             continue
         reply = result.stdout.strip()
         print(f"  judge raw: {reply[:200]}")
-        # Robust digit search: the model may add preamble ("The winner is 1").
-        m = re.search(r"[12]", reply)
+        # Prefer an explicit "Rewrite N" verdict; otherwise take the last
+        # standalone 1 or 2 so an incidental digit earlier in the reply
+        # (e.g. "keep all 2 facts, so Rewrite 1 wins") cannot win.
+        m = re.search(r"rewrite\s*([12])", reply, re.I)
         if m:
-            return m.group(0)
+            return m.group(1)
+        matches = re.findall(r"(?<![\w.])([12])(?![\w.])", reply)
+        if matches:
+            return matches[-1]
         print(f"  WARN judge reply had no 1/2: {reply[:200]}")
         return None
     return None  # pragma: no cover
