@@ -96,9 +96,11 @@ def strip_preamble(text):
     t = re.sub(r"^```(?:json|markdown|md|text)?\s*\n", "", t)
     t = re.sub(r"\n```\s*$", "", t).strip()
     lines = t.splitlines()
-    # Drop leading preamble lines ("Here is the rewrite:", "Sure, ...", etc.).
+    # Drop leading preamble lines ("Here is the rewrite:", "Sure, ...:", etc.).
+    # Only colon-terminated lines match, so a legitimate opener such as
+    # "Here is what changed in the second quarter." is preserved.
     preamble_re = re.compile(
-        r"^(?:here(?:'s| is)|sure|certainly|of course|okay|ok)\b.*:?\s*$",
+        r"^(?:here(?:'s| is)|sure|certainly|of course|okay|ok)\b[^.!?]{0,60}:\s*$",
         re.I)
     while lines and preamble_re.match(lines[0].strip()):
         lines.pop(0)
@@ -114,15 +116,11 @@ def rewrite(model, system_path, brief, input_text):
 
 
 def claude_text(model, prompt, system_path=None, timeout=CLAUDE_TIMEOUT,
-                retries=MAX_RETRIES, temperature=None):
+                retries=MAX_RETRIES):
     cmd = ["claude", "-p", prompt, "--model", model, "--tools", "",
            "--output-format", "text"]
     if system_path is not None:
         cmd += ["--system-prompt-file", str(system_path)]
-    if temperature is not None:
-        # Deterministic judge; passed as settings JSON so unknown keys are
-        # ignored rather than failing the CLI.
-        cmd += ["--settings", json.dumps({"temperature": temperature})]
     last_exc = None
     for attempt in range(retries + 1):
         try:
@@ -178,12 +176,11 @@ def judge_added_claims(model, source, rewrite):
 
     A reply that is not a JSON array of non-empty strings is returned as a
     one-item list holding the raw text, so a confused judge fails the fixture
-    instead of passing it.
+    instead of passing it. The judge runs with default sampling; the Claude
+    Code CLI exposes no supported temperature setting.
     """
-    # Temperature 0 for a deterministic verdict; judge stays on opus unless
-    # --judge-model overrides (see main).
-    reply = claude_text(model, JUDGE_PROMPT.format(source=source, rewrite=rewrite),
-                        temperature=0)
+    # The judge stays on opus unless --judge-model overrides (see main).
+    reply = claude_text(model, JUDGE_PROMPT.format(source=source, rewrite=rewrite))
     print(f"  judge raw: {reply[:300]}")
     cleaned = strip_code_fences(reply)
     start, end = cleaned.find("["), cleaned.rfind("]")
@@ -293,10 +290,18 @@ def main():
             claims = judge_added_claims(judge_model, input_text, text)
         except subprocess.CalledProcessError as exc:
             print(f"  FAIL judge (claude exited {exc.returncode})")
+            try:
+                claims_path.unlink(missing_ok=True)
+            except OSError:
+                pass
             all_ok = False
             continue
         except (OSError, TimeoutError) as exc:
             print(f"  FAIL judge ({exc})")
+            try:
+                claims_path.unlink(missing_ok=True)
+            except OSError:
+                pass
             all_ok = False
             continue
         claims_path.write_text(

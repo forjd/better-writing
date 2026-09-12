@@ -303,8 +303,11 @@ def check_agents(expected_name=None):
         check(version_match, f"{rel}: missing top-level version")
         if version_match and not _strip_quotes(version_match.group(1)):
             errors.append(f"{rel}: version must be a non-empty string")
+        prompt_match = re.search(
+            r"^[ \t]*default_prompt:\s*(.+?)\s*$", text, re.M)
+        prompt_value = _strip_quotes(prompt_match.group(1)) if prompt_match else ""
         check(
-            "$better-writing" in text or "/better-writing" in text,
+            "$better-writing" in prompt_value or "/better-writing" in prompt_value,
             f"{rel}: default_prompt mentions neither $better-writing "
             "nor /better-writing",
         )

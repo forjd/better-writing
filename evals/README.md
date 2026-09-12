@@ -74,7 +74,7 @@ CI runs this self-test, together with `scripts/validate.py`, on every push and p
 - `brief`: the rewrite instruction to give the skill.
 - `required`: case-insensitive substrings that must appear in the rewrite (preserved facts).
 - `banned`: case-insensitive substrings that must not appear (tells and slop).
-- `banned_regex`: regular expressions that must not match (for example invented percentages).
+- `banned_regex`: regular expressions that must not match (for example invented percentages). Matching is case-insensitive.
 - `max_words_ratio` / `min_words_ratio`: rewrite length bounds relative to the input, to catch padding and over-cutting.
 - `voice_drift`: for keep-my-voice briefs, the largest change allowed per marker between input and rewrite. Markers are `contraction_rate`, `first_person_rate`, and `hedge_rate` (all per 100 words) and `mean_word_length`. These are the four markers rewrites move even under a voice-preserving prompt (van Nuenen, "Voice Under Revision", 2026): contractions, first person, and hedges fall, word length rises. The counts are rough (a possessive counts as a contraction), but only the change matters. A rewrite of `voice-preservation` that turned "I have" and "I am" into contractions passed every other check and fails this one.
 

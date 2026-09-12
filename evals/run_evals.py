@@ -141,7 +141,7 @@ CONTRAST = [
 WORD = re.compile(r"[A-Za-z0-9][A-Za-z0-9'’-]*")
 CONTRACTION = re.compile(r"\b\w+(?:n['’]t|['’](?:s|re|ve|ll|d|m))\b", re.I)
 FIRST_PERSON = re.compile(
-    r"\b(?:I|me|my|mine|myself|we|us|our|ours|ourselves|yourselves)\b", re.I)
+    r"\b(?:I|me|my|mine|myself|we|us|our|ours|ourselves)\b", re.I)
 HEDGE = re.compile(
     r"\b(?:I think|I suspect|I guess|probably|perhaps|maybe|sort of|kind of|"
     r"seems|seemed|apparently|arguably|roughly|might|may|"
@@ -255,7 +255,7 @@ def check_rewrite(checks, input_text, rewrite_text):
                                                f'"{name}" (known: '
                                                f"{', '.join(sorted(KNOWN_MARKERS))})"))
                         continue
-                    if not isinstance(limit, (int, float)):
+                    if not isinstance(limit, (int, float)) or isinstance(limit, bool):
                         results.append((False, f"voice kept: limit for {name} "
                                                f"must be a number, got {limit!r}"))
                         continue
