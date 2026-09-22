@@ -71,7 +71,7 @@ For any brief that says keep my voice, light edit, or supplies a sample:
 - Contractions, first-person pronouns, and hedges: count them in the source and the rewrite. If the rewrite has fewer, put them back. This is the measured direction of drift and it happens under a voice-preserving instruction too.
 - Mean word length: if the rewrite's words are longer on average, the edit swapped plain words for formal ones. Reverse it.
 - Unity: person, tense, and stance match the first paragraph all the way through.
-- Every change has a reason: for each word changed on a light edit, name the error it fixes. "It is on a tell list" and "it reads better" are not reasons. Put back any change without one.
+- Every change has a reason: for each word changed on a light edit, name the error it fixes, or the filler it removes. "It is on a tell list" and "it reads better" are not reasons. Put back any change without one.
 - Counts over feel: do not accept "it still sounds like them" in place of the numbers. In a 2026 study, people who post-edited model text judged it their own while it measured closer to the model's style than to their unassisted writing.
 - Recognition: would the writer read the rewrite and recognise it as theirs? If a sentence would make them say "I would never put it that way", it goes back to how they put it.
 
