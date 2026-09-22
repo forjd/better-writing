@@ -23,6 +23,7 @@ Fix by leading with the reason for the message, the ask, the owner, and the date
 - hashtag stacks, thread markers such as "🧵" or "1/", and exclamation marks on every line. One exclamation mark in a long post is a person; one per sentence is a template.
 - ellipses that do not trail off, used as a beat.
 - markdown headings and bold labels in a post the platform renders as plain text.
+- "Read that again.", "Every. Single. Day.", and arrow chains (→) used as a mock flow chart.
 
 Fix by making one real claim and ending on it. Cut the performance.
 
@@ -82,6 +83,9 @@ Tells:
 - verbose PR descriptions that narrate the diff line by line instead of stating intent and risk
 - gitmoji or emoji in commit messages where the project does not use them
 - over-defensive caveats and reimplementation of code that already exists
+- change notes and edit summaries that list what was left alone: "while preserving the original meaning", "retained all key points", "ensured consistency throughout". A person reports what they changed; the reader assumes the rest stayed.
+- commit-speak preambles: a summary that opens "Major refactor:" or "Comprehensive update:", or leads with "Rebuilt X" and "Upgraded X". Tier 2.
+- spec-sheet negation ("No configuration is required") and verbs that give code a home or an owner ("the config lives in", "this module owns", "the fix lands in"). Tier 3: both are normal in developer writing, so flag them only inside a cluster.
 
 Fix by deleting comments that repeat the code, describing behaviour in the present tense, and keeping identifiers, flags, filenames, version numbers, and exit codes exact.
 

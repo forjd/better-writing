@@ -1,0 +1,27 @@
+{
+  "name": "ranking-claims",
+  "brief": "Rewrite this internal update so it is plain and direct. Keep every fact.",
+  "required": [
+    "Leeds",
+    "payroll",
+    "August",
+    "first",
+    "only",
+    "most"
+  ],
+  "banned": [
+    "thrilled",
+    "landmark",
+    "testament",
+    "notably",
+    "achievement",
+    "underscore",
+    "paving the way",
+    "seamless"
+  ],
+  "banned_regex": [
+    "\\d+(\\.\\d+)?\\s*%",
+    "\\d[\\d,]*\\s*payslips"
+  ],
+  "max_words_ratio": 0.7
+}

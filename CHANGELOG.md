@@ -2,6 +2,28 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-22, detection research refresh
+
+A survey of 2026 detection and stylometry research, current-model system prompts and leaks, Wikipedia's changes since 2026-09-01, and practitioner tools. Sources are in `references/sources.md` under the 2026-09-22 refresh. Leaked prompts and second-hand reports are marked as such and used for diagnosis only.
+
+### Added
+
+- `references/ai-writing-patterns.md`: new near-conclusive artefacts (`citeturn…` tokens, invisible private-use characters, Grok's citation-card markup, Perplexity's `[web:1]`, ChatGPT's `Example+1` chip, more tracking parameters, markdown pipe tables, `<thinking>` tags written as text, "Claude responded:" labels). Over-compression as a formatting tell. Dated fingerprints for GPT-5.5 and GPT-6 Astra, Claude Opus 5, Fable 5.1, and Opus 5.5, Gemini 3.x, Grok 4.7, and Meta AI, with a caution on leaked prompts and on web-article corpora. False positives for mixed register and for any text under about 200 words. Human signals for parentheses, exclamation marks, concessives and discourse particles, and the writer's own contraction rate.
+- `references/structures-and-phrases.md`: the split and clipped forms of binary contrast; "Every. Single. Day.", a capitalised word for emphasis, "Read that again"; "What if I told you" and hot-take disclaimers; a Tier 3 section on announced counts, pseudo-clefts, shell nouns, abstract subjects, comparisons with no second term, and universal objects.
+- `references/genre-tells.md`: change notes that list what was preserved, commit-speak preambles, spec-sheet negation and personified placement verbs (Tier 3), and social-post gravity markers.
+- `SKILL.md`: a change note says what changed, not what was kept.
+- `references/preflight.md`: scope words ("only", "first", "most") must survive; voice is judged by the counts, not by feel; no change note lists what was preserved.
+- `evals/`: a fifth contrast check for "This doesn't mean X. It means Y."; `mattr` and `sentence_length_sd` voice-drift markers, gated on the two keep-my-voice fixtures; a `ranking-claims` fixture; a `--corpus` report mode and a public-domain pre-ChatGPT `human-corpus/`.
+
+### Changed
+
+- Dash entries: the Claude rate is disputed for Opus 5 (about human in articles, up on Opus 4.5 in chat), a one-line instruction removes dashes from Claude and Gemini, and Wikipedia has proposed moving the dash to its historical indicators. A dash-free text proves nothing.
+- Lenticular-bracket citations are attributed to DeepSeek and Meta AI, and `:::writing` to ChatGPT.
+- False ranges folded into Vague connection after Wikipedia dropped them as a separate sign. Synonym cycling kept, with a note that Wikipedia now treats it as historical and why this catalogue does not.
+- Detector bias: the first measurement for autistic writers (a 2026 preprint, one detector), dialect and teen over-flagging, polished-human misclassification, and watermark removal by paraphrase. The claim that no study measures neurodivergent false positives is retired.
+- `references/voice-and-context.md`: recompute the profile rather than trusting the ear, with the post-editing and style-variance evidence.
+- `references/sources.md`: the cursor unslop credit notes that its "Adding soul" section was removed on 2026-09-07.
+
 ## 2026-09-22, checker and consistency fixes
 
 Verified fixes from a five-dimension review with adversarial verification.

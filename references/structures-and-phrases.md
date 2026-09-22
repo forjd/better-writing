@@ -170,6 +170,8 @@ These patterns feel pre-baked:
 - "Not just X, but Y."
 - "Not only X but Y."
 - "This is not about X, it is about Y."
+- "This does not mean X. It means Y." The same contrast split across two sentences.
+- A clipped negative tail after the claim: "Deploys run on every merge, no guessing."
 - "X rather than Y" and "rather than X, Y" used as a reflex (common in Grok output).
 
 Fix by stating the point directly. This is a Tier 1 structure when it repeats: see Negative parallelism in `ai-writing-patterns.md`.
@@ -189,6 +191,9 @@ Watch for:
 - "X. That's it."
 - "X. And Y. And Z."
 - "This unlocks something. [Single abstract word]."
+- full stops between words for emphasis: "Every. Single. Day."
+- one word in capitals for emphasis: "This is NOT optional."
+- "Read that again."
 
 Fix with complete sentences unless the fragment is clearly part of the writer's voice. Exempt speech and fiction where fragments are voice.
 
@@ -200,6 +205,8 @@ Cut prompts that pretend to discover an insight:
 - "Think about it"
 - "Here's what I mean"
 - "And that's okay"
+- "What if I told you"
+- disclaimer openers that stage a hot take: "I'm no expert, but", "This might be controversial, but"
 
 Make the point. Let the reader react.
 
@@ -348,6 +355,17 @@ Social-post habits that fish for a reaction:
 - stock templates: "Not all X are created equal", "Whether you're a X or a Y", "That's where X comes in"
 
 Fix by making a claim worth reacting to and ending on it.
+
+### Announced counts and framing clauses
+
+Constructions that frame a point before making it. Each is ordinary English, so treat them as Tier 3: act on a habit across a piece, never on one sentence.
+
+- a count announced before the list: "Three pillars support this strategy", "There are two reasons this matters". Name the items.
+- a pseudo-cleft that delays the subject: "What changed is the retry logic" for "The retry logic changed".
+- a shell noun and a copula: "The problem is that the cache expires early", "The reality is that". Write "The cache expires early".
+- an abstraction as subject: "That asymmetry is the point".
+- a comparison with no second term: "significantly faster", "more reliable". Faster than what? Name the baseline if the source has it; otherwise cut the comparison or mark the gap. Do not invent one; see Fact safety in `voice-and-context.md`.
+- a universal object: "handles all edge cases", "works everywhere". Name the cases it handles, or narrow the claim.
 
 ## Quick rewrite moves
 

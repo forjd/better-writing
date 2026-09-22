@@ -49,7 +49,7 @@ Match the user's requested deliverable.
 - For a rewrite request, return the final rewritten text first.
 - For a review request, return specific findings before any rewrite.
 - For a draft-from-scratch request, deliver the finished draft, not an outline unless the user asked for one.
-- Include a short change note when you cut or flagged facts, or when voice measurement moved. Otherwise omit it.
+- Include a short change note when you cut or flagged facts, or when voice measurement moved. Otherwise omit it. The note says what changed. Do not list what you kept or left alone ("while preserving the original meaning"); the reader assumes it.
 - Do not expose a long diagnostic audit unless the user asks for it or the risk is high. High risk means legal, medical, financial, or public-facing text.
 - When editing a file in place, change prose only. Keep code, code identifiers, YAML front matter, link targets, image references, and quoted text byte for byte; table cell prose and alt text may be edited unless the user froze them. Quoted text means fenced blockquotes and inline quoted spans. Match the file's existing heading levels and list style. Judge the result by information kept, not by paragraph count matched.
 

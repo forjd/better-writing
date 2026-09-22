@@ -9,7 +9,7 @@ This skill is a new synthesis informed by these public sources:
 - `Leonxlnx/taste-skill`: https://github.com/Leonxlnx/taste-skill
   Context-first brief reading, explicit quality dials, anti-default discipline, and pre-flight matrices.
 - `cursor/plugins` (`pstack/skills/unslop`): https://github.com/cursor/plugins/blob/main/pstack/skills/unslop/SKILL.md
-  Abstract metaphor nouns, the mechanism-not-mood rule and its swap test, colon-as-connector, the redundancy reading of inline-header bullets, and the reminder that voiceless prose is its own tell.
+  Abstract metaphor nouns, the mechanism-not-mood rule and its swap test, colon-as-connector, the redundancy reading of inline-header bullets, and the reminder that voiceless prose is its own tell. That last one came from its "Adding soul" section, which PR #329 removed on 2026-09-07; the credit is to the earlier version. The same PR added the over-compression rule.
 - `Wikipedia:Signs of AI writing`: https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing
   Observed patterns in AI-generated prose, especially significance inflation, vague attribution, promotional tone, formulaic structure, and overused vocabulary.
 
@@ -84,5 +84,45 @@ These informed the hedging re-scope, the corrected dash and fingerprint entries,
   Over-representation ratios for LLM fiction vocabulary (some phrases at over a thousand times the human rate); the not-x-but-y weighting behind the eval contrast checks.
 - Wikipedia:Signs of AI writing, fetched 2026-09-01.
   Current vocabulary eras, the spaced-dash note, the Grok entries, and the "signs of human writing" list.
+
+## 2026-09-22 research refresh
+
+These informed the corrected dash and fingerprint entries, the new leaked artefacts, the detector-bias and short-text guardrails, the new human signals, the change-note rule, the scope-word preflight check, and the eval additions (split-contrast check, `mattr` and `sentence_length_sd`, the `ranking-claims` fixture, and the human corpus). Leaked system prompts are unofficial; items marked second-hand were not read directly.
+
+- Chambers and Kelley, "The misclassification of autistic writing as AI-generated", arXiv 2607.14729, 2026 (preprint).
+  About 33,000 Reddit posts, one detector: posts from autism communities flagged 25% more often, 50% at matched length, with no lower perplexity or burstiness.
+- Basu, Zhang, Raheja, "BAID", arXiv 2512.11505, 2025.
+  About 208,000 document pairs, four open-source detectors: worst results on African American English, Singlish, teen, and informal Gen Z writing.
+- Saha et al., arXiv 2603.20450, 2026; Ren, Raghavan, Garg, arXiv 2606.25152, 2026.
+  All five detectors misclassified a share of LLM-polished reviews as AI-written; a commercial detector reached 24% accuracy on adversarially humanised text.
+- Tamim and Khan, arXiv 2607.16010, 2026.
+  Paraphrase removed 98.3% of SynthID-Text watermarks in the open-source MarkLLM implementation, with a 5.4% false-positive rate on human text.
+- Freeburg, "The Last Fingerprint", arXiv 2603.27006, 2026 (full text).
+  The suppression condition: a short no-dash instruction takes Claude Opus 4.6 from 9.09 to 0.19 per 1,000 words and Gemini 2.5 Pro to zero; GPT-4.1 moves from 10.62 to 9.10.
+- Baumler et al., "Can You Make It Sound Like You?", ACL 2026, arXiv 2604.24444; Maier, Zaiss, Bayer, arXiv 2605.02620, 2026.
+  Post-edited text stays closer to LLM style than to the writer's own while writers feel it is theirs; replicated with GPT-5.5 and Opus 4.7 agents.
+- Sourati et al., "The Shrinking Landscape of Linguistic Diversity", Nature Human Behaviour, 2026, doi 10.1038/s41562-026-02550-0.
+  LLM revision cuts variance in writing complexity across writers by 21 to 50%.
+- Chen et al., Digital Scholarship in the Humanities, 2026, doi 10.1093/llc/fqag064; El Attar et al., arXiv 2606.04177, 2026.
+  Function-word classifiers above 95% on essays fall off sharply at 200 words; across 284 features, 27 models, and 10 domains only lexical richness held up. The basis for the short-text guardrail and the `mattr` marker.
+- Rudnicka and Juzek, "Beyond 'AI Language'", arXiv 2608.06589, 2026; Rallapalli et al., arXiv 2604.14111, 2026.
+  Contraction rates across six 2026 models from about 1,200 to over 30,000 per million words; LLMs under-use concessives and discourse particles.
+- Miletić and Falk, arXiv 2605.19936, 2026.
+  LLM-revised scientific text carries more commas and dashes and fewer brackets.
+- Yakura et al., arXiv 2409.01754 v4, 2026; Geng and Trotta, arXiv 2502.09606, 2025; Kousha and Thelwall, arXiv 2509.09596, 2025.
+  A preregistered experiment showing chatbot exposure causes vocabulary adoption; "delve" falling in arXiv abstracts once publicised; "underscore" in nearly half of 2024 PMC papers that use any LLM-associated term.
+- Graphite, "AI Tells" (Druck, Paredes, Smith), September 2026: https://graphite.io/five-percent/research/ai-tells
+  10,000 pre-ChatGPT human articles against 10,000 web articles per model; the Claude Opus 5, GPT-6 Astra, and Gemini 3.1 Pro phrase multiples and dash rates. A vendor study of web articles.
+- Arena.ai, Claude Opus 5 style comparison, August 2026 (second-hand, via AlphaSignal and paddo.dev); The Economist, 30 July 2026 (second-hand); OpenAI, "Where the goblins came from", April 2026 (second-hand).
+- Anthropic, "Prompting Claude Opus 5", "Prompting Claude Fable 5.1", and the Claude Opus 5.5 system prompt, read 2026-09-22.
+- asgeirtj/system_prompts_leaks: https://github.com/asgeirtj/system_prompts_leaks
+  Leaked GPT-5.5 Thinking, GPT-5.6, Gemini 3 Pro and 3.8 Flash, Grok 4.7, and Meta AI Muse Spark prompts. Unofficial; used only for what a vendor told its model to avoid or use.
+- lidge-jun/opencodex issue #3150, 2026-09-01: the `citeturn…` token wrapped in private-use characters.
+- blader/humanizer v3.0.0, 2026-09-06: https://github.com/blader/humanizer/releases/tag/v3.0.0
+  The scope-word preservation check (PRs #236, #264), the split and clipped contrast forms, and the manufactured-gravity items (PR #240).
+- tbhb/vale-ai-tells v1.37.0, 2026-09-15: https://github.com/tbhb/vale-ai-tells
+  Announced counts, pseudo-clefts, shell nouns, comparisons with no second term, universal objects, spec-sheet negation, personified placement verbs, and the method behind the human corpus: count a candidate against pre-2022 human prose before making it a rule.
+- Wikipedia:Signs of AI writing, fetched 2026-09-22 (revision 1376018375), and its talk page.
+  The em-dash historical-indicator notice, elegant variation moved to historical indicators, false ranges dropped, change notes that list what was preserved, mixed register as an ineffective indicator, the new tracking parameters and Grok and Perplexity markup, markdown pipe tables, curly quotes by vendor, and the commit-speak preamble.
 
 Use these sources as diagnostic inspiration. Do not copy upstream examples or prose into user deliverables. When maintaining this skill, keep `SKILL.md` concise and move detailed pattern lists into references.

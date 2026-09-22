@@ -4,10 +4,17 @@
 Usage:
     python3 evals/run_evals.py <fixture-dir> <rewrite-file>
     python3 evals/run_evals.py --all <outputs-dir>
+    python3 evals/run_evals.py --corpus <human-text-dir>
 
 In --all mode, <outputs-dir> must contain one file per fixture, named
 <fixture-name>.md (for example outputs/launch-email.md). Exits non-zero
 if any check fails. No dependencies beyond the standard library.
+
+--corpus runs the global structure and well-formedness checks, and every
+fixture's banned phrases and patterns, over human text written before
+ChatGPT and reports each hit. It is a report, not a gate: a hit on human
+prose means a check is broader than its tell. Exits 0 unless the corpus
+cannot be read.
 """
 
 import json
@@ -22,6 +29,8 @@ KNOWN_MARKERS = {
     "first_person_rate",
     "hedge_rate",
     "mean_word_length",
+    "mattr",
+    "sentence_length_sd",
 }
 
 
@@ -159,13 +168,25 @@ CONTRAST = [
      "no 'it's not X, it's Y' scaffold"),
     (r"\bnot\s+because\b[\s\S]{0,120}?\b(?:but\b(?:\s+because)?|because\b)",
      "no 'not because X but Y' scaffold"),
+    # The split form: "This does not mean X. It means Y." and "This isn't
+    # about X. It's about Y." Limited to "mean" and "about" so ordinary
+    # negation followed by an "It is" sentence does not match.
+    (r"\b(?:this|that|it)\s+(?:(?:does not|doesn't|did not|didn't)\s+mean|"
+     r"(?:is not|isn't|was not|wasn't)\s+(?:really\s+|just\s+)?about)\b"
+     r"[^.!?;]{0,120}[.!?;,\u2014\u2013]\s*(?:it|this|that)(?:'s|\s+is|"
+     r"\s+was|\s+means|\s+meant)\b",
+     "no 'this doesn't mean X. It means Y' scaffold"),
 ]
 
 # Voice markers a rewrite moves even when told to keep the writer's voice
 # (van Nuenen, "Voice Under Revision", 2026: contractions and first person
-# fall, mean word length rises; Jiang and Hyland, 2025: fewer hedges). Each
-# is measured per 100 words on the input and the rewrite; checks.json's
-# "voice_drift" gives the largest change allowed per marker.
+# fall, mean word length rises; Jiang and Hyland, 2025: fewer hedges). The
+# rates are per 100 words on the input and the rewrite; checks.json's
+# "voice_drift" gives the largest change allowed per marker. Two more are
+# not rates: mattr, the moving-average type-token ratio (lexical richness,
+# the one feature group El Attar et al., 2026, found robust across 27 models
+# and 10 domains), and sentence_length_sd, the spread of sentence lengths in
+# words (LLM revision narrows it; Sourati et al., 2026).
 # WORD includes leading digits so counts ("37C", "3:30", "v2.4.0") do not skew
 # the per-100 denominator. A possessive "'s" still counts as a contraction;
 # only the input-to-rewrite change matters, so the skew cancels out.
@@ -179,6 +200,33 @@ HEDGE = re.compile(
     r"tends? to|not sure)\b", re.I)
 
 
+MATTR_WINDOW = 25
+# A sentence ends at ., !, or ? followed by whitespace or the end of the
+# text, so "3.5", "v2.4.0", and ".env" do not split.
+SENTENCE_END = re.compile(r"[.!?]+(?:\s+|$)")
+
+
+def mattr(words, window=MATTR_WINDOW):
+    """Moving-average type-token ratio; plain TTR below one window."""
+    words = [w.lower() for w in words]
+    if not words:
+        return 0.0
+    if len(words) <= window:
+        return len(set(words)) / len(words)
+    ratios = [len(set(words[i:i + window])) / window
+              for i in range(len(words) - window + 1)]
+    return sum(ratios) / len(ratios)
+
+
+def sentence_length_sd(text):
+    lengths = [len(WORD.findall(s)) for s in SENTENCE_END.split(text)]
+    lengths = [n for n in lengths if n]
+    if len(lengths) < 2:
+        return 0.0
+    mean = sum(lengths) / len(lengths)
+    return (sum((n - mean) ** 2 for n in lengths) / len(lengths)) ** 0.5
+
+
 def voice_metrics(text):
     words = WORD.findall(text)
     n = max(len(words), 1)
@@ -188,6 +236,8 @@ def voice_metrics(text):
         "first_person_rate": len(FIRST_PERSON.findall(text)) * per_100,
         "hedge_rate": len(HEDGE.findall(text)) * per_100,
         "mean_word_length": sum(len(w) for w in words) / n,
+        "mattr": mattr(words),
+        "sentence_length_sd": sentence_length_sd(text),
     }
 
 
@@ -311,9 +361,11 @@ def check_rewrite(checks, input_text, rewrite_text):
                         results.append((False, f"voice kept: unknown marker "
                                                f'"{name}"'))
                         continue
+                    fmt = ".2f" if name == "mattr" else ".1f"
                     results.append((abs(delta) <= limit,
-                                    f"voice kept: {name} {before[name]:.1f} -> {after[name]:.1f} "
-                                    f"(change {delta:+.1f}, limit {limit})"))
+                                    f"voice kept: {name} {before[name]:{fmt}} -> "
+                                    f"{after[name]:{fmt}} (change {delta:+{fmt}}, "
+                                    f"limit {limit})"))
 
     return results
 
@@ -345,10 +397,73 @@ def run_one(fixture_dir, rewrite_path):
     return not failures
 
 
+def _snippet(text, match, width=40):
+    start = max(match.start() - width, 0)
+    end = min(match.start() + 2 * width, match.end() + width, len(text))
+    return re.sub(r"\s+", " ", text[start:end]).strip()
+
+
+def run_corpus(corpus_dir):
+    """Report every check that fires on known-human text. Never a gate."""
+    corpus_dir = Path(corpus_dir)
+    try:
+        files = sorted(p for p in corpus_dir.rglob("*")
+                       if p.suffix in (".md", ".txt") and p.is_file()
+                       and p.name.lower() != "readme.md")
+    except OSError as exc:
+        print(f"FAIL (cannot list corpus in {corpus_dir}: {exc})")
+        return 2
+    if not files:
+        print(f"no .md or .txt files found in {corpus_dir}")
+        return 2
+
+    probes = [(desc, re.compile(p)) for p, desc in WELL_FORMED]
+    probes += [(f"structure: {desc}", re.compile(p, re.I)) for p, desc in CONTRAST]
+    for fixture_dir in sorted(p for p in FIXTURES_DIR.iterdir() if p.is_dir()):
+        try:
+            checks, _ = load_fixture(fixture_dir)
+        except (OSError, ValueError) as exc:
+            print(f"skipping {fixture_dir.name}: {exc}")
+            continue
+        for phrase in checks.get("banned", []):
+            pattern = phrase_pattern(phrase, inflect="banned")
+            if pattern is None:
+                pattern = re.escape(normalize_apos(phrase))
+            probes.append((f'{fixture_dir.name} banned: "{phrase}"',
+                           re.compile(pattern, re.I)))
+        for pattern in checks.get("banned_regex", []):
+            probes.append((f"{fixture_dir.name} banned: /{pattern}/",
+                           re.compile(pattern, re.I)))
+
+    total_words = 0
+    hits = {}
+    for path in files:
+        text = normalize_apos(path.read_text(encoding="utf-8"))
+        total_words += word_count(text)
+        flat = re.sub(r"\s+", " ", text)
+        for desc, rx in probes:
+            source = flat if desc.startswith("structure:") else text
+            for m in rx.finditer(source):
+                hits.setdefault(desc, []).append(
+                    (path.relative_to(corpus_dir), _snippet(source, m)))
+
+    print(f"corpus: {len(files)} files, {total_words} words, "
+          f"{len(probes)} checks, {len(hits)} with hits")
+    for desc in sorted(hits):
+        found = hits[desc]
+        print(f"  {desc}: {len(found)} hit(s)")
+        for rel, snip in found[:3]:
+            print(f"    {rel}: ...{snip}...")
+    return 0
+
+
 def main(argv):
     if len(argv) != 3:
         print(__doc__.strip())
         return 2
+
+    if argv[1] == "--corpus":
+        return run_corpus(argv[2])
 
     if argv[1] == "--all":
         outputs_dir = Path(argv[2])
