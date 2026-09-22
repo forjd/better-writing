@@ -48,7 +48,7 @@ Watch for:
 - "left an indelible mark", "deeply rooted", "a key turning point", "a focal point"
 - vague claims about legacy, impact, or a changing landscape
 
-Fix by naming the concrete event, effect, audience, or evidence.
+Fix by naming the concrete event, effect, audience, or evidence, if the source gives one. If it does not, cut the clause, or, when the brief asks to keep everything and the clause carries a real hope or judgement, keep it as one in plain words: "which should help the rollout to other sites". Never convert the inflation into a fact: "paving the way for a company-wide rollout" is a hope, not a report that the rollout has started, and "underscores the importance of planning" does not say planning caused anything.
 
 ### Notability padding
 
@@ -65,7 +65,7 @@ Watch for:
 - "highlighting", "underscoring", "reflecting", "showcasing", "contributing to", "fostering"
 - trailing clauses tacked to the end of a sentence that restate the main clause instead of adding a fact
 
-Fix by splitting the sentence and saying the actual relationship, or remove the phrase.
+Fix by splitting the sentence and saying the actual relationship, or remove the phrase. When the source states no relationship, remove the phrase or keep it at the strength the source gave it; a trailing "-ing" clause turned into a sentence that asserts a cause or a result is an invented claim.
 
 ### Promotional language
 
