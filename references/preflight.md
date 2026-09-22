@@ -11,7 +11,7 @@ Run this before delivery.
 - If you added specificity, is it sourced by the user's material or clearly framed as a placeholder?
 - Does every sentence in the rewrite say something the source states or directly implies? A next step, a claim about what has happened since, an opinion, or a joke that the source does not contain is an invention, however natural it sounds.
 - Have qualifiers such as "may", "often", and "under these conditions" survived where they limit a claim?
-- Read the last sentence against the source on its own. Endings are where inventions cluster: a closing line that states progress, a cause, or a result the source only hoped for or implied is an addition. Cut it and end on the previous fact.
+- Read the last sentence against the source on its own. Endings are where inventions cluster: a closing line that states progress, a cause, or a result the source only hoped for or implied is an addition. Cut it and end on the previous fact. A hope the source did hold stays a hope, in about as many words as the source gave it; a thanks, a verdict, or a lesson wrapped around it is an addition.
 - Have ranking and scope words survived: "only", "first", "most", "least", "never", "simultaneously"? Trimming a tricolon, a qualifier, or a bold label often takes them out, and each one is a claim.
 
 ## Anti-slop check

@@ -48,7 +48,7 @@ Watch for:
 - "left an indelible mark", "deeply rooted", "a key turning point", "a focal point"
 - vague claims about legacy, impact, or a changing landscape
 
-Fix by naming the concrete event, effect, audience, or evidence, if the source gives one. If it does not, cut the clause, or, when the brief asks to keep everything and the clause carries a real hope or judgement, keep it as one in plain words: "which should help the rollout to other sites". Never convert the inflation into a fact: "paving the way for a company-wide rollout" is a hope, not a report that the rollout has started, and "underscores the importance of planning" does not say planning caused anything.
+Fix by naming the concrete event, effect, audience, or evidence, if the source gives one. If it does not, cut the clause, or, when the brief asks to keep everything and the clause carries a real hope or judgement, keep it as one in plain words, in about as many words as the source's clause: "paving the way for a seamless rollout across the organisation" becomes "which should help the rollout across the organisation". Keep only the hope. Do not wrap it in a judgement of your own ("careful planning mattered here"), turn praise into a thanks or a sign-off ("thanks to the team in Leeds"), or give it a sentence of its own when the source gave it a clause. Never convert the inflation into a fact: "paving the way for a company-wide rollout" is a hope, not a report that the rollout has started, and "underscores the importance of planning" does not say planning caused anything.
 
 ### Notability padding
 
