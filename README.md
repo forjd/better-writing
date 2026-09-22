@@ -118,6 +118,14 @@ DISABLE_TELEMETRY=1 bunx skills add forjd/better-writing
 
 You can also copy the folder into your agent skills directory if your agent runtime supports local skill discovery.
 
+To pin a release rather than track `main`, clone its tag and copy that checkout:
+
+```bash
+git clone --branch v1.0.0 https://github.com/forjd/better-writing.git
+```
+
+The installed version is `metadata.version` in the `SKILL.md` frontmatter.
+
 ### Install with your agent
 
 Paste this into your coding agent and it will do the install for you:
@@ -189,7 +197,7 @@ Use my writing sample below as the voice reference, then rewrite the article int
 CI runs two checks on every push to main and every pull request:
 
 ```bash
-python3 scripts/validate.py                      # frontmatter, fixture, symlink, and agent config checks
+python3 scripts/validate.py                      # frontmatter, version, fixture, symlink, and agent config checks
 python3 evals/run_evals.py --all evals/examples  # checker self-test
 ```
 
@@ -252,6 +260,18 @@ The skill follows the standard agent-skill layout (`SKILL.md` plus lazily loaded
 
 The `skills/better-writing/` directory is a tap layout for managers that expect `skills/<name>/`. It is built from relative symlinks back to the root files, which survive `git clone` but not GitHub's Download ZIP or a Windows checkout without symlink support. In those cases install from the repo root, which is the canonical copy.
 
+## Releases
+
+Releases follow [semantic versioning](https://semver.org/) and are cut by [release-please](https://github.com/googleapis/release-please) from the conventional commit history. It keeps a release pull request open on `main` that collects merged commits, bumps `metadata.version` in `SKILL.md` and `version` in `agents/openai.yaml`, and drafts the notes. Merging that pull request tags `vX.Y.Z` and publishes a [GitHub Release](https://github.com/forjd/better-writing/releases). Watch the repo for releases to hear when the catalogue changes.
+
+The skill has no API, so a major version means one of these:
+
+- The install layout changes: the root files, `references/`, `agents/`, or the `skills/better-writing/` tap.
+- An eval CLI flag or fixture field is removed or renamed.
+- `SKILL.md` changes behaviour in a way that means people must change how they prompt it.
+
+New patterns, checks, and fixtures are minor versions. Corrections are patches. The GitHub Release lists the commits; [CHANGELOG.md](./CHANGELOG.md) stays the hand-written record of why the catalogue changed.
+
 ## Contributing
 
 Keep the skill lean. Put core workflow guidance in [SKILL.md](./SKILL.md), and move detailed pattern lists or examples into [references/](./references/).
@@ -261,9 +281,10 @@ Before opening a pull request:
 1. Run `python3 scripts/validate.py`. CI runs it on every pull request as well.
 2. Run `python3 evals/run_skill.py` before and after the change if you touched the pattern lists or `SKILL.md`, and say in the pull request what changed in the two reports.
 3. Date any pattern addition, change, or retirement in [CHANGELOG.md](./CHANGELOG.md).
-4. Check that new prose uses British English and sentence-case headings. The repo's own docs follow the catalogue.
-5. Avoid adding bulky documentation that the agent does not need.
-6. Keep examples factual, concise, and easy to audit.
+4. Use a [conventional commit](https://www.conventionalcommits.org/) title for the pull request, since release-please sets the version from it: `feat:` for new patterns or checks, `fix:` for corrections, and `feat!:` or a `BREAKING CHANGE:` footer for anything listed under [Releases](#releases). Do not edit version numbers by hand.
+5. Check that new prose uses British English and sentence-case headings. The repo's own docs follow the catalogue.
+6. Avoid adding bulky documentation that the agent does not need.
+7. Keep examples factual, concise, and easy to audit.
 
 ## Licence
 

@@ -16,6 +16,8 @@ Checks:
 - Tap content: each tap symlink is byte-identical to its root counterpart.
 - agents/*.yaml schema: top-level name matches SKILL.md, version present,
   and default_prompt mentions the skill trigger.
+- Release version: SKILL.md metadata.version is semver and matches every
+  agents/*.yaml version and the release-please manifest, once it has one.
 
 Tap symlinks require a checkout with symlink support (git core.symlinks=true).
 They survive `git clone` but not GitHub's Download ZIP or a Windows checkout
@@ -274,7 +276,44 @@ def check_fixtures():
         )
 
 
-def check_agents(expected_name=None):
+def check_version():
+    """Return SKILL.md metadata.version, which release-please bumps."""
+    try:
+        raw = (ROOT / "SKILL.md").read_bytes().decode("utf-8-sig")
+    except (OSError, UnicodeDecodeError):
+        return None  # check_frontmatter already reported it
+    text = raw.replace("\r\n", "\n").replace("\r", "\n")
+    block = re.match(r"^---\n(.*?)\n---(?:\n|$)", text, re.S)
+    match = block and re.search(
+        r"^metadata:[ \t]*\n(?:[ \t]+.*\n)*?[ \t]+version:\s*(.+?)\s*(?:#.*)?$",
+        block.group(1) + "\n",
+        re.M,
+    )
+    check(match, "SKILL.md: frontmatter has no metadata.version")
+    if not match:
+        return None
+    version = _strip_quotes(match.group(1))
+    check(
+        re.fullmatch(r"\d+\.\d+\.\d+", version),
+        f"SKILL.md: metadata.version {version!r} is not MAJOR.MINOR.PATCH",
+    )
+    manifest_path = ROOT / ".release-please-manifest.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        errors.append(f".release-please-manifest.json: unreadable ({exc})")
+        return version
+    released = manifest.get(".")
+    if released:
+        check(
+            released == version,
+            f"SKILL.md: metadata.version {version!r} does not match "
+            f"release manifest {released!r}",
+        )
+    return version
+
+
+def check_agents(expected_name=None, expected_version=None):
     agents_dir = ROOT / "agents"
     if not agents_dir.is_dir():
         errors.append("agents: missing directory")
@@ -310,10 +349,17 @@ def check_agents(expected_name=None):
                     f"{rel}: name {agent_name!r} does not match "
                     f"SKILL.md name {expected_name!r}",
                 )
-        version_match = re.search(r"^version:\s*(.+?)\s*$", text, re.M)
+        version_match = re.search(r"^version:\s*(.+?)\s*(?:#.*)?$", text, re.M)
         check(version_match, f"{rel}: missing top-level version")
-        if version_match and not _strip_quotes(version_match.group(1)):
+        agent_version = _strip_quotes(version_match.group(1)) if version_match else ""
+        if version_match and not agent_version:
             errors.append(f"{rel}: version must be a non-empty string")
+        if expected_version and agent_version:
+            check(
+                agent_version == expected_version,
+                f"{rel}: version {agent_version!r} does not match "
+                f"SKILL.md metadata.version {expected_version!r}",
+            )
         prompt_match = re.search(
             r"^[ \t]*default_prompt:\s*(.+?)\s*$", text, re.M)
         prompt_value = _strip_quotes(prompt_match.group(1)) if prompt_match else ""
@@ -451,7 +497,7 @@ def check_tap():
 def main():
     skill_name = check_frontmatter()
     check_fixtures()
-    check_agents(skill_name)
+    check_agents(skill_name, check_version())
     check_tap()
     if errors:
         for message in errors:
