@@ -169,13 +169,16 @@ CONTRAST = [
     (r"\bnot\s+because\b[\s\S]{0,120}?\b(?:but\b(?:\s+because)?|because\b)",
      "no 'not because X but Y' scaffold"),
     # The split form: "This does not mean X. It means Y." and "This isn't
-    # about X. It's about Y." Limited to "mean" and "about" so ordinary
-    # negation followed by an "It is" sentence does not match.
-    (r"\b(?:this|that|it)\s+(?:(?:does not|doesn't|did not|didn't)\s+mean|"
-     r"(?:is not|isn't|was not|wasn't)\s+(?:really\s+|just\s+)?about)\b"
-     r"[^.!?;]{0,120}[.!?;,\u2014\u2013]\s*(?:it|this|that)(?:'s|\s+is|"
-     r"\s+was|\s+means|\s+meant)\b",
+    # about X. It's about Y." The second clause must repeat the verb ("means"
+    # or "about"), so "This does not mean it failed. It was down for
+    # maintenance." does not match.
+    (r"\b(?:this|that|it)\s+(?:does not|doesn't|did not|didn't)\s+mean\b"
+     r"[^.!?;]{0,120}[.!?;,\u2014\u2013]\s*(?:it|this|that)\s+(?:means|meant)\b",
      "no 'this doesn't mean X. It means Y' scaffold"),
+    (r"\b(?:this|that|it)\s+(?:is not|isn't|was not|wasn't)\s+"
+     r"(?:really\s+|just\s+)?about\b[^.!?;]{0,120}[.!?;,\u2014\u2013]\s*"
+     r"(?:it|this|that)(?:'s|\s+is|\s+was)\s+(?:really\s+|just\s+)?about\b",
+     "no 'this isn't about X. It's about Y' scaffold"),
 ]
 
 # Voice markers a rewrite moves even when told to keep the writer's voice
@@ -438,7 +441,11 @@ def run_corpus(corpus_dir):
     total_words = 0
     hits = {}
     for path in files:
-        text = normalize_apos(path.read_text(encoding="utf-8"))
+        try:
+            text = normalize_apos(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError) as exc:
+            print(f"FAIL (cannot read corpus file {path}: {exc})")
+            return 2
         total_words += word_count(text)
         flat = re.sub(r"\s+", " ", text)
         for desc, rx in probes:

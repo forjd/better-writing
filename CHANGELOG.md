@@ -13,7 +13,7 @@ A survey of 2026 detection and stylometry research, current-model system prompts
 - `references/genre-tells.md`: change notes that list what was preserved, commit-speak preambles, spec-sheet negation and personified placement verbs (Tier 3), and social-post gravity markers.
 - `SKILL.md`: a change note says what changed, not what was kept.
 - `references/preflight.md`: scope words ("only", "first", "most") must survive; voice is judged by the counts, not by feel; no change note lists what was preserved.
-- `evals/`: a fifth contrast check for "This doesn't mean X. It means Y."; `mattr` and `sentence_length_sd` voice-drift markers, gated on the two keep-my-voice fixtures; a `ranking-claims` fixture; a `--corpus` report mode and a public-domain pre-ChatGPT `human-corpus/`.
+- `evals/`: contrast checks for the split forms "This doesn't mean X. It means Y." and "This isn't about X. It's about Y."; `mattr` and `sentence_length_sd` voice-drift markers, gated on the two keep-my-voice fixtures; a `ranking-claims` fixture; a `--corpus` report mode and a public-domain pre-ChatGPT `human-corpus/`.
 
 ### Changed
 
