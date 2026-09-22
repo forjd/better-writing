@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "initial-version": "1.0.0",
+      "include-component-in-tag": false,
+      "skip-changelog": true,
+      "extra-files": ["SKILL.md", "agents/openai.yaml"]
+    }
+  }
+}

@@ -2,6 +2,12 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-22, versioned releases
+
+- release-please cuts semver releases from the conventional commit history (`.github/workflows/release.yml`, `release-please-config.json`). It writes GitHub Release notes and leaves this file hand-written.
+- `SKILL.md` carries the version in `metadata.version`, kept in step with `agents/openai.yaml`; `scripts/validate.py` fails if they differ from each other or from the release manifest.
+- README: a Releases section defines what counts as a major version, and Installation shows how to pin a tag.
+
 ## 2026-09-22, added-claims judge
 
 - `evals/run_skill.py`: the judge sees the brief, lists hopes restated as facts and emphases restated as causes, takes the last JSON array in a self-correcting reply, retries once, and reports an unusable reply as a judge error instead of an invented claim. New `--judge-only DIR` re-judges saved rewrites.
