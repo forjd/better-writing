@@ -21,7 +21,8 @@
   ],
   "banned_regex": [
     "\\d+(\\.\\d+)?\\s*%",
-    "\\d[\\d,]*\\+?\\s*(users|teams|customers|companies|clients|members)"
+    "\\d[\\d,]*\\+?\\s*(users|teams|customers|companies|clients|members)",
+    "\\b(?:before|until|within)\\s+(?:the\\s+)?(?:end\\s+of\\s+(?:the\\s+)?)?(?:next|this|coming|following)?\\s*(?:quarter|month|year|week|Q[1-4])\\b|\\bby\\s+(?:the\\s+)?(?:end\\s+of\\s+(?:the\\s+|this\\s+|next\\s+)?(?:quarter|month|year|week|Q[1-4])|(?:next|this|coming|following)\\s+(?:quarter|month|year|week)|Q[1-4])\\b|\\bdeadline\\b"
   ],
   "max_words_ratio": 1.1
 }

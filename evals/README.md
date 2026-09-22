@@ -76,7 +76,7 @@ CI runs this self-test, together with `scripts/validate.py`, on every push to ma
 | Fixture | Tests |
 | --- | --- |
 | `launch-email` | Slop removal with full fact preservation: date, feature names, and the UI label must survive. |
-| `quarterly-report` | Specificity without invention: the rewrite must keep the named causes and must not contain any percentage, because none was given. |
+| `quarterly-report` | Specificity without invention: the rewrite must keep the named causes and must not contain any percentage, because none was given, or a deadline ("before the next quarter closes"), because the source only says "moving forward". |
 | `release-notes` | Technical register: flags, filenames, version numbers, and exit codes stay exact while hype and diff-anchored wording go. |
 | `voice-preservation` | The inverse test: a quirky human draft must come back with its quirks intact, not flattened into a house style. Contraction, first-person, and hedge rates must not move. |
 | `chatbot-artefacts` | Near-conclusive cleanup: pasted chatbot scaffolding, an unfilled `[Your Name]` placeholder, and a decorative emoji must go while the steps and link survive. |
