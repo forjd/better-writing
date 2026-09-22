@@ -246,6 +246,11 @@ def check_fixtures():
             for pattern in patterns:
                 if not isinstance(pattern, str):
                     continue
+                if not pattern.strip():
+                    # An empty pattern matches every rewrite: a required one
+                    # always passes and a banned one always fails.
+                    errors.append(f"{rel}/checks.json: {key} has an empty pattern")
+                    continue
                 try:
                     re.compile(pattern)
                 except re.error as exc:

@@ -132,11 +132,12 @@ def word_count(text):
 # a space before closing punctuation, or two punctuation marks with nothing
 # between them ("I !", "our  new", "to .", "update ,.", "done, ;"). A space
 # before "." is allowed when it starts a dotfile, number, or ellipsis
-# (".env", ".5", "Wait ... what?"), and "?!"/"!?" are allowed.
+# (".env", ".5", "Wait ... what?"). Only the mixed pairs "?!" and "!?" are
+# allowed; "!!" and "??" fail.
 WELL_FORMED = [
     (r"\S[^\S\n]{2,}\S", "no doubled spaces inside a line"),
     (r"\s[,;:!?]|\s\.(?![.\w])", "no space before punctuation"),
-    (r"[,;:]\s*[,;:!?]|[!?]\s*[,;:]|[!?]\s+[!?]",
+    (r"[,;:]\s*[,;:!?]|[!?]\s*[,;:]|[!?]\s+[!?]|!!|\?\?",
      "no empty clause between punctuation marks"),
 ]
 
@@ -225,9 +226,9 @@ def check_rewrite(checks, input_text, rewrite_text):
         results.append((ok, f'required fact present: "{fact}"'))
 
     for pattern in required_regex:
-        if not isinstance(pattern, str):
-            results.append((False, f"required pattern must be a string, got "
-                                   f"{pattern!r}"))
+        if not isinstance(pattern, str) or not pattern.strip():
+            results.append((False, f"required pattern must be a non-empty "
+                                   f"string, got {pattern!r}"))
             continue
         try:
             ok = re.search(pattern, norm_rewrite, re.I) is not None
