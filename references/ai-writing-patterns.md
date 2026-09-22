@@ -92,6 +92,8 @@ Watch for:
 
 Fix by naming the source, narrowing the claim, or removing it.
 
+When the source gives no name, narrowing means dropping the faceless-authority noun and keeping the claim at its strength. "Some internal observers suggest the pricing change may have contributed" becomes "The pricing change has been raised internally as a possible cause". The noun ("observers", "experts", "critics", "industry watchers") is the tell; the hedge is not, so "may", "possible", and "suggest" stay. Do not replace the noun with an invented one ("the finance team", "analysts"), and where the brief needs the source named, add a gap marker such as `[who raised this?]`.
+
 A 2025-era variant is more dangerous than vagueness: a *real* source cited for a claim it does not actually support. Current models name genuine papers, authors, and URLs but do not verify that the source backs the sentence. When a claim leans on a specific citation, check that the source says what the text says, or flag it.
 
 ### Speculation from absence
