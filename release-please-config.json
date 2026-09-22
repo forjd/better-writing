@@ -6,7 +6,13 @@
       "initial-version": "1.0.0",
       "include-component-in-tag": false,
       "skip-changelog": true,
-      "extra-files": ["SKILL.md", "agents/openai.yaml"]
+      "extra-files": [
+        "SKILL.md",
+        {
+          "type": "generic",
+          "path": "agents/openai.yaml"
+        }
+      ]
     }
   }
 }
