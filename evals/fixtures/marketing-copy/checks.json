@@ -24,7 +24,7 @@
   "banned_regex": [
     "\\d+(\\.\\d+)?\\s*%",
     "\\d[\\d,]*\\+?\\s*(users|teams|customers|companies)",
-    "award|rated|trusted by"
+    "\\baward(?:s|ed|-winning)?\\b|\\brated\\b|\\btrusted by\\b"
   ],
   "max_words_ratio": 0.9
 }

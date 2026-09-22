@@ -171,7 +171,7 @@ Use my writing sample below as the voice reference, then rewrite the article int
 
 ## Validation
 
-CI runs three checks on every push to main and every pull request:
+CI runs two checks on every push to main and every pull request:
 
 ```bash
 python3 scripts/validate.py                      # frontmatter, fixture, symlink, and agent config checks
@@ -215,7 +215,7 @@ python3 evals/compare_outputs.py evals/baseline evals/outputs         # pairwise
 
 The runner needs the Claude Code CLI on PATH with working credentials. Run it before and after any change to `SKILL.md` or the references and compare the two reports. The added-claims judge exists because the substring checker cannot see invention; a rewrite that added "nobody has asked to bring the stand-up back" to the LinkedIn fixture passed every substring check. The baseline and pairwise comparison exist because a pass count cannot show the skill beat the unaided model.
 
-The checker is a smoke test, not a judge. It matches substrings, bounds the length, rejects the damage a search-and-replace leaves behind (doubled spaces, space before punctuation), catches binary-contrast scaffolds, and on keep-my-voice fixtures measures whether contractions, first person, hedges, and word length moved. A rewrite can pass it and still read badly, so read the outputs in `evals/outputs/` as well as the pass counts. Detector scores are deliberately not a check; `evals/README.md` says why. See [evals/README.md](./evals/README.md) for the fixture list and check format.
+The checker is a smoke test, not a judge. It matches whole words and phrases (allowing inflections such as "syncs" or "seamlessly"), bounds the length, rejects the damage a search-and-replace leaves behind (doubled spaces, space before punctuation), catches binary-contrast scaffolds, and on keep-my-voice fixtures measures whether contractions, first person, hedges, and word length moved. A rewrite can pass it and still read badly, so read the outputs in `evals/outputs/` as well as the pass counts. Detector scores are deliberately not a check; `evals/README.md` says why. See [evals/README.md](./evals/README.md) for the fixture list and check format.
 
 ## A living pattern catalogue
 

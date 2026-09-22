@@ -35,7 +35,7 @@ Use this skill to make prose stronger without flattening the writer. The goal is
    - For short pieces and emails, the first sentence makes the point and the last sentence is the strongest fact or the user-requested next action. "The migration runs on Saturday 12 July", not "I wanted to reach out about the migration". For long documents apply this per section, and exempt specs and runbooks.
    - The literal phrase wins over the figurative one. "Three services call the same endpoint", not "a symphony of microservices".
    - Subtract and surface. Never add. Cut the tells, then let what the source already holds show through. Never invent facts, voice, a next step, a claim about what has or has not happened, a joke or aside in the writer's manner, a sensory detail, a typo, slang, or a contraction the source lacks. Genre-required register shifts (contractions and second person in chat or email) and a user-requested next action are allowed additions, not fabrications. Where a gap needs filling, mark it or ask.
-   - When the brief asks for a light edit or to keep the writer's voice, change only what is wrong. A lone word or punctuation mark from a tell list, such as one "delve" or a single em dash, is the writer's choice and stays. Keep the writer's contractions or lack of them, first-person sentences, and hedges unless you can quote the clarity failure; show before-and-after counts per `references/preflight.md`.
+   - When the brief asks for a light edit or to keep the writer's voice, change only what is wrong. A lone word or punctuation mark from a tell list, such as one "delve" or a single em dash, is the writer's choice and stays. Keep the writer's contractions or lack of them, first-person sentences, and hedges unless you can quote the clarity failure; compare before-and-after counts per `references/preflight.md`, and report them only if they moved (see Default output).
 
 5. Self-audit and revise.
    - Ask: "What still sounds generic, evasive, or AI-written?" and "Does every sentence add new information?"
@@ -93,5 +93,5 @@ Precedence for conflicts: quoted or frozen text first, then legal and citation e
 - `references/ai-writing-patterns.md`: AI-writing tells, confidence tiers, near-conclusive artefacts, and false-positive checks.
 - `references/structures-and-phrases.md`: slop phrase and structure audit.
 - `references/genre-tells.md`: genre-specific phrase banks for email, social, marketing, academic, fiction, and code.
-- `references/preflight.md`: final delivery checks and scoring.
+- `references/preflight.md`: final yes/no delivery checks.
 - `references/sources.md`: source projects and attribution notes.

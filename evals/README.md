@@ -50,7 +50,7 @@ Do not add an AI-detector score to this harness. Three reasons. First, the targe
 python3 evals/run_evals.py --all evals/examples
 ```
 
-CI runs this self-test, together with `scripts/validate.py`, on every push and pull request.
+CI runs this self-test, together with `scripts/validate.py`, on every push to main and every pull request.
 
 ## What each fixture tests
 
@@ -72,13 +72,14 @@ CI runs this self-test, together with `scripts/validate.py`, on every push and p
 `checks.json` fields:
 
 - `brief`: the rewrite instruction to give the skill.
-- `required`: case-insensitive substrings that must appear in the rewrite (preserved facts).
-- `banned`: case-insensitive substrings that must not appear (tells and slop).
+- `required`: case-insensitive words or phrases that must appear in the rewrite (preserved facts). Matching is whole-word, treats spaces, hyphens, and dashes between words as equivalent, and allows a trailing inflection ("sync" matches "syncs", "profile" matches "profiling"). Leading dashes are literal, so `--dry-run` needs the flag, not "dry run".
+- `required_regex`: regular expressions that must match, for a fact with more than one acceptable wording (for example "every hour" or "hourly"). Matching is case-insensitive.
+- `banned`: case-insensitive words or phrases that must not appear (tells and slop). Matching works like `required` and also catches an `-ly` form, so `seamless` catches "seamlessly" and `empower` catches "empowering". List the base word, not a stem.
 - `banned_regex`: regular expressions that must not match (for example invented percentages). Matching is case-insensitive.
 - `max_words_ratio` / `min_words_ratio`: rewrite length bounds relative to the input, to catch padding and over-cutting.
-- `voice_drift`: for keep-my-voice briefs, the largest change allowed per marker between input and rewrite. Markers are `contraction_rate`, `first_person_rate`, and `hedge_rate` (all per 100 words) and `mean_word_length`. These are the four markers rewrites move even under a voice-preserving prompt (van Nuenen, "Voice Under Revision", 2026): contractions, first person, and hedges fall, word length rises. The counts are rough (a possessive counts as a contraction), but only the change matters. A rewrite of `voice-preservation` that turned "I have" and "I am" into contractions passed every other check and fails this one.
+- `voice_drift`: for keep-my-voice briefs, the largest change allowed per marker between input and rewrite. Markers are `contraction_rate`, `first_person_rate`, and `hedge_rate` (all per 100 words) and `mean_word_length`. These are the four markers rewrites move even under a voice-preserving prompt (van Nuenen, "Voice Under Revision", 2026: contractions and first person fall, word length rises; Jiang and Hyland, 2025: model text carries fewer hedges). The counts are rough (a possessive counts as a contraction), but only the change matters. A rewrite of `voice-preservation` that turned "I have" and "I am" into contractions passed every other check and fails this one.
 
-Every fixture also gets three well-formedness checks the checker applies itself: no doubled spaces inside a line, no space before punctuation, and no empty clause between punctuation marks. These catch a rewrite that only deleted the banned phrases and left the wreckage. Four structure checks run on every rewrite as well: the binary-contrast scaffolds ("not just X but Y", "isn't just", "it's not about X, it's Y", "not because X but because Y"), which sam-paech's slop-score weights at a quarter of its total and which no fixture's ideal output needs.
+Every fixture also gets three well-formedness checks the checker applies itself: no doubled spaces inside a line, no space before punctuation (a dotfile, decimal, or ellipsis is fine), and no empty clause between punctuation marks. These catch a rewrite that only deleted the banned phrases and left the wreckage. Four structure checks run on every rewrite as well: the binary-contrast scaffolds ("not just X but Y", "isn't just", "it's not about X, it's Y", "not because X but because Y"), which sam-paech's slop-score weights at a quarter of its total and which no fixture's ideal output needs.
 
 ## Adding a fixture
 
