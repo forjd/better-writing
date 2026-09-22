@@ -284,17 +284,20 @@ def check_version():
         return None  # check_frontmatter already reported it
     text = raw.replace("\r\n", "\n").replace("\r", "\n")
     block = re.match(r"^---\n(.*?)\n---(?:\n|$)", text, re.S)
+    # metadata's children share the first child's indent; anything deeper
+    # (metadata.release.version) is not metadata.version.
     match = block and re.search(
-        r"^metadata:[ \t]*\n(?:[ \t]+.*\n)*?[ \t]+version:\s*(.+?)\s*(?:#.*)?$",
+        r"^metadata:[ \t]*\n([ \t]+)(?:\S.*\n(?:\1[ \t]+.*\n)*\1)*?"
+        r"version:\s*(.+?)\s*(?:#.*)?$",
         block.group(1) + "\n",
         re.M,
     )
     check(match, "SKILL.md: frontmatter has no metadata.version")
     if not match:
         return None
-    version = _strip_quotes(match.group(1))
+    version = _strip_quotes(match.group(2))
     check(
-        re.fullmatch(r"\d+\.\d+\.\d+", version),
+        re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", version),
         f"SKILL.md: metadata.version {version!r} is not MAJOR.MINOR.PATCH",
     )
     manifest_path = ROOT / ".release-please-manifest.json"
