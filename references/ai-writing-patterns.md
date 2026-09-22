@@ -17,7 +17,7 @@ Confidence tiers, used throughout this file:
 
 - Tier 1: distinctive markers. Flag when two or more appear in the same passage.
 - Tier 2: common but overused. Flag only at higher density, and never replace a word on sight.
-- Tier 3: ordinary English whose elevated rate shows up only across a large corpus. A single instance is never a tell. Stacked connectives are actionable — see Over-signposting in `structures-and-phrases.md`. Other Tier 3 words are actionable only inside Significance inflation or Notability padding below, otherwise leave them alone.
+- Tier 3: ordinary English whose elevated rate shows up only across a large corpus. A single instance is never a tell. Stacked connectives are actionable — see Over-signposting in `structures-and-phrases.md`. Other Tier 3 words are actionable only inside Significance inflation or Notability padding (under Content patterns), otherwise leave them alone.
 
 ## Near-conclusive artefacts
 
@@ -129,7 +129,7 @@ Read the list through the confidence tiers above:
 
 - Tier 1, distinctive (flag a cluster of two or more): delve, tapestry, testament, intricate, meticulous, pivotal, underscore, realm, showcase, multifaceted, myriad, plethora, commendable, paramount, burgeoning, quintessential, cornerstone, beacon, nuanced.
 - Tier 2, common but overused (flag at higher density, never replace on sight): enhance, foster, leverage, utilise, facilitate, streamline, bolster, amplify, cultivate, garner, surpass, exemplify, encompass, align with, ensure, robust, seamless, comprehensive, holistic, scalable.
-- Tier 3, ordinary English (an aggregate corpus signal only, never a single-document tell): potential, significant, crucial, key, vital, notable, important, additionally, moreover, furthermore, subsequently. Single instances are never a tell. Flag stacked "additionally, moreover, furthermore, subsequently" only as Over-signposting in `structures-and-phrases.md`, and flag the rest only inside Significance inflation or Notability padding below.
+- Tier 3, ordinary English (an aggregate corpus signal only, never a single-document tell): potential, significant, crucial, key, vital, notable, important, additionally, moreover, furthermore, subsequently. Single instances are never a tell. Flag stacked "additionally, moreover, furthermore, subsequently" only as Over-signposting in `structures-and-phrases.md`, and flag the rest only inside Significance inflation or Notability padding above.
 
 Fix Tier 1 and Tier 2 clusters by using plainer words or rewriting the sentence around a concrete noun and verb. Leave Tier 3 alone except for stacked connectives and Significance inflation or Notability padding as above. Keep any Tier 2 word that carries precise technical meaning in code and documentation, such as "robust" and "scalable", when accurate. See Exemptions under Code, pull requests, and documentation in `genre-tells.md`.
 
@@ -200,7 +200,7 @@ Fix by naming the actor when it matters. Keep passive voice when the actor is un
 
 AI prose can lean on em dashes and en dashes for rhythm and faux sophistication. Treat this carefully: the em dash is the most-publicised tell and the least reliable. Many strong human writers use it heavily, and some writers now self-censor real punctuation to dodge suspicion. A single em dash, or em dashes in literary and editorial long-form, is not a tell.
 
-The rate depends on which model wrote the text, not on "AI"; the per-model figures are under Model fingerprints below, for diagnosis only. None of this is an instruction about the writer's dashes: a dash the writer put there stays unless the brief asks for the strict pass.
+The rate depends on which model wrote the text, not on "AI"; the per-model figures are under Model fingerprints below, for diagnosis only. A per-model rate is never, by itself, a reason to edit the writer's dashes: a dash the writer put there stays unless it clusters with other tells as described next, or the brief asks for the strict pass.
 
 In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns and clearly substitutes for sentence structure. In strict "humanise" or de-AI passes, removing em and en dashes is a register choice the user has asked for, not proof of AI origin. End the sentence or use a comma. Do not swap the dash for a colon or parentheses; see Colon as connector in `structures-and-phrases.md`. Either way, keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography. Stripping dashes to beat a detector is not a quality goal.
 

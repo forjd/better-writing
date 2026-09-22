@@ -194,7 +194,7 @@ def check_fixtures():
             f"{rel}/checks.json: brief must be a non-empty string",
         )
 
-        for key in ("required", "banned", "banned_regex"):
+        for key in ("required", "required_regex", "banned", "banned_regex"):
             if key in checks:
                 value = checks[key]
                 check(
@@ -229,24 +229,28 @@ def check_fixtures():
 
         check(
             checks.get("required")
+            or checks.get("required_regex")
             or checks.get("banned")
             or checks.get("banned_regex")
             or checks.get("max_words_ratio") is not None
             or checks.get("min_words_ratio") is not None
             or checks.get("voice_drift"),
-            f"{rel}/checks.json: defines no required, banned, banned_regex, "
+            f"{rel}/checks.json: defines no required, required_regex, banned, "
+            "banned_regex, "
             "max/min_words_ratio, or voice_drift checks",
         )
-        banned_regex = checks.get("banned_regex", [])
-        if isinstance(banned_regex, list):
-            for pattern in banned_regex:
+        for key in ("required_regex", "banned_regex"):
+            patterns = checks.get(key, [])
+            if not isinstance(patterns, list):
+                continue
+            for pattern in patterns:
                 if not isinstance(pattern, str):
                     continue
                 try:
                     re.compile(pattern)
                 except re.error as exc:
                     errors.append(
-                        f"{rel}/checks.json: banned_regex /{pattern}/ "
+                        f"{rel}/checks.json: {key} /{pattern}/ "
                         f"does not compile ({exc})"
                     )
 
@@ -316,6 +320,11 @@ def check_agents(expected_name=None):
 def check_tap():
     skills_dir = ROOT / "skills"
     if not skills_dir.is_dir():
+        errors.append("skills: tap directory is missing")
+        return
+    taps = [p for p in skills_dir.iterdir() if p.is_dir()]
+    if not taps:
+        errors.append("skills: tap directory has no skill subdirectories")
         return
     references_dir = ROOT / "references"
     agents_dir = ROOT / "agents"

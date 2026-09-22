@@ -2,6 +2,19 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-22, checker and consistency fixes
+
+Verified fixes from a five-dimension review with adversarial verification.
+
+### Changed
+
+- `evals/run_evals.py`: banned phrases allow inflections and an `-ly` form, so seeded "underscoring", "Seamlessly", and "empowering" are now caught; a final "e" may drop before "-ing". Leading dashes are literal, so `--dry-run` is no longer satisfied by "dry run". The well-formedness checks accept dotfiles, decimals, ellipses, and "?!". New `required_regex` field for facts with more than one acceptable wording.
+- `evals/fixtures/`: `underscor` stem replaced with `underscore`; launch-email accepts "every hour" or "hourly"; the marketing-copy award regex is word-bounded so "integrated" no longer trips it.
+- `evals/compare_outputs.py`: unknown fixture names exit 2; the judge's last "Rewrite N" wins.
+- `scripts/validate.py`: a missing or empty `skills/` tap is an error.
+- `SKILL.md` and `references/ai-writing-patterns.md`: the dash rule no longer contradicts the normal-rewrite thinning rule, light-edit voice counts are reported only when they moved, the preflight index no longer promises scoring, and a stale "below" is fixed.
+- `README.md`, `evals/README.md`: CI check count and trigger, whole-word matching semantics, and the hedge marker credited to Jiang and Hyland.
+
 ## 2026-09-12, review fixes
 
 Verified fixes from a five-agent review with isolated verification.

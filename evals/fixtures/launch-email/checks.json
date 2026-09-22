@@ -4,8 +4,10 @@
   "required": [
     "15 June",
     "CSV",
-    "hour",
     "Reports tab"
+  ],
+  "required_regex": [
+    "\\b(?:every hour|hourly)\\b"
   ],
   "banned": [
     "hope this email finds you well",

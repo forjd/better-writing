@@ -39,39 +39,66 @@ def normalize_apos(text):
 FLEX_SEP = r"[\s\-—–―−‐‑_]+"
 
 
+# Trailing inflections allowed after a phrase's last word. Required facts
+# accept verb/plural endings ("sync" matches "syncs"); banned tells also accept
+# "-ly" so "seamless" catches "seamlessly". A final "e" may drop before "-ing"
+# ("underscore" matches "underscoring", "empower" matches "empowering").
+REQUIRED_SUFFIXES = ("s", "es", "ed", "ing", "d")
+BANNED_SUFFIXES = REQUIRED_SUFFIXES + ("ly",)
+# Leading/trailing dashes and underscores are literal ("--dry-run" must keep
+# its "--"); only separators between words are flexible.
+EDGE_SEP = r"[\-—–―−‐‑_]+"
+
+
+def _inflect(inner, last_word, suffixes):
+    if last_word[-1:].lower() == "e" and len(last_word) > 2:
+        kept_e = "|".join(dict.fromkeys(
+            s[1:] if s.startswith("e") else s for s in suffixes if s != "ing"))
+        stem = inner[:-len(re.escape(last_word[-1]))]
+        return stem + r"(?:e(?:" + kept_e + r")?|ing)"
+    return inner + "(?:" + "|".join(suffixes) + ")?"
+
+
 def phrase_pattern(phrase, inflect=False):
     """Build a word-boundary regex for a required/banned phrase.
 
     Returns None for phrases with no alphanumeric characters (emoji, lone
     punctuation), where substring matching is correct.
 
-    With inflect=True (required facts), a trailing inflection
-    (s/es/ed/ing/d) is allowed so "sync" matches "syncs" while "may" still
-    does not match "maybe" and "37" does not match "137".
+    inflect=True (required facts) or inflect="banned" (banned tells) allows
+    a trailing inflection so "sync" matches "syncs" while "may" still does
+    not match "maybe" and "37" does not match "137".
     """
-    norm = normalize_apos(phrase)
+    norm = normalize_apos(phrase).strip()
     if not re.search(r"[A-Za-z0-9]", norm):
         return None
-    parts = [p for p in re.split(FLEX_SEP, norm) if p]
+    lead = re.match(EDGE_SEP, norm)
+    lead = lead.group(0) if lead else ""
+    trail = re.search(EDGE_SEP + "$", norm[len(lead):])
+    trail = trail.group(0) if trail else ""
+    core = norm[len(lead):len(norm) - len(trail)]
+    parts = [p for p in re.split(FLEX_SEP, core) if p]
     if not parts:
         return None
-    inner_pieces = []
-    for part in parts:
-        inner_pieces.append("".join(re.escape(ch) for ch in part))
-    inner = FLEX_SEP.join(inner_pieces)
+    inner = FLEX_SEP.join(re.escape(part) for part in parts)
     first = parts[0][0]
     last = parts[-1][-1]
-    if first.isdigit():
+    if lead:
+        left = r"(?<![\w\-—–―−‐‑])" + re.escape(lead)
+    elif first.isdigit():
         left = r"(?<!\d)"
     elif first.isalnum() or first == "_":
         left = r"(?<!\w)"
     else:
         left = ""
-    if last.isdigit():
+    if trail:
+        right = re.escape(trail)
+    elif last.isdigit():
         right = r"(?!\d)"
     elif last.isalnum() or last == "_":
         if inflect:
-            inner = inner + r"(?:s|es|ed|ing|d)?"
+            suffixes = BANNED_SUFFIXES if inflect == "banned" else REQUIRED_SUFFIXES
+            inner = _inflect(inner, parts[-1], suffixes)
         right = r"(?!\w)"
     else:
         right = ""
@@ -103,11 +130,14 @@ def word_count(text):
 
 # Damage a search-and-replace rewrite leaves behind: doubled spaces mid-line,
 # a space before closing punctuation, or two punctuation marks with nothing
-# between them ("I !", "our  new", "to .", "update ,.").
+# between them ("I !", "our  new", "to .", "update ,.", "done, ;"). A space
+# before "." is allowed when it starts a dotfile, number, or ellipsis
+# (".env", ".5", "Wait ... what?"), and "?!"/"!?" are allowed.
 WELL_FORMED = [
     (r"\S[^\S\n]{2,}\S", "no doubled spaces inside a line"),
-    (r"\s[,.;:!?]", "no space before punctuation"),
-    (r"[,;:!?]\s*[,;:!?]", "no empty clause between punctuation marks"),
+    (r"\s[,;:!?]|\s\.(?![.\w])", "no space before punctuation"),
+    (r"[,;:]\s*[,;:!?]|[!?]\s*[,;:]|[!?]\s+[!?]",
+     "no empty clause between punctuation marks"),
 ]
 
 
@@ -131,10 +161,10 @@ CONTRAST = [
 ]
 
 # Voice markers a rewrite moves even when told to keep the writer's voice
-# (van Nuenen, "Voice Under Revision", 2026): contractions, first person, and
-# hedges fall, mean word length rises. Each is measured per 100 words on the
-# input and the rewrite; checks.json's "voice_drift" gives the largest change
-# allowed per marker.
+# (van Nuenen, "Voice Under Revision", 2026: contractions and first person
+# fall, mean word length rises; Jiang and Hyland, 2025: fewer hedges). Each
+# is measured per 100 words on the input and the rewrite; checks.json's
+# "voice_drift" gives the largest change allowed per marker.
 # WORD includes leading digits so counts ("37C", "3:30", "v2.4.0") do not skew
 # the per-100 denominator. A possessive "'s" still counts as a contraction;
 # only the input-to-rewrite change matters, so the skew cancels out.
@@ -168,16 +198,19 @@ def check_rewrite(checks, input_text, rewrite_text):
     norm_rewrite = normalize_apos(rewrite_text)
     norm_input = normalize_apos(input_text)
 
-    for field in ("required", "banned", "banned_regex"):
+    for field in ("required", "required_regex", "banned", "banned_regex"):
         val = checks.get(field, [])
         if field in checks and not isinstance(val, list):
             results.append((False, f"{field} must be a list, got "
                                    f"{type(val).__name__}"))
     required = checks.get("required", [])
+    required_regex = checks.get("required_regex", [])
     banned = checks.get("banned", [])
     banned_regex = checks.get("banned_regex", [])
     if not isinstance(required, list):
         required = []
+    if not isinstance(required_regex, list):
+        required_regex = []
     if not isinstance(banned, list):
         banned = []
     if not isinstance(banned_regex, list):
@@ -191,12 +224,24 @@ def check_rewrite(checks, input_text, rewrite_text):
         ok = phrase_found(fact, norm_rewrite, inflect=True)
         results.append((ok, f'required fact present: "{fact}"'))
 
+    for pattern in required_regex:
+        if not isinstance(pattern, str):
+            results.append((False, f"required pattern must be a string, got "
+                                   f"{pattern!r}"))
+            continue
+        try:
+            ok = re.search(pattern, norm_rewrite, re.I) is not None
+        except re.error as exc:
+            results.append((False, f"required pattern invalid: /{pattern}/ ({exc})"))
+            continue
+        results.append((ok, f"required pattern present: /{pattern}/"))
+
     for phrase in banned:
         if not isinstance(phrase, str):
             results.append((False, f"banned phrase must be a string, got "
                                    f"{phrase!r}"))
             continue
-        ok = not phrase_found(phrase, norm_rewrite, inflect=False)
+        ok = not phrase_found(phrase, norm_rewrite, inflect="banned")
         results.append((ok, f'banned phrase absent: "{phrase}"'))
 
     for pattern in banned_regex:
