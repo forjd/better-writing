@@ -9,7 +9,7 @@
   "required_regex": [
     "\\bfirst\\s+(?:site|office)\\b",
     "\\bonly\\s+(?:site|office)\\b",
-    "\\bmost\\s+payslips\\b[^.]{0,40}\\bany\\s+(?:other\\s+)?(?:site|office)"
+    "\\b(?:most|more)\\s+payslips\\b[^.]{0,40}\\bany\\s+(?:other\\s+)?(?:site|office)"
   ],
   "banned": [
     "thrilled",
