@@ -227,13 +227,14 @@ def judge_added_claims(model, brief, source, rewrite, attempts=2):
     # The judge stays on opus unless --judge-model overrides (see main).
     prompt = JUDGE_PROMPT.format(brief=brief, source=source, rewrite=rewrite)
     reply = ""
-    for _ in range(attempts):
+    for attempt in range(attempts):
         reply = claude_text(model, prompt)
         print(f"  judge raw: {reply[:300]}")
         claims = parse_claims(reply)
         if claims is not None:
             return claims
-        print("  WARN judge reply had no JSON array of strings, asking again")
+        if attempt + 1 < attempts:
+            print("  WARN judge reply had no JSON array of strings, asking again")
     raise JudgeError(f"no usable JSON array after {attempts} attempts: "
                      f"{reply[:200]}")
 
@@ -242,11 +243,12 @@ def judge_only(judge_model, out_dir, fixtures):
     """Re-judge saved rewrites; write <fixture>.claims.json next to each."""
     print(f"judge only: {judge_model} on {out_dir}")
     all_ok = True
-    judged = 0
+    found = 0
     for fixture_dir in fixtures:
         rewrite_path = out_dir / f"{fixture_dir.name}.md"
         if not rewrite_path.exists():
             continue
+        found += 1
         claims_path = out_dir / f"{fixture_dir.name}.claims.json"
         try:
             checks, input_text = load_fixture(fixture_dir)
@@ -259,7 +261,6 @@ def judge_only(judge_model, out_dir, fixtures):
             claims_path.unlink(missing_ok=True)
             all_ok = False
             continue
-        judged += 1
         claims_path.write_text(json.dumps(claims, indent=2) + "\n",
                                encoding="utf-8")
         if claims:
@@ -269,7 +270,7 @@ def judge_only(judge_model, out_dir, fixtures):
                 print(f"  added claim: {claim}")
         else:
             print(f"{fixture_dir.name}: no added claims")
-    if not judged:
+    if not found:
         print(f"no <fixture-name>.md rewrites found in {out_dir}")
         return 2
     return 0 if all_ok else 1
@@ -290,11 +291,6 @@ def main():
     parser.add_argument("fixtures", nargs="*", help="fixture names (default: all)")
     args = parser.parse_args()
 
-    out_dir = Path(args.out)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    system_path = out_dir / "_system_prompt.md"
-    system_path.write_text(build_system_prompt(not args.no_skill), encoding="utf-8")
-
     fixtures = sorted(p for p in FIXTURES_DIR.iterdir() if p.is_dir())
     if args.fixtures:
         fixtures = [f for f in fixtures if f.name in args.fixtures]
@@ -305,7 +301,13 @@ def main():
 
     judge_model = args.judge_model or DEFAULT_JUDGE_MODEL
     if args.judge_only:
+        # Read-and-judge only: never create or touch the --out directory.
         return judge_only(judge_model, Path(args.judge_only), fixtures)
+
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    system_path = out_dir / "_system_prompt.md"
+    system_path.write_text(build_system_prompt(not args.no_skill), encoding="utf-8")
 
     print(f"model: {args.model}" + ("" if args.no_judge else f", judge: {judge_model}")
           + (", no skill loaded (baseline)" if args.no_skill else ""))
