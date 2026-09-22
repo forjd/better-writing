@@ -51,7 +51,7 @@ Before:
 
 After:
 
-> Churn rose for the second quarter in a row [figure needed from the Q1 report]. Two causes have been flagged internally: the March pricing change and onboarding drop-off. Both point to the need for a retention plan.
+> Churn rose for the second quarter in a row [figure needed from the Q1 report]. It has been suggested internally that the March pricing change and onboarding drop-off may have contributed. Both point to the need for a retention plan.
 
 Note the placeholder. The skill will not invent a churn figure to make the paragraph sound concrete. If the figure exists in the source material, it goes in; if not, the gap is marked honestly.
 
