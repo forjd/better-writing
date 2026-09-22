@@ -2,6 +2,11 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-22, added-claims judge
+
+- `evals/run_skill.py`: the judge sees the brief, lists hopes restated as facts and emphases restated as causes, takes the last JSON array in a self-correcting reply, retries once, and reports an unusable reply as a judge error instead of an invented claim. New `--judge-only DIR` re-judges saved rewrites.
+- `evals/examples/`: three known-good outputs corrected after the new judge flagged real overstatements in them (`linkedin-post`, `quarterly-report`, `release-notes`); the README's quarterly-report example follows.
+
 ## 2026-09-22, detection research refresh
 
 A survey of 2026 detection and stylometry research, current-model system prompts and leaks, Wikipedia's changes since 2026-09-01, and practitioner tools. Sources are in `references/sources.md` under the 2026-09-22 refresh. Leaked prompts and second-hand reports are marked as such and used for diagnosis only.

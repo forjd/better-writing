@@ -12,6 +12,10 @@ rewrite makes that the input does not state or imply; one invented claim
 fails the fixture. Pass --no-judge to skip that call. Exits non-zero if
 any fixture fails.
 
+Pass --judge-only DIR to re-run only the claim check on rewrites already
+saved in DIR as <fixture-name>.md, for example to test a change to the
+judge prompt against earlier runs without generating new rewrites.
+
 Pass --no-skill to produce a baseline with the same brief and no skill
 loaded, into a different --out directory, then compare the two with
 evals/compare_outputs.py.
@@ -49,6 +53,11 @@ no change note, no diagnostic audit, no closing remark.
 
 JUDGE_PROMPT = """You are checking a rewrite for invented content.
 
+The editor was given this brief:
+<brief>
+{brief}
+</brief>
+
 Source text:
 <source>
 {source}
@@ -59,15 +68,24 @@ Rewrite:
 {rewrite}
 </rewrite>
 
-List every claim the rewrite makes that a reader of the source could not have
-taken from it: new facts, figures, events, or actors; a next step the source
-never proposed; a statement about what has or has not happened since; an
-opinion, joke, or aside the source does not carry.
+List every claim the rewrite makes that a reader of the source and the brief
+could not have taken from them: new facts, figures, events, or actors; a next
+step the source never proposed; a statement about what has or has not
+happened since; an opinion, verdict, thanks, joke, or aside the source does
+not carry.
+
+Also list a claim whose strength changed on the way:
+- a hope, aim, or plan in the source restated as something that has happened,
+  is happening, or will happen ("paving the way for a rollout" rewritten as
+  "the rollout continues" or "the rollout is still to come");
+- an emphasis restated as a cause ("underscores the importance of planning"
+  rewritten as "planning made the difference").
 
 Do not list: rewording, reordering, or cuts; the source's own recommendation,
-opinion, or conclusion restated in plainer or firmer words; a change in how
-strongly a claim is attributed; bracketed gap markers such as [figure needed];
-a heading that names the document's subject.
+opinion, or conclusion restated in plainer words at the same strength; a hope
+kept as a hope ("which should help the rollout"); a change in how strongly a
+claim is attributed; a fact the brief states; bracketed gap markers such as
+[figure needed]; a heading that names the document's subject.
 
 Reply with a JSON array of short strings, one per invented claim, and nothing
 else. Reply with [] if there are none."""
@@ -171,30 +189,91 @@ def strip_code_fences(reply):
     return "\n".join(lines).strip()
 
 
-def judge_added_claims(model, source, rewrite):
+class JudgeError(Exception):
+    """The judge gave no usable answer, which is not the same as a claim."""
+
+
+def parse_claims(reply):
+    """Return the last JSON array of non-empty strings in a judge reply.
+
+    A judge sometimes answers, second-guesses itself, and answers again
+    ("[...] Wait, that is in the source. Correcting: []"), so the final
+    array is the answer. Returns None when the reply holds no such array.
+    """
+    cleaned = strip_code_fences(reply)
+    decoder = json.JSONDecoder()
+    found = None
+    for i, ch in enumerate(cleaned):
+        if ch != "[":
+            continue
+        try:
+            value, _ = decoder.raw_decode(cleaned, i)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, list) and all(
+                isinstance(c, str) and c.strip() for c in value):
+            found = [c.strip() for c in value]
+    return found
+
+
+def judge_added_claims(model, brief, source, rewrite, attempts=2):
     """Return the list of claims the judge found in the rewrite but not the source.
 
-    A reply that is not a JSON array of non-empty strings is returned as a
-    one-item list holding the raw text, so a confused judge fails the fixture
-    instead of passing it. The judge runs with default sampling; the Claude
+    A reply with no usable JSON array is asked again; if every attempt fails,
+    JudgeError is raised so the fixture fails as a judge error rather than
+    as an invented claim. The judge runs with default sampling; the Claude
     Code CLI exposes no supported temperature setting.
     """
     # The judge stays on opus unless --judge-model overrides (see main).
-    reply = claude_text(model, JUDGE_PROMPT.format(source=source, rewrite=rewrite))
-    print(f"  judge raw: {reply[:300]}")
-    cleaned = strip_code_fences(reply)
-    start, end = cleaned.find("["), cleaned.rfind("]")
-    if start == -1 or end == -1 or end <= start:
-        return [f"judge reply was not a JSON array: {reply[:200]}"]
-    try:
-        claims = json.loads(cleaned[start:end + 1])
-    except json.JSONDecodeError:
-        return [f"judge reply was not valid JSON: {reply[:200]}"]
-    if not isinstance(claims, list):
-        return [f"judge reply was not a JSON array: {reply[:200]}"]
-    if not all(isinstance(c, str) and c.strip() for c in claims):
-        return [f"judge reply was not a list of non-empty strings: {reply[:200]}"]
-    return [c.strip() for c in claims]
+    prompt = JUDGE_PROMPT.format(brief=brief, source=source, rewrite=rewrite)
+    reply = ""
+    for attempt in range(attempts):
+        reply = claude_text(model, prompt)
+        print(f"  judge raw: {reply[:300]}")
+        claims = parse_claims(reply)
+        if claims is not None:
+            return claims
+        if attempt + 1 < attempts:
+            print("  WARN judge reply had no JSON array of strings, asking again")
+    raise JudgeError(f"no usable JSON array after {attempts} attempts: "
+                     f"{reply[:200]}")
+
+
+def judge_only(judge_model, out_dir, fixtures):
+    """Re-judge saved rewrites; write <fixture>.claims.json next to each."""
+    print(f"judge only: {judge_model} on {out_dir}")
+    all_ok = True
+    found = 0
+    for fixture_dir in fixtures:
+        rewrite_path = out_dir / f"{fixture_dir.name}.md"
+        if not rewrite_path.exists():
+            continue
+        found += 1
+        claims_path = out_dir / f"{fixture_dir.name}.claims.json"
+        try:
+            checks, input_text = load_fixture(fixture_dir)
+            text = rewrite_path.read_text(encoding="utf-8")
+            claims = judge_added_claims(judge_model, checks.get("brief", ""),
+                                        input_text, text)
+        except (JudgeError, OSError, TimeoutError, ValueError,
+                subprocess.CalledProcessError) as exc:
+            print(f"{fixture_dir.name}: FAIL judge error ({exc})")
+            claims_path.unlink(missing_ok=True)
+            all_ok = False
+            continue
+        claims_path.write_text(json.dumps(claims, indent=2) + "\n",
+                               encoding="utf-8")
+        if claims:
+            all_ok = False
+            print(f"{fixture_dir.name}: FAIL")
+            for claim in claims:
+                print(f"  added claim: {claim}")
+        else:
+            print(f"{fixture_dir.name}: no added claims")
+    if not found:
+        print(f"no <fixture-name>.md rewrites found in {out_dir}")
+        return 2
+    return 0 if all_ok else 1
 
 
 def main():
@@ -207,13 +286,10 @@ def main():
     parser.add_argument("--no-skill", action="store_true",
                         help="baseline: send the brief with no skill loaded")
     parser.add_argument("--out", default=str(ROOT / "evals" / "outputs"))
+    parser.add_argument("--judge-only", metavar="DIR",
+                        help="only re-run the claim check on rewrites saved in DIR")
     parser.add_argument("fixtures", nargs="*", help="fixture names (default: all)")
     args = parser.parse_args()
-
-    out_dir = Path(args.out)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    system_path = out_dir / "_system_prompt.md"
-    system_path.write_text(build_system_prompt(not args.no_skill), encoding="utf-8")
 
     fixtures = sorted(p for p in FIXTURES_DIR.iterdir() if p.is_dir())
     if args.fixtures:
@@ -224,6 +300,15 @@ def main():
             return 2
 
     judge_model = args.judge_model or DEFAULT_JUDGE_MODEL
+    if args.judge_only:
+        # Read-and-judge only: never create or touch the --out directory.
+        return judge_only(judge_model, Path(args.judge_only), fixtures)
+
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    system_path = out_dir / "_system_prompt.md"
+    system_path.write_text(build_system_prompt(not args.no_skill), encoding="utf-8")
+
     print(f"model: {args.model}" + ("" if args.no_judge else f", judge: {judge_model}")
           + (", no skill loaded (baseline)" if args.no_skill else ""))
 
@@ -287,7 +372,15 @@ def main():
                 print(f"  WARN could not delete stale {claims_path}: {exc}")
             continue
         try:
-            claims = judge_added_claims(judge_model, input_text, text)
+            claims = judge_added_claims(judge_model, brief, input_text, text)
+        except JudgeError as exc:
+            print(f"  FAIL judge error ({exc})")
+            try:
+                claims_path.unlink(missing_ok=True)
+            except OSError:
+                pass
+            all_ok = False
+            continue
         except subprocess.CalledProcessError as exc:
             print(f"  FAIL judge (claude exited {exc.returncode})")
             try:
