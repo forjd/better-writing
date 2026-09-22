@@ -23,12 +23,14 @@ Confidence tiers, used throughout this file:
 
 These need no corroboration. A single instance is hard evidence that text was machine-generated or pasted unedited from a chatbot. Remove them.
 
-- Leaked tool and citation markup that no human types: `oaicite`, `oai_citation`, `contentReference`, `turn0search0`, `attributableIndex`, `grok_card`, `:::writing`, `【...】` citation brackets, Gemini's `[cite: 1]` and `[span_1](start_span)`, Perplexity's `attached_file` and `ppl-ai-file-upload`, DeepSeek's lenticular brackets and dagger marks, ` ```wikitext ` fences, and links that point at a search-engine results page instead of a source.
+- Leaked tool and citation markup that no human types: `oaicite`, `oai_citation`, `contentReference`, `turn0search0`, `citeturn1view0`, `attributableIndex`, ChatGPT's `:::writing{variant="…" id="…"}` block and its `Example+1` source-chip suffix, Grok's `grok_card`, `grok_render_citation_card_json`, and `<grok-card data-type="citation_card">`, Gemini's `[cite: 1]` and `[span_1](start_span)`, Perplexity's `[web:1]`, `attached_file`, and `ppl-ai-file-upload`, lenticular-bracket citations with a dagger such as `【85†L261-269】` (DeepSeek and Meta AI both use the form), ` ```wikitext ` fences, and links that point at a search-engine results page instead of a source.
+- Invisible private-use characters (U+E000 to U+F8FF). ChatGPT wraps its `cite…` tokens in U+E200, U+E201, and U+E202, and when the visible markup is deleted the invisible characters often stay behind. They do not render, so search for them with a regex or a hex view.
+- Reasoning or tool syntax written out as text: literal `<thinking>` tags, or a tool call typed as prose. Anthropic documents this for Claude Opus 5 with thinking disabled. No case in pasted text had been reported as of September 2026, but one sighting is conclusive.
 - Citations that do not resolve: a DOI or ISBN that is invalid, or a DOI that resolves to an unrelated article. A 2026 audit of flagged Wikipedia articles found only 7% cited a fabricated source but over two-thirds failed verification, so check the resolving ones too.
 - Humaniser residue. Commercial "humanisers" swap words for dictionary synonyms and damage the text: "counterfeit consciousness" for "artificial intelligence", tortured phrases in place of standard terms, non-standard Unicode look-alike characters, and a sudden drop to elementary register with random typos. A benchmark of 19 such tools found every one degraded the original. Treat the residue as conclusive and restore the plain term.
-- Raw markdown dropped into a destination that does not render it: literal `**bold**`, `##` headings, or escaped `\*` asterisks in an email, a plain-text field, or a CMS that expected HTML.
-- Tracking parameters left on pasted links, such as `?utm_source=chatgpt.com`.
-- Unedited assistant scaffolding: "Let me know if you need any modifications", "Here is the revised version", "I hope this helps", "Would you like me to".
+- Raw markdown dropped into a destination that does not render it: literal `**bold**`, `##` headings, escaped `\*` asterisks, or a markdown pipe table (`| a | b |` rows over a `|---|` separator) in an email, a plain-text field, a wiki, or a CMS that expected HTML.
+- Tracking parameters left on pasted links: `?utm_source=chatgpt.com`, `utm_source=openai`, `utm_source=copilot.com`, `referrer=grok.com`.
+- Unedited assistant scaffolding: "Let me know if you need any modifications", "Here is the revised version", "I hope this helps", "Would you like me to", and pasted chat labels such as "Claude responded:".
 - Unfilled template placeholders the writer forgot to replace: `[Your Name]`, `[Insert X here]`, `[Company]`, `[Date]`. A deliberate editorial gap marker such as `[figure needed from the Q1 report]` is not one of these; keep it until the fact arrives.
 - Standalone model disclaimers: "As an AI language model", "As a large language model", "I don't have access to real-time information". These are 2022–2024-era and largely retired by current models, so their absence proves nothing, but their presence is conclusive.
 
@@ -104,6 +106,8 @@ The text asserts a relationship without saying what it is: "associated with", "l
 
 Fix by naming the relationship (built, sold, funded, tested, was sued over) or cutting the sentence.
 
+The false range is a close relative: "from X to Y" where the endpoints are not the ends of any scale, as in "from ancient pottery to modern fintech". Wikipedia stopped listing it as a separate sign in September 2026. Treat it as a vague connection and fix it the same way, by naming the topics covered.
+
 ### Process narration
 
 The text narrates the research instead of reporting it: "after reviewing available sources", "upon examination of the record", "a closer look reveals". A 2026 Wikipedia cleanup candidate. Fix by giving the finding and, where the genre wants it, the citation.
@@ -172,6 +176,8 @@ The same thing gets renamed for variety: "the protagonist", "the central figure"
 
 Fix by choosing the clearest term and repeating it when repetition helps. A human writer says "the parser" four times in a paragraph.
 
+The sources disagree on whether this is current. In September 2026 Wikipedia moved elegant variation to its historical indicators, on the premise that it came from repetition penalties in older models. This catalogue keeps it, because the 2025 study measured the habit getting stronger in newer ChatGPT versions. Either way it is Tier 2: a habit across a piece, never one renamed noun.
+
 ### Sentence length
 
 2025-era instruction-tuned models write sentences 15 to 30% longer than human authors of comparable text, and pack them with nominal modifiers, participial phrases, and coordinated nouns. 2023-era models ran short and choppy. Neither is a single-sentence tell; the signal is a whole piece that sits at one length with no short sentence anywhere. See Uniform cadence under Structure check in `preflight.md`.
@@ -179,12 +185,6 @@ Fix by choosing the clearest term and repeating it when repetition helps. A huma
 ### Mannered prose
 
 The sentence substitutes metaphor and flourish for direct statement: "the codebase groans under its own weight", "a symphony of microservices", "we set sail for a new architecture". The fix is to say what you mean. When a literal phrase is available, use it. This is similar to Anthropic's guidance for its own models, and it works on drafts too.
-
-### False ranges
-
-The text uses "from X to Y" where the endpoints are not a real range.
-
-Fix by naming the covered topics directly.
 
 ### Passive voice and subjectless fragments
 
@@ -200,7 +200,7 @@ Fix by naming the actor when it matters. Keep passive voice when the actor is un
 
 AI prose can lean on em dashes and en dashes for rhythm and faux sophistication. Treat this carefully: the em dash is the most-publicised tell and the least reliable. Many strong human writers use it heavily, and some writers now self-censor real punctuation to dodge suspicion. A single em dash, or em dashes in literary and editorial long-form, is not a tell.
 
-The rate depends on which model wrote the text, not on "AI"; the per-model figures are under Model fingerprints below, for diagnosis only. A per-model rate is never, by itself, a reason to edit the writer's dashes: a dash the writer put there stays unless it clusters with other tells as described next, or the brief asks for the strict pass.
+The rate depends on which model wrote the text, not on "AI"; the per-model figures are under Model fingerprints below, for diagnosis only. The habit is also fading and easy to switch off. In September 2026 Wikipedia proposed moving em-dash overuse to its historical indicators, and a one-line instruction to avoid dashes takes some current models to almost none. A text with no dashes proves nothing, and one with many proves little. A per-model rate is never, by itself, a reason to edit the writer's dashes: a dash the writer put there stays unless it clusters with other tells as described next, or the brief asks for the strict pass.
 
 In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns and clearly substitutes for sentence structure. In strict "humanise" or de-AI passes, removing em and en dashes is a register choice the user has asked for, not proof of AI origin. End the sentence or use a comma. Do not swap the dash for a colon or parentheses; see Colon as connector in `structures-and-phrases.md`. Either way, keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography. Stripping dashes to beat a detector is not a quality goal.
 
@@ -234,6 +234,10 @@ Headings that do the section's work for it ("Why the reception was mixed" where 
 
 Horizontal rules between every section, skipped heading levels, a heading that contains only sub-headings, and a small table for two or three facts that are not tabular. Fix by writing the structure the content needs, not the one the model's template produces.
 
+### Over-compression
+
+The opposite of padding: articles and verbs dropped, arrows standing in for sentences, private abbreviations, so the reader has to decode. "Config → validated → cached; retry on fail" in a document written for someone else. Arrow chains used as a mock flow chart are the usual form in social posts. Fix by writing the sentence with its verb and articles. Exempt commit subjects, changelogs, chat between people who share the context, and notes the writer keeps for themselves.
+
 ### Hyphenated pairs after the noun
 
 AI prose hyphenates compound modifiers everywhere. Keep the hyphen before a noun when grammar needs it ("a high-quality report") and drop it after the noun ("the report is high quality"). One stray hyphen is nothing; a piece where every pair is hyphenated in both positions is a habit.
@@ -244,7 +248,7 @@ Remove decorative emoji in professional, technical, reference, and de-AI rewrite
 
 ### Curly quotes
 
-Curly quotes alone are not an AI tell. Convert to straight quotes only when the output format, code context, or user preference requires it.
+Curly quotes alone are not an AI tell. Word processors and phones insert them, and chat models split: ChatGPT (since mid-2025) and DeepSeek emit curly quotes, Claude and Gemini straight ones. Convert to straight quotes only when the output format, code context, or user preference requires it.
 
 ## Communication artefacts
 
@@ -288,13 +292,22 @@ Wordy constructions such as "in order to" and "as a result of" belong with the s
 
 For review and diagnosis tasks, not for verdicts. These date fast and a wrong attribution is worse than none, so never act on them alone. Two cautions from the corpus work: instruction tuning, not the vendor, drives most of the shared tells, and successive models from one vendor often do not cluster together, so a fingerprint carries a model version and a date or it is worthless.
 
-- ChatGPT, GPT-4 to 4o era (2023 to 2024): tricolons, additive em dashes, bold inside enumerations, "such as", "certainly", "below is", "overall", academic register that shuns slang. GPT-5.x (late 2025 onward): em dashes below the human rate, softer register, a "Good question" or "Great start" opener reintroduced by OpenAI.
-- Claude, 3.5 to Opus 4.6 (2024 to early 2026): minimal structure and less bold than ChatGPT, "here", "according to", "based on", em dashes at roughly triple the human rate, long hedged multi-clause sentences, "you're absolutely right".
-- Gemini, 2.5 era: verbose, corporate-flat, plain conversational vocabulary, more italics, list and header heavy, "[cite: 1]" leakage.
-- Grok, 2025 to 2026: superficially scientific vocabulary ("causal", "empirical", "correlate"), "X rather than Y" framing, and "underscore" long after other models dropped it.
-- DeepSeek: lenticular brackets and dagger marks leaking from its citation format.
+Two more cautions for this section. Several entries rest on vendor system prompts, some official and some leaked (the leaked ones come from the asgeirtj/system_prompts_leaks collection and are unofficial). A ban in a system prompt shows the vendor saw the habit; it does not show how often the habit survives. And the phrase multiples from Graphite's September 2026 study come from web articles, so they may not carry over to chat replies or email.
 
-Em dashes per 1,000 words, measured in early 2026 (Freeburg) with no formatting instruction (rounded figures): GPT-5.4 at 1.4, below a human essay baseline of 3.2; Claude Opus 4.6 at 9.1 and DeepSeek V3 at 7.0, roughly triple it; Gemini 2.5 Pro at 3.5; Llama at zero. OpenAI cut the habit, Claude and DeepSeek did not. Two secondary signals: machine em dashes are usually surrounded by spaces, and in scientific discussion sections a corpus study found em-dash prevalence rising from 4% of papers before ChatGPT to 20% in 2025. Neither is a single-document verdict, and neither is a reason to touch a dash in a writer's draft.
+- ChatGPT, GPT-4 to 4o era (2023 to 2024): tricolons, additive em dashes, bold inside enumerations, "such as", "certainly", "below is", "overall", academic register that shuns slang.
+- GPT-5.x (late 2025 onward): em dashes below the human rate, softer register, curly quotes, a "Good question" or "Great start" opener reintroduced by OpenAI. The leaked GPT-5.5 Thinking prompt (May 2026) bans "If you want", "If you mean", "Short answer:", "Short version:", and ending a reply on "I can …", which suggests those were habits. Creature metaphors ("goblin", "gremlin") rose from GPT-5.1 on, per an OpenAI post-mortem reported second-hand.
+- GPT-6 Astra (Graphite, September 2026): em dashes 88% below the human rate; "not simply" at 157 times the human rate, "rather than relying", "dependable", "another dimension", "together these".
+- Claude, 3.5 to Opus 4.6 (2024 to early 2026): minimal structure and less bold than ChatGPT, "here", "according to", "based on", em dashes at roughly triple the human rate, long hedged multi-clause sentences, "you're absolutely right".
+- Claude Opus 5 (2026): "deliberate" at 26 times the human rate, "every single" at 112, "rather than merely" at 160, "less like a X and more like a Y" at 105, plus "single most" and "arguably the most" (Graphite). An Arena comparison (August 2026, second-hand) found replies about three times as long as Opus 4.5's, sentences 58% longer, and more "load-bearing", "honestly", and "frankly". Anthropic's prompting guide says it runs long, with filler sections and redundant summaries, and narrates its own self-corrections.
+- Claude Fable 5.1 and Opus 5.5 (2026): per Anthropic's guide, Fable 5.1 writes denser prose with longer sentences, fewer paragraph breaks, and less bold, fewer headers and lists, and can reproduce source passages without quotation marks; the guide gives "a dial worth turning" and "earns its keep" as its mannered prose. The Opus 5.5 system prompt (September 2026) asks for reports in prose, with lists written inline ("some things include: x, y, and z"), and at most one question per reply.
+- Gemini, 2.5 era: verbose, corporate-flat, plain conversational vocabulary, more italics, list and header heavy, "[cite: 1]" leakage.
+- Gemini 3.x (2026): 3.1 Pro has nearly stopped using em dashes and over-uses "incredibly", "profound", "furthermore the", "ultimately this", "this comprehensive guide", and "is not just a X, it is" (Graphite). The Gemini 3 Pro system prompt tells it to end on "Would you like me to …", so in Gemini text that closer is by design. The leaked 3.8 Flash prompt (September 2026) bans "Here's my take:", "Short answer:", and "Here are…".
+- Grok, 2025 to 2026: superficially scientific vocabulary ("causal", "empirical", "correlate"), "X rather than Y" framing, and "underscore" long after other models dropped it. The leaked Grok 4.7 CLI prompt (September 2026) bans "X, not Y", "X rather than Y", "Bottom Line:", "delve", "foster", "leverage", "it's worth noting", self-answered questions, "This isn't about X. It's about Y.", and coined acronyms, so its vendor sees the same habits.
+- DeepSeek: lenticular brackets and dagger marks leaking from its citation format, and curly quotes.
+- Meta AI, Muse Spark (July 2026, leaked prompt): told to use no em dashes at all and to format with `- **Label**: explanation` bullets, headings, and tables. Bold-label bullets in its output are house style; see Mechanical bold and inline headers.
+- Contractions: six 2026 models given identical prompts ranged from about 1,200 to over 30,000 contractions per million words. No contraction rate marks "AI" or "human"; see Human signals to preserve.
+
+Em dashes per 1,000 words, measured in early 2026 (Freeburg) with no formatting instruction (rounded figures): GPT-5.4 at 1.4, below a human essay baseline of 3.2; Claude Opus 4.6 at 9.1 and DeepSeek V3 at 7.0, roughly triple it; Gemini 2.5 Pro at 3.5; Llama at zero. With a short instruction to avoid dashes, Claude Opus 4.6 fell to 0.2 and Gemini 2.5 Pro to zero, while GPT-4.1 barely moved (10.6 to 9.1). OpenAI cut the habit first. Later data is mixed: Graphite (September 2026, 10,000 web articles per model against 10,000 pre-ChatGPT human articles) puts Claude Opus 5 at about the human rate and Gemini 3.1 Pro near zero, while the Arena chat comparison found Opus 5 using 2.3 times as many as Opus 4.5. Articles and chat replies are different corpora, which probably explains the split, so date any figure you cite. Two secondary signals: machine em dashes are usually surrounded by spaces, and in scientific discussion sections a corpus study found em-dash prevalence rising from 4% of papers before ChatGPT to 20% in 2025. Neither is a single-document verdict, and neither is a reason to touch a dash in a writer's draft.
 
 ## False positives
 
@@ -307,11 +320,14 @@ Do not over-edit these without a cluster of other tells:
 - one warm "happy to help" in a genuine message
 - a common salutation or sign-off
 - clean formatting from a CMS or document editor
+- casual and formal register mixed in one piece, which fits technical writers, young writers, and neurodivergent writers; Wikipedia lists it as an ineffective indicator
+- anything under about 200 words. Style classifiers lose most of their accuracy at that length, so a short message gets no stylometric verdict at all; only near-conclusive artefacts count
 
 Why single features are unreliable, and why detector-evasion is a non-goal:
 
 - Detectors vary enormously and the bias is documented. A 2023 Stanford study found more than half of non-native English essays misclassified as AI across seven detectors, on a sample of 179 essays. A 2026 ACL study of 16 detectors on about 41,700 essays confirmed the direction: essays by English language learners are more likely to be classified as machine-generated, and non-white learners more so than white ones. Human raters in the same study were no better than chance and showed no such bias. At the other end, commercial vendors report near-zero false-positive rates for their current products, figures that are vendor-relayed and unverified here. OpenAI retired its own classifier in 2023 after it correctly flagged only 26% of AI text. Light paraphrasing still defeats most detectors.
-- Plain, predictable, low-variation prose is the normal style of fluent non-native and formal writers. Flagging it penalises people, not machines. The same is widely reported for neurodivergent writers, and at least one university finding has been annulled on that basis, but as of 2026 no peer-reviewed study quantifies that false-positive rate.
+- Plain, predictable, low-variation prose is the normal style of fluent non-native and formal writers. Flagging it penalises people, not machines. The same is widely reported for neurodivergent writers, and at least one university finding has been annulled on that basis. A July 2026 preprint gives the first measurement: across about 33,000 Reddit posts, one older detector flagged posts from autism communities 25% more often than posts from general communities, and 50% more often at matched length, although the flagged posts were no flatter or more predictable. It is one detector, not peer-reviewed, and autism was inferred from the subreddit, so take the direction, not the rate. A 2025 Grammarly benchmark of about 208,000 document pairs found the same kind of gap for dialect, age, and register: four open-source detectors scored worst on African American English, Singlish, teen, and informal Gen Z writing.
+- Detectors cannot tell a human draft lightly polished by a model from generated text. In a 2026 study all five detectors tested flagged a non-trivial share of LLM-polished peer reviews as AI-written, so any policy that allows polishing cannot be enforced by a detector. Watermarks do not settle it either: in a 2026 test of the open-source SynthID-Text implementation, meaning-preserving paraphrase removed 98% of the watermarks, and 5.4% of human text was flagged.
 - "delve" is an RLHF artefact, not, as sometimes claimed, a marker of Nigerian English; corpus work found it does not originate there. It is common in fluent Nigerian, Indian, and other non-native business English. One or two focal words mean nothing; only a dense cluster in a short passage is a signal. Humans are also adopting these words: recordings of unscripted speech show "delve", "meticulous", and "underscore" rising since 2023, some more than doubling, so the 2023 list keeps losing power as a tell.
 - The em dash is the least reliable single tell. See Dash dependence above.
 
@@ -333,4 +349,8 @@ Preserve:
 - wordy constructions such as "in order to" and "as a result of"
 - superlatives and definitive statements the writer is willing to stand behind
 - simple "is" and "has" sentences and plain verbs ("wrote", not "authored")
+- parenthetical asides and brackets. Model revision removes them, and current models use far fewer than human writers do
+- exclamation marks where the writer uses them. Current models rarely write one in an article; the social-post tell is one on every line, not one in a piece
+- concessives ("although", "though") and discourse particles ("well", "anyway", "mind you"), which a 2026 register study found models under-use
+- the writer's own contraction rate, high or low. Rates vary about 25-fold between current models, so compare against the writer's sample, never against a supposed human rate
 - a single em dash, a lone "delve", or one tricolon used naturally

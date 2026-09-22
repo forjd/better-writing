@@ -39,6 +39,8 @@ KNOWN_VOICE_KEYS = {
     "first_person_rate",
     "hedge_rate",
     "mean_word_length",
+    "mattr",
+    "sentence_length_sd",
 }
 
 # Top-level root files mirrored into each tap as symlinks.

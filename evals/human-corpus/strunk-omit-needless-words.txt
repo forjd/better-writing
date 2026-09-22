@@ -1,0 +1,105 @@
+13. Omit needless words.
+
+Vigorous writing is concise. A sentence should contain no unnecessary
+words, a paragraph no unnecessary sentences, for the same reason that a
+drawing should have no unnecessary lines and a machine no unnecessary
+parts. This requires not that the writer make all his sentences short,
+or that he avoid all detail and treat his subjects only in outline, but
+that he make every word tell.
+
+Many expressions in common use violate this principle:
+
+  the question as to whether
+
+    whether (the question whether)
+
+  there is no doubt but that
+
+    no doubt (doubtless)
+
+  used for fuel purposes
+
+    used for fuel
+
+  he is a man who
+
+    he
+
+  in a hasty manner
+
+    hastily
+
+  this is a subject which
+
+    this subject
+
+  His story is a strange one.
+
+    His story is strange.
+
+In especial the expression _the fact that_ should be revised out of
+every sentence in which it occurs.
+
+  owing to the fact that
+
+    since (because)
+
+  in spite of the fact that
+
+    though (although)
+
+  call your attention to the fact that
+
+    remind you (notify you)
+
+  I was unaware of the fact that
+
+    I was unaware that (did not know)
+
+  the fact that he had not succeeded
+
+    his failure
+
+  the fact that I had arrived
+
+    my arrival
+
+See also under _case_, _character_, _nature_, _system_ in Chapter V.
+
+_Who is_, _which was_, and the like are often superfluous.
+
+  His brother, who is a member of the same firm
+
+    His brother, a member of the same firm
+
+  Trafalgar, which was Nelson's last battle
+
+    Trafalgar, Nelson's last battle
+
+As positive statement is more concise than negative, and the active
+voice more concise than the passive, many of the examples given under
+Rules 11 and 12 illustrate this rule as well.
+
+A common violation of conciseness is the presentation of a single
+complex idea, step by step, in a series of sentences or independent
+clauses which might to advantage be combined into one.
+
+  Macbeth was very ambitious. This led him to wish to become king of
+  Scotland. The witches told him that this wish of his would come true.
+  The king of Scotland at this time was Duncan. Encouraged by his wife,
+  Macbeth murdered Duncan. He was thus enabled to succeed Duncan as
+  king. (51 words.)
+
+    Encouraged by his wife, Macbeth achieved his ambition and realized
+    the prediction of the witches by murdering Duncan and becoming king
+    of Scotland in his place. (26 words.)
+
+  There were several less important courses, but these were the most
+  important, and although they did not come every day, they came often
+  enough to keep you in such a state of mind that you never knew what
+  your next move would be. (43 words.)
+
+    These, the most important courses of all, came, if not daily, at
+    least often enough to keep one under constant strain. (21 words.)
+
+

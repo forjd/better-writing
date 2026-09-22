@@ -152,7 +152,7 @@ Use my writing sample below as the voice reference, then rewrite the article int
 | [references/structures-and-phrases.md](./references/structures-and-phrases.md) | Slop phrase and structure audit. |
 | [references/genre-tells.md](./references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, fiction, and code. |
 | [references/voice-and-context.md](./references/voice-and-context.md) | Audience, genre, dials, voice calibration, and genre exemptions. |
-| [evals/](./evals/) | Fixture texts, a checker with voice-drift metrics, a model runner with an added-claims judge, and a pairwise comparison against a no-skill baseline. |
+| [evals/](./evals/) | Fixture texts, a checker with voice-drift metrics, a pre-ChatGPT human corpus for false-positive reports, a model runner with an added-claims judge, and a pairwise comparison against a no-skill baseline. |
 | [skills/better-writing/](./skills/better-writing/) | Tap layout for managers that expect `skills/<name>/`; relative symlinks back to the root files. |
 | [scripts/validate.py](./scripts/validate.py) | Repo checks run by CI: frontmatter, fixtures, symlinks. |
 | [CHANGELOG.md](./CHANGELOG.md) | Dated history of the pattern catalogue. |
@@ -204,7 +204,7 @@ See [references/sources.md](./references/sources.md) for fuller source notes.
 
 ## Evaluation
 
-Pattern lists are easy to break: one well-meaning edit and the skill starts flagging human writing or missing a new tell. The [evals/](./evals/) directory holds ten fixture texts seeded with known tells and known facts, a dependency-free checker that verifies a rewrite removed the tells *and* kept the facts, and a runner that produces the rewrites with a real model.
+Pattern lists are easy to break: one well-meaning edit and the skill starts flagging human writing or missing a new tell. The [evals/](./evals/) directory holds eleven fixture texts seeded with known tells and known facts, a dependency-free checker that verifies a rewrite removed the tells *and* kept the facts, and a runner that produces the rewrites with a real model.
 
 ```bash
 python3 evals/run_skill.py                                          # run every fixture through claude-opus-5, check, then judge for added claims
@@ -215,7 +215,7 @@ python3 evals/compare_outputs.py evals/baseline evals/outputs         # pairwise
 
 The runner needs the Claude Code CLI on PATH with working credentials. Run it before and after any change to `SKILL.md` or the references and compare the two reports. The added-claims judge exists because the substring checker cannot see invention; a rewrite that added "nobody has asked to bring the stand-up back" to the LinkedIn fixture passed every substring check. The baseline and pairwise comparison exist because a pass count cannot show the skill beat the unaided model.
 
-The checker is a smoke test, not a judge. It matches whole words and phrases (allowing inflections such as "syncs" or "seamlessly"), bounds the length, rejects the damage a search-and-replace leaves behind (doubled spaces, space before punctuation), catches binary-contrast scaffolds, and on keep-my-voice fixtures measures whether contractions, first person, hedges, and word length moved. A rewrite can pass it and still read badly, so read the outputs in `evals/outputs/` as well as the pass counts. Detector scores are deliberately not a check; `evals/README.md` says why. See [evals/README.md](./evals/README.md) for the fixture list and check format.
+The checker is a smoke test, not a judge. It matches whole words and phrases (allowing inflections such as "syncs" or "seamlessly"), bounds the length, rejects the damage a search-and-replace leaves behind (doubled spaces, space before punctuation), catches binary-contrast scaffolds, and on keep-my-voice fixtures measures whether contractions, first person, hedges, word length, lexical variety, and the spread of sentence lengths moved. `run_evals.py --corpus evals/human-corpus` runs the same checks over pre-ChatGPT human prose and reports what fires, so an over-broad check shows up before it misfires on a writer. A rewrite can pass it and still read badly, so read the outputs in `evals/outputs/` as well as the pass counts. Detector scores are deliberately not a check; `evals/README.md` says why. See [evals/README.md](./evals/README.md) for the fixture list and check format.
 
 ## A living pattern catalogue
 
@@ -224,7 +224,7 @@ AI tells drift. "Delve" and "tapestry" marked 2023-era output; "it's not just X,
 - The vocabulary list is era-stamped and tiered, so the skill leans on cluster density and structure rather than any single word. Distinctive markers, common-but-overused words, and ordinary English that only shows up across a corpus are flagged differently.
 - Additions, changes, and retirements are dated in [CHANGELOG.md](./CHANGELOG.md).
 - Patterns that fade from current model output get marked as legacy rather than deleted, so the skill still catches older drafts.
-- The false-positive guardrails carry the detector-bias evidence (non-native over-flagging measured across 16 detectors in 2026; neurodivergent over-flagging widely reported but not yet measured), and the `plain-human`, `voice-preservation`, and `academic-hedge` evals fail if the skill over-edits clean prose. Detector-evasion is explicitly a non-goal.
+- The false-positive guardrails carry the detector-bias evidence (non-native over-flagging measured across 16 detectors in 2026; dialect, teen, and informal writing over-flagged in a 2025 benchmark; autistic writers' posts flagged 25 to 50% more often by one detector in a 2026 preprint), and the `plain-human`, `voice-preservation`, and `academic-hedge` evals fail if the skill over-edits clean prose. Detector-evasion is explicitly a non-goal.
 - Pull requests adding newly observed tells are welcome. Bring at least one real example and a false-positive note.
 
 ## Compatibility

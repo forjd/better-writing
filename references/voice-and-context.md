@@ -117,7 +117,7 @@ Imitation from a sample has limits, and the procedure below is built around them
 
 ### After editing
 
-Recompute the profile on the rewrite. Any figure that moved by more than a third is a voice break: either justify it from the brief or put the original back. Contractions, first person, and hedges falling while word length rises is the documented direction of drift, and it happens even under a "keep my voice" instruction, so check those four first.
+Recompute the profile on the rewrite. Any figure that moved by more than a third is a voice break: either justify it from the brief or put the original back. Contractions, first person, and hedges falling while word length rises is the documented direction of drift, and it happens even under a "keep my voice" instruction, so check those four first. Recompute rather than judging by ear: in a 2026 preregistered study, participants who post-edited model text said it sounded like them while it measured closer to the model than to their own writing, and a 2026 Nature Human Behaviour study found LLM revision narrowed the variation in writing style between people by 21 to 50%.
 
 On outputs over about 600 words, or across several turns of editing, re-read the first paragraph and the last together. Drift toward formal, hedged, contraction-free prose is the failure to look for.
 

@@ -11,6 +11,7 @@ Run this before delivery.
 - If you added specificity, is it sourced by the user's material or clearly framed as a placeholder?
 - Does every sentence in the rewrite say something the source states or directly implies? A next step, a claim about what has happened since, an opinion, or a joke that the source does not contain is an invention, however natural it sounds.
 - Have qualifiers such as "may", "often", and "under these conditions" survived where they limit a claim?
+- Have ranking and scope words survived: "only", "first", "most", "least", "never", "simultaneously"? Trimming a tricolon, a qualifier, or a bold label often takes them out, and each one is a claim.
 
 ## Anti-slop check
 
@@ -24,6 +25,7 @@ Run this before delivery.
 - No sentence names a feeling where it could name a mechanism, a number, or a date.
 - Swap test: no sentence could sit unchanged in another company's or project's copy.
 - No fake precision, invented anecdote, or made-up metric was added.
+- No change note lists what was preserved or left alone.
 - No leaked tool artefacts, citation markup, tracking parameters, unedited assistant scaffolding, model disclaimers, or unfilled placeholders remain — see Near-conclusive artefacts in `ai-writing-patterns.md`. Examples include `oaicite`, `contentReference`, raw `**` or `##` in a plain-text destination, `?utm_source=chatgpt.com`, and `[Your Name]`. A deliberate gap marker for a missing fact, such as `[figure needed from the Q1 report]`, is allowed; see the Preservation check.
 
 ## Taste check
@@ -68,6 +70,7 @@ For any brief that says keep my voice, light edit, or supplies a sample:
 - Contractions, first-person pronouns, and hedges: count them in the source and the rewrite. If the rewrite has fewer, put them back. This is the measured direction of drift and it happens under a voice-preserving instruction too.
 - Mean word length: if the rewrite's words are longer on average, the edit swapped plain words for formal ones. Reverse it.
 - Unity: person, tense, and stance match the first paragraph all the way through.
+- Counts over feel: do not accept "it still sounds like them" in place of the numbers. In a 2026 study, people who post-edited model text judged it their own while it measured closer to the model's style than to their unassisted writing.
 - Recognition: would the writer read the rewrite and recognise it as theirs? If a sentence would make them say "I would never put it that way", it goes back to how they put it.
 
 ## Per-sentence pass
