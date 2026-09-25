@@ -130,7 +130,7 @@ These informed the corrected dash and fingerprint entries, the new leaked artefa
 These informed the draft-from-scratch substance step, rewrite-not-patch, the detector-request guardrail, zero-width residue, the updated detector and expert-reader evidence, voice markers at their natural rate, and the contrast budget. All came via a September 2026 research summary and were not read directly.
 
 - Jabarian and Imas, "Artificial Writing and Automated Detection", NBER Working Paper 34223, August 2025: https://www.nber.org/papers/w34223
-  1,992 human passages in six genres against four 2025 models: the leading trained classifier near-zero error on medium and long passages, all tools weaker at 50 words or fewer.
+  1,992 human passages in six genres against four 2025 models: the leading trained classifier near-zero error, robust even on stubs of 50 words or fewer (abstract read directly, 2026-09-25).
 - Van Vlasselaer, Van Droogenbroeck, Spruyt, "Who wrote this?", International Journal for Educational Integrity, June 2026: https://link.springer.com/article/10.1007/s40979-026-00226-w
   160 documents, four detectors; false positives rare on human text by non-native writers, weaker tools under-counting AI content from the newest model.
 - Russell, Karpinska, Iyyer, "People who frequently use ChatGPT for writing tasks are accurate and robust detectors of AI-generated text", ACL 2025: https://aclanthology.org/2025.acl-long.267/
