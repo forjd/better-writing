@@ -2,6 +2,12 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-25, CI and release hardening
+
+- CI validates the plugin and marketplace manifests with `claude plugin validate`, and only cancels superseded runs on pull requests.
+- Release: write permissions move to the release-please job, and a `RELEASE_PLEASE_TOKEN` secret, when set, lets release PRs trigger CI.
+- Dependabot keeps the pinned actions current.
+
 ## 2026-09-25, review fixes
 
 ### Added
