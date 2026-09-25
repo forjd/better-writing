@@ -127,12 +127,12 @@ These informed the corrected dash and fingerprint entries, the new leaked artefa
 
 ## 2026-09-25 research refresh
 
-These informed the draft-from-scratch substance step, rewrite-not-patch, the detector-request guardrail, zero-width residue, the updated detector and expert-reader evidence, voice markers at their natural rate, and the contrast budget. All came via a September 2026 research summary and were not read directly.
+These informed the draft-from-scratch substance step, rewrite-not-patch, the detector-request guardrail, zero-width residue, the updated detector and expert-reader evidence, voice markers at their natural rate, and the contrast budget. All came via a September 2026 research summary. The PR review on 2026-09-25 checked each against its source; the NBER paper was read directly and the IJEI full text was paywalled.
 
-- Jabarian and Imas, "Artificial Writing and Automated Detection", NBER Working Paper 34223, August 2025: https://www.nber.org/papers/w34223
-  1,992 human passages in six genres against four 2025 models: the leading trained classifier near-zero error, robust even on stubs of 50 words or fewer (abstract read directly, 2026-09-25).
+- Jabarian and Imas, "Artificial Writing and Automated Detection", NBER Working Paper 34223, September 2025: https://www.nber.org/papers/w34223
+  1,992 human passages in six genres against four 2025 models: the leading trained classifier near-zero error, robust even on stubs of 50 words or fewer (paper read directly, 2026-09-25).
 - Van Vlasselaer, Van Droogenbroeck, Spruyt, "Who wrote this?", International Journal for Educational Integrity, June 2026: https://link.springer.com/article/10.1007/s40979-026-00226-w
-  160 documents, four detectors; false positives rare on human text by non-native writers, weaker tools under-counting AI content from the newest model.
+  160 documents, four detectors; false positives rare across all tools, weaker tools under-counting AI content from the newest model.
 - Russell, Karpinska, Iyyer, "People who frequently use ChatGPT for writing tasks are accurate and robust detectors of AI-generated text", ACL 2025: https://aclanthology.org/2025.acl-long.267/
   Five-reader majority vote misclassified 1 of 300 articles; cues included formality, originality, and clarity as well as vocabulary.
 - Jakesch, Hancock, Naaman, "Human heuristics for AI-generated language are flawed", PNAS 2023: https://arxiv.org/abs/2206.07271
@@ -141,9 +141,9 @@ These informed the draft-from-scratch substance step, rewrite-not-patch, the det
   Minimal polishing of human text flagged at 10 to 75% depending on the detector.
 - Spinner, "How to generate AI drafts that sound more human", Wondering About AI, July 2026: https://wonderingaboutai.substack.com/p/how-to-generate-ai-drafts-that-sound
   Voice markers applied at their natural rate and never all at once; a patched sentence keeps the AI rhythm.
-- Carter, "4 reasons your writing accidentally sounds AI-generated", PR Daily: https://www.prdaily.com/4-reasons-your-writing-accidentally-sounds-ai-generated-and-how-to-fix-it/
-  Negative parallelism once per piece at most.
+- Carter, "4 reasons your writing accidentally sounds AI-generated", PR Daily, 9 April 2026: https://www.prdaily.com/4-reasons-your-writing-accidentally-sounds-ai-generated-and-how-to-fix-it/
+  Negative parallelism once per piece at most. The misconception condition is this skill's own.
 - Turnitin AI bypasser detection, 27 August 2025; Krishna et al., "Paraphrasing evades detectors", NeurIPS 2023: https://arxiv.org/abs/2303.13408
-  Detectors trained against humanisers; character-level and paraphrase evasion.
+  Detectors trained against humaniser output; paraphrase evasion.
 
 Use these sources as diagnostic inspiration. Do not copy upstream examples or prose into user deliverables. When maintaining this skill, keep `SKILL.md` concise and move detailed pattern lists into references.
