@@ -31,7 +31,7 @@ These need no corroboration. A single instance is hard evidence that text was ma
 - Raw markdown dropped into a destination that does not render it: literal `**bold**`, `##` headings, escaped `\*` asterisks, or a markdown pipe table (`| a | b |` rows over a `|---|` separator) in an email, a plain-text field, a wiki, or a CMS that expected HTML.
 - Tracking parameters left on pasted links: `?utm_source=chatgpt.com`, `utm_source=openai`, `utm_source=copilot.com`, `referrer=grok.com`.
 - Unedited assistant scaffolding: "Let me know if you need any modifications", "Here is the revised version", "I hope this helps", "Would you like me to", and pasted chat labels such as "Claude responded:".
-- Unfilled template placeholders the writer forgot to replace: `[Your Name]`, `[Insert X here]`, `[Company]`, `[Date]`. A deliberate editorial gap marker such as `[figure needed from the Q1 report]` is not one of these; keep it until the fact arrives.
+- Unfilled template placeholders the writer forgot to replace: `[Your Name]`, `[Insert X here]`, `[Company]`, `[Date]`. A deliberate editorial gap marker such as `[churn figure needed]` is not one of these; keep it until the fact arrives.
 - Standalone model disclaimers: "As an AI language model", "As a large language model", "I don't have access to real-time information". These are 2022–2024-era and largely retired by current models, so their absence proves nothing, but their presence is conclusive.
 
 ## Content patterns
@@ -134,7 +134,7 @@ Vocabulary tells are time-dependent, so lean on structure and cluster density ov
 Read the list through the confidence tiers above:
 
 - Tier 1, distinctive (flag a cluster of two or more): delve, tapestry, testament, intricate, meticulous, pivotal, underscore, realm, showcase, multifaceted, myriad, plethora, commendable, paramount, burgeoning, quintessential, cornerstone, beacon, nuanced.
-- Tier 2, common but overused (flag at higher density, never replace on sight): enhance, foster, leverage, utilise, facilitate, streamline, bolster, amplify, cultivate, garner, surpass, exemplify, encompass, align with, ensure, robust, seamless, comprehensive, holistic, scalable.
+- Tier 2, common but overused (flag at higher density, never replace on sight): enhance, foster, leverage, utilise, facilitate, streamline, bolster, amplify, cultivate, garner, surpass, exemplify, encompass, align with, ensure, robust, seamless, comprehensive, holistic, scalable, and the abstract nouns framework, ecosystem, and dynamic (as a noun, "the team dynamic") when they name no specific thing. See Abstract metaphor nouns in `structures-and-phrases.md`.
 - Tier 3, ordinary English (an aggregate corpus signal only, never a single-document tell): potential, significant, crucial, key, vital, notable, important, additionally, moreover, furthermore, subsequently. Single instances are never a tell. Flag stacked "additionally, moreover, furthermore, subsequently" only as Over-signposting in `structures-and-phrases.md`, and flag the rest only inside Significance inflation or Notability padding above.
 
 Fix Tier 1 and Tier 2 clusters by using plainer words or rewriting the sentence around a concrete noun and verb. Leave Tier 3 alone except for stacked connectives and Significance inflation or Notability padding as above. Keep any Tier 2 word that carries precise technical meaning in code and documentation, such as "robust" and "scalable", when accurate. See Exemptions under Code, pull requests, and documentation in `genre-tells.md`.
@@ -170,7 +170,7 @@ The text uses a predictable contrast structure: "not only X but Y", "this is not
 
 The prose keeps packing ideas into threes. LLM argumentative prose runs tricolons at close to twice the rate of expert human writers.
 
-Fix by using the exact number the thought needs. Two is often enough. One strong example often beats a trio. A single tricolon is a normal rhetorical device, not a tell; the signal is the habit repeating across a piece.
+Fix by using the exact number the thought needs. When the source's three items overlap in meaning, merge them; when each carries a distinct fact, keep all three and vary the sentence shape instead. A single tricolon is a normal rhetorical device, not a tell; the signal is the habit repeating across a piece.
 
 ### Synonym cycling and close-repetition avoidance
 
@@ -204,7 +204,7 @@ AI prose can lean on em dashes and en dashes for rhythm and faux sophistication.
 
 The rate depends on which model wrote the text, not on "AI"; the per-model figures are under Model fingerprints below, for diagnosis only. The habit is also fading and easy to switch off. In September 2026 Wikipedia proposed moving em-dash overuse to its historical indicators, and a one-line instruction to avoid dashes takes some current models to almost none. A text with no dashes proves nothing, and one with many proves little. A per-model rate is never, by itself, a reason to edit the writer's dashes: a dash the writer put there stays unless it clusters with other tells as described next, or the brief asks for the strict pass.
 
-In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns and clearly substitutes for sentence structure. In strict "humanise" or de-AI passes, removing em and en dashes is a register choice the user has asked for, not proof of AI origin. End the sentence or use a comma. Do not swap the dash for a colon or parentheses; see Colon as connector in `structures-and-phrases.md`. Either way, keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography. Stripping dashes to beat a detector is not a quality goal.
+In normal rewrites, treat heavy dash use as one tell among others and thin it out only when it clusters with other patterns and clearly substitutes for sentence structure. In strict "humanise" or de-AI passes, removing em and en dashes is a register choice the user has asked for, not proof of AI origin. End the sentence or use a comma. Do not swap the dash for a colon or parentheses; see Colon as connector below. Either way, keep en dashes in numeric and date ranges such as "2019–2024" or "pages 10–12"; that is standard typography. Stripping dashes to beat a detector is not a quality goal.
 
 ### Colon as connector
 
@@ -281,6 +281,7 @@ Watch for:
 - "due to the fact that", "at this point in time"
 - "it is important to note", "worth noting", "when it comes to"
 - "could potentially possibly be argued", "may potentially in some cases"
+- impersonal hedges that assign a view to no one: "one might argue", "it could be said", "some would say", "it can be argued that". Cut the frame and state the claim at the strength the source gives it; if the source holds the view, it is the writer's, so write it as theirs.
 - "at its core", "the real question is", "the heart of the matter"
 - "the future looks bright", "exciting times lie ahead"
 

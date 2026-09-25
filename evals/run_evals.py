@@ -129,6 +129,8 @@ def phrase_found(phrase, text, inflect=False):
 def load_fixture(fixture_dir):
     fixture_dir = Path(fixture_dir)
     checks = json.loads((fixture_dir / "checks.json").read_text(encoding="utf-8"))
+    if not isinstance(checks, dict):
+        raise ValueError("checks.json: top level must be an object")
     input_text = (fixture_dir / "input.md").read_text(encoding="utf-8")
     return checks, input_text
 
@@ -141,11 +143,13 @@ def word_count(text):
 # a space before closing punctuation, or two punctuation marks with nothing
 # between them ("I !", "our  new", "to .", "update ,.", "done, ;"). A space
 # before "." is allowed when it starts a dotfile, number, or ellipsis
-# (".env", ".5", "Wait ... what?"). Only the mixed pairs "?!" and "!?" are
+# (".env", ".5", "Wait ... what?"), and a space before ":-" or "![" is
+# allowed for Markdown table alignment rows and inline images. Only the mixed pairs "?!" and "!?" are
 # allowed; "!!" and "??" fail.
 WELL_FORMED = [
     (r"\S[^\S\n]{2,}\S", "no doubled spaces inside a line"),
-    (r"\s[,;:!?]|\s\.(?![.\w])", "no space before punctuation"),
+    (r"\s(?:[,;?]|:(?!-)|!(?!\[))|\s\.(?![.\w])",
+     "no space before punctuation"),
     (r"[,;:]\s*[,;:!?]|[!?]\s*[,;:]|[!?]\s+[!?]|!!|\?\?",
      "no empty clause between punctuation marks"),
 ]
@@ -161,10 +165,14 @@ CONTRAST = [
     (r"\bnot\s+(?:just|only|merely|simply)\b[\s\S]{0,120}?\bbut\b",
      "no 'not just X but Y' scaffold"),
     (r"\b(?:isn['’]?t|is not|wasn['’]?t|was not|weren['’]?t|were not|"
-     r"aren['’]?t|are not|it['’]?s not|it is not)\s+"
+     r"aren['’]?t|are not|it['’]?s not|it is not|doesn['’]?t|does not|"
+     r"don['’]?t|do not|didn['’]?t|did not)\s+"
      r"(?:just|only|merely|simply)\b",
      "no 'isn't just X' scaffold"),
-    (r"\bit(?:['’]?s| is)\s+not\b[\s\S]{0,120}?\b(?:it(?:['’]?s| is)|but)\b",
+    # The "but" form needs a noun phrase after "but" ("It's not a tool, but
+    # a partner"), so "It's not ready yet, but it will ship" does not match.
+    (r"\bit(?:['’]?s| is)\s+not\b(?:[\s\S]{0,120}?\bit(?:['’]?s| is)\b|"
+     r"[^.!?]{0,120}?\bbut\s+(?:a|an|about|rather|instead)\b)",
      "no 'it's not X, it's Y' scaffold"),
     (r"\bnot\s+because\b[\s\S]{0,120}?\b(?:but\b(?:\s+because)?|because\b)",
      "no 'not because X but Y' scaffold"),
@@ -199,7 +207,7 @@ FIRST_PERSON = re.compile(
     r"\b(?:I|me|my|mine|myself|we|us|our|ours|ourselves)\b", re.I)
 HEDGE = re.compile(
     r"\b(?:I think|I suspect|I guess|probably|perhaps|maybe|sort of|kind of|"
-    r"seems|seemed|apparently|arguably|roughly|might|may|"
+    r"seems|seemed|apparently|arguably|roughly|might|(?-i:may)|"
     r"tends? to|not sure)\b", re.I)
 
 

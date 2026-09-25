@@ -27,6 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from run_evals import FIXTURES_DIR, load_fixture  # noqa: E402
+from run_skill import ISOLATION_FLAGS, JUDGE_SYSTEM  # noqa: E402
 
 CLAUDE_TIMEOUT = 300
 MAX_RETRIES = 2
@@ -60,7 +61,8 @@ Reply with exactly one character: 1 or 2."""
 
 def ask(model, prompt, timeout=CLAUDE_TIMEOUT, retries=MAX_RETRIES):
     cmd = ["claude", "-p", prompt, "--model", model, "--tools", "",
-         "--output-format", "text"]
+           "--output-format", "text", *ISOLATION_FLAGS,
+           "--system-prompt", JUDGE_SYSTEM]
     for attempt in range(retries + 1):
         try:
             result = subprocess.run(
@@ -98,6 +100,11 @@ def ask(model, prompt, timeout=CLAUDE_TIMEOUT, retries=MAX_RETRIES):
         # judge that reasons first ("Rewrite 1 invents a claim, so Rewrite 2")
         # is read by its conclusion; otherwise take the last standalone 1 or 2
         # so an incidental digit earlier in the reply cannot win.
+        # A bare 1 or 2 on the final line is the requested format; trust it
+        # before scanning prose such as "Rewrite 2 is better; Rewrite 1 pads".
+        last_line = reply.splitlines()[-1].strip() if reply else ""
+        if re.fullmatch(r"\**([12])\**\.?", last_line):
+            return re.search(r"[12]", last_line).group(0)
         verdicts = re.findall(r"rewrite\s*([12])", reply, re.I)
         if verdicts:
             return verdicts[-1]

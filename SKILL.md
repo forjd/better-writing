@@ -27,7 +27,7 @@ Use this skill to make prose stronger without flattening the writer. The goal is
    - For AI-writing tells, use `references/ai-writing-patterns.md`.
    - For slop phrases and formulaic structures, use `references/structures-and-phrases.md`.
    - For genre-specific fingerprints and exemptions, use `references/genre-tells.md`.
-   - Work in order: scan for near-conclusive artefacts first; then count clustered tells in context; then apply genre exemptions. Never edit on a single Tier 2 or Tier 3 feature; near-conclusive artefacts defined in `references/ai-writing-patterns.md` are the sole single-instance exception.
+   - Work in order: scan for near-conclusive artefacts first; then count clustered tells in context; then apply genre exemptions. Never edit on a single feature of any tier; near-conclusive artefacts defined in `references/ai-writing-patterns.md` are the sole single-instance exception.
    - Look for clusters of tells, not isolated quirks. The most durable tell is uniform tone that never adapts to audience or genre. Do not destroy valid style just because it is polished.
 
 4. Rewrite. Each bullet below is a target illustrated by a preferred versus dispreferred pair; the ban lists in `references/` are for the audit, not for the rewrite.
@@ -37,7 +37,7 @@ Use this skill to make prose stronger without flattening the writer. The goal is
    - Sentence length follows the idea: a short sentence for the point, a longer one for the reasoning behind it. "It works. The regex that makes it work took three rewrites and a Friday evening."
    - For short pieces and emails, the first sentence makes the point and the last sentence is the strongest fact already in the source, or the user-requested next action. When cutting a flourish leaves no closing fact, end on the previous sentence; do not write a new one. "The migration runs on Saturday 12 July", not "I wanted to reach out about the migration". For long documents apply this per section, and exempt specs and runbooks.
    - The literal phrase wins over the figurative one. "Three services call the same endpoint", not "a symphony of microservices".
-   - Subtract and surface. Never add. Cut the tells, then let what the source already holds show through. Never invent facts, voice, a next step, a claim about what has or has not happened, a joke or aside in the writer's manner, a sensory detail, a typo, slang, or a contraction the source lacks. Genre-required register shifts (contractions and second person in chat or email) and a user-requested next action are allowed additions, not fabrications. Where a gap needs filling, mark it or ask. Inflation is cut or restated at its true strength, in about as many words as the source's clause, and never converted into a fact: "paving the way for a rollout" does not become "the rollout is under way", and "underscores the importance of planning" does not become "planning made the difference".
+   - Subtract and surface. Never add. Cut the tells, then let what the source already holds show through. Never invent facts, voice, a next step, a claim about what has or has not happened, a joke or aside in the writer's manner, a sensory detail, a typo, slang, or a contraction the source lacks. Genre-required register shifts (contractions and second person in chat or email) and a user-requested next action are allowed additions, not fabrications. A hedge the genre requires (academic, legal, medical) is flagged in a note, not added. Where a gap needs filling, mark it or ask. Inflation is cut or restated at its true strength, in about as many words as the source's clause, and never converted into a fact: "paving the way for a rollout" does not become "the rollout is under way", and "underscores the importance of planning" does not become "planning made the difference".
    - In light-edit mode, change only what is wrong. A lone word or punctuation mark from a tell list, such as one "delve" or a single em dash, is the writer's choice and stays. "Trying to delve into why the export failed" keeps "delve"; "right when the backup locked the table" keeps its dash. A light edit that finds nothing wrong returns the text unchanged, and that is a correct result. Keep the writer's contractions or lack of them, first-person sentences, and hedges unless you can quote the clarity failure; compare before-and-after counts per `references/preflight.md`, and report them only if they moved (see Default output).
 
 5. Self-audit and revise.
@@ -68,7 +68,7 @@ When the user asks to "humanise", "de-AI", "remove slop", "make this sound less 
 
 ## Editing principles
 
-- Specific beats impressive. Name the person, object, constraint, date, place, evidence, or trade-off.
+- Specific beats impressive. Name the person, object, constraint, date, place, evidence, or trade-off the source gives; mark the gap where it gives none.
 - Direct beats announced. Do the thing instead of saying "let's explore" or "here's what matters".
 - Context beats blanket rules. A support email, a board memo, a product page, and a personal essay need different levels of warmth and polish.
 - Voice beats cleanliness. Preserve human asides, mixed feelings, unusual details, and defendable quirks.
@@ -92,9 +92,9 @@ Precedence for conflicts: quoted or frozen text first, then legal and citation e
 
 ## References
 
-- `references/voice-and-context.md`: audience, genre, dials, voice calibration, and genre exemptions.
+- `references/voice-and-context.md`: audience, genre, dials, and voice calibration.
 - `references/ai-writing-patterns.md`: AI-writing tells, confidence tiers, near-conclusive artefacts, and false-positive checks.
 - `references/structures-and-phrases.md`: slop phrase and structure audit.
-- `references/genre-tells.md`: genre-specific phrase banks for email, social, marketing, academic, fiction, and code.
+- `references/genre-tells.md`: genre-specific phrase banks and exemptions for email, social, marketing, academic, fiction, and code.
 - `references/preflight.md`: final yes/no delivery checks.
 - `references/sources.md`: source projects and attribution notes.

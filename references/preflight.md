@@ -2,6 +2,8 @@
 
 Run this before delivery.
 
+In light-edit mode, only the Preservation check and Voice check can trigger changes. Run the other sections to spot errors you can name (see light-edit mode in `SKILL.md`); a "no" there is not by itself a reason to rewrite, and a text with nothing wrong goes back unchanged.
+
 ## Preservation check
 
 - Have you kept every required fact, citation, quote, name, date, number, and constraint?
@@ -27,7 +29,7 @@ Run this before delivery.
 - Swap test: no sentence could sit unchanged in another company's or project's copy.
 - No fake precision, invented anecdote, or made-up metric was added.
 - No change note lists what was preserved or left alone.
-- No leaked tool artefacts, citation markup, tracking parameters, unedited assistant scaffolding, model disclaimers, or unfilled placeholders remain — see Near-conclusive artefacts in `ai-writing-patterns.md`. Examples include `oaicite`, `contentReference`, raw `**` or `##` in a plain-text destination, `?utm_source=chatgpt.com`, and `[Your Name]`. A deliberate gap marker for a missing fact, such as `[figure needed from the Q1 report]`, is allowed; see the Preservation check.
+- No leaked tool artefacts, citation markup, tracking parameters, unedited assistant scaffolding, model disclaimers, or unfilled placeholders remain — see Near-conclusive artefacts in `ai-writing-patterns.md`. Examples include `oaicite`, `contentReference`, raw `**` or `##` in a plain-text destination, `?utm_source=chatgpt.com`, and `[Your Name]`. A deliberate gap marker for a missing fact, such as `[churn figure needed]`, is allowed; see the Preservation check.
 
 ## Taste check
 

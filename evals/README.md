@@ -13,7 +13,7 @@ python3 evals/run_skill.py                       # all fixtures, claude-opus-5
 python3 evals/run_skill.py --model claude-sonnet-5 launch-email plain-human
 ```
 
-The runner builds a system prompt from `SKILL.md` plus every file in `references/`, sends each fixture's `input.md` with its `brief` through `claude -p` with no tools, saves the rewrite to `evals/outputs/<fixture-name>.md` (gitignored), and runs the checker on it. It needs the Claude Code CLI on PATH with working credentials. Run it before and after any change to `SKILL.md` or the pattern lists and compare the reports, and read the outputs, since a pass count says nothing about whether the prose reads well. The report's first line names the model, because length and formatting defaults differ between models.
+The runner builds a system prompt from `SKILL.md` plus every file in `references/`, sends each fixture's `input.md` with its `brief` through `claude -p` with no tools and none of your own settings (`--setting-sources ""`, so your `~/.claude/CLAUDE.md`, memory, plugins, and MCP servers stay out of the run), saves the rewrite to `evals/outputs/<fixture-name>.md` (gitignored), and runs the checker on it. It needs the Claude Code CLI on PATH with working credentials. Run it before and after any change to `SKILL.md` or the pattern lists and compare the reports, and read the outputs, since a pass count says nothing about whether the prose reads well. The report's first line names the model, because length and formatting defaults differ between models.
 
 After the checker, the runner makes a second model call that lists every claim in the rewrite that neither the input nor the brief states or implies: a next step, a line about what has happened since, an opinion, verdict, thanks, or joke the source lacks. It also lists claims whose strength changed on the way, such as a hope restated as something that has happened ("paving the way for a rollout" becoming "the rollout continues") or an emphasis restated as a cause. One listed claim fails the fixture, and the list is saved next to the rewrite as `<fixture-name>.claims.json`. This exists because the substring checker cannot see invention: a rewrite that added "nobody has asked to bring the stand-up back" to the LinkedIn fixture passed every substring check. Read a flagged claim before acting on it.
 
@@ -49,7 +49,15 @@ The comparison shows the judge the brief, the source, and both rewrites, unlabel
 
 ## Why detector scores are not a check
 
-Do not add an AI-detector score to this harness. Four reasons. First, the target is wrong: Pangram's own analysis of humaniser output found that the more readable and fluent the text, the more likely it is to be detected, so optimising against a detector rewards worse prose. Second, the signal is unstable: a 2026 study found light AI edits flagged between 38% and 80% of the time while unmodified human abstracts were flagged 9% to 15% of the time, and adversarial paraphrasing cuts detection by around 88%. Third, the bias is real: a 2026 ACL study across 16 detectors found essays by English language learners over-flagged, and non-white learners more so, and a 2025 benchmark found dialect, teen, and informal writing scored worst. Fourth, a detector cannot separate a human draft a model lightly polished from generated text, which is exactly the output this skill produces. The skill's stated goal is fit and clarity, and the false-positive fixtures exist to keep it from behaving like a detector in reverse.
+Do not add an AI-detector score to this harness.
+
+The target is wrong: Pangram's own analysis of humaniser output found that the more readable and fluent the text, the more likely it is to be detected, so optimising against a detector rewards worse prose.
+
+The signal is unstable: a 2026 study found light AI edits flagged between 38% and 80% of the time while unmodified human abstracts were flagged 9% to 15% of the time, and adversarial paraphrasing cuts detection by around 88%.
+
+The bias is real: a 2026 ACL study across 16 detectors found essays by English language learners over-flagged, and non-white learners more so, and a 2025 benchmark found dialect, teen, and informal writing scored worst.
+
+A detector cannot separate a human draft a model lightly polished from generated text, which is exactly the output this skill produces. The skill's stated goal is fit and clarity, and the false-positive fixtures exist to keep it from behaving like a detector in reverse.
 
 ## Human corpus
 
@@ -63,7 +71,7 @@ The report lists each check that fires, with a snippet. It is not a gate and CI 
 
 ## Known-good outputs
 
-`examples/` contains one passing rewrite per fixture (the same texts shown in the main README). They double as a self-test for the checker:
+`examples/` contains one passing rewrite per fixture (three of them appear in the main README). They double as a self-test for the checker:
 
 ```bash
 python3 evals/run_evals.py --all evals/examples
@@ -97,7 +105,7 @@ CI runs this self-test, together with `scripts/validate.py`, on every push to ma
 - `banned`: case-insensitive words or phrases that must not appear (tells and slop). Matching works like `required` and also catches an `-ly` form, so `seamless` catches "seamlessly" and `empower` catches "empowering". List the base word, not a stem.
 - `banned_regex`: regular expressions that must not match (for example invented percentages). Matching is case-insensitive.
 - `max_words_ratio` / `min_words_ratio`: rewrite length bounds relative to the input, to catch padding and over-cutting.
-- `voice_drift`: for keep-my-voice briefs, the largest change allowed per marker between input and rewrite. Markers are `contraction_rate`, `first_person_rate`, and `hedge_rate` (all per 100 words), `mean_word_length`, `mattr` (moving-average type-token ratio over a 25-word window, plain type-token ratio below that), and `sentence_length_sd` (the standard deviation of sentence lengths in words). The last two are the lexical-richness and style-variance signals that held up across models and domains in 2026 work (El Attar et al.; Sourati et al.); a rewrite that evens out every sentence or swaps repeated plain words for synonyms moves them. These are the four markers rewrites move even under a voice-preserving prompt (van Nuenen, "Voice Under Revision", 2026: contractions and first person fall, word length rises; Jiang and Hyland, 2025: model text carries fewer hedges). The counts are rough (a possessive counts as a contraction), but only the change matters. A rewrite of `voice-preservation` that turned "I have" and "I am" into contractions passed every other check and fails this one.
+- `voice_drift`: for keep-my-voice briefs, the largest change allowed per marker between input and rewrite. Markers are `contraction_rate`, `first_person_rate`, and `hedge_rate` (all per 100 words), `mean_word_length`, `mattr` (moving-average type-token ratio over a 25-word window, plain type-token ratio below that), and `sentence_length_sd` (the standard deviation of sentence lengths in words). The last two are the lexical-richness and style-variance signals that held up across models and domains in 2026 work (El Attar et al.; Sourati et al.); a rewrite that evens out every sentence or swaps repeated plain words for synonyms moves them. The first four are the markers rewrites move even under a voice-preserving prompt (van Nuenen, "Voice Under Revision", 2026: contractions and first person fall, word length rises; Jiang and Hyland, 2025: model text carries fewer hedges). The counts are rough (a possessive counts as a contraction), but only the change matters. A rewrite of `voice-preservation` that turned "I have" and "I am" into contractions passed every other check and fails this one.
 
 Every fixture also gets three well-formedness checks the checker applies itself: no doubled spaces inside a line, no space before punctuation (a dotfile, decimal, or ellipsis is fine), and no empty clause between punctuation marks. These catch a rewrite that only deleted the banned phrases and left the wreckage. Six structure checks run on every rewrite as well: the binary-contrast scaffolds ("not just X but Y", "isn't just", "it's not about X, it's Y", "not because X but because Y", and the split forms "This doesn't mean X. It means Y." and "This isn't about X. It's about Y."), which sam-paech's slop-score weights at a quarter of its total and which no fixture's ideal output needs.
 

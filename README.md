@@ -48,7 +48,7 @@ It also ships with an [evaluation harness](./evals/): fixtures seeded with known
 
 ## Before and after
 
-Real input, real output, no cherry-picked single sentences. These pairs double as test fixtures in [evals/fixtures/](./evals/fixtures/).
+Each "after" is a hand-written target rewrite that passes the checker for its fixture. The inputs are in [evals/fixtures/](./evals/fixtures/) and the rewrites in [evals/examples/](./evals/examples/).
 
 ### A launch email, de-slopped
 
@@ -58,9 +58,9 @@ Before:
 
 After:
 
-> The new analytics dashboard goes live on Monday 15 June. It replaces the weekly CSV export. Data refreshes every hour instead of every seven days, and you can filter by team, project, or date range. Log in and open the Reports tab to try it.
+> The new analytics dashboard goes live on Monday 15 June. It replaces the weekly CSV export. Data refreshes every hour instead of every seven days, and you can see it across teams, projects, and date ranges. Log in and open the Reports tab to try it.
 
-Every fact survived (the date, the CSV export, the hourly refresh, the Reports tab). Everything else went.
+Every fact survived: the date, the CSV export, the hourly refresh, the teams, projects, and date ranges, and the Reports tab. Everything else went.
 
 ### A report paragraph, made specific without inventing anything
 
@@ -70,7 +70,7 @@ Before:
 
 After:
 
-> Churn rose for the second quarter in a row [figure needed from the Q1 report]. It has been suggested internally that the March pricing change and onboarding drop-off may have contributed. Both point to the need for a retention plan.
+> Churn rose for the second quarter in a row [churn figure needed]. It has been suggested internally that the March pricing change and onboarding drop-off may have contributed. Both point to the need for a retention plan.
 
 Note the placeholder. The skill will not invent a churn figure to make the paragraph sound concrete. If the figure exists in the source material, it goes in; if not, the gap is marked honestly.
 
@@ -160,7 +160,7 @@ You can also copy the folder into your agent skills directory if your agent runt
 To pin a release rather than track `main`, clone its tag and copy that checkout:
 
 ```bash
-git clone --branch v1.0.0 https://github.com/forjd/better-writing.git
+git clone --branch v1.1.0 https://github.com/forjd/better-writing.git # x-release-please-version
 ```
 
 The installed version is `metadata.version` in the `SKILL.md` frontmatter.
