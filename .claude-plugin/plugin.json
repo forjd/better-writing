@@ -1,0 +1,21 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "better-writing",
+  "version": "1.0.0",
+  "description": "Rewrite, draft, and review prose so it is clear, specific, and human, without inventing facts or flattening the writer's voice.",
+  "author": {
+    "name": "Dan Dewhurst",
+    "url": "https://github.com/danjdewhurst"
+  },
+  "homepage": "https://github.com/forjd/better-writing",
+  "repository": "https://github.com/forjd/better-writing",
+  "license": "MIT",
+  "keywords": [
+    "writing",
+    "editing",
+    "anti-slop",
+    "humanizer",
+    "copywriting",
+    "ai-writing"
+  ]
+}

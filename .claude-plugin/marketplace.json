@@ -1,0 +1,17 @@
+{
+  "name": "forjd",
+  "description": "Writing skills from forjd.",
+  "owner": {
+    "name": "forjd",
+    "url": "https://github.com/forjd"
+  },
+  "plugins": [
+    {
+      "name": "better-writing",
+      "source": "./",
+      "description": "Rewrite, draft, and review prose so it is clear, specific, and human, without inventing facts or flattening the writer's voice.",
+      "version": "1.0.0",
+      "category": "productivity"
+    }
+  ]
+}
