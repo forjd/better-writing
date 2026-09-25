@@ -25,8 +25,8 @@
   ],
   "banned_regex": [
     "—",
-    "\\d+(\\.\\d+)?\\s*%",
-    "\\d[\\d,]*\\+?\\s*(users|teams|customers|companies)"
+    "\\d+(\\.\\d+)?\\s*(?:%|per\\s*cent\\b|percent\\b)",
+    "\\d[\\d,.]*\\s*[km]?\\+?\\s*(?:[a-z]+\\s+)?(?:users|teams|customers|companies)\\b"
   ],
   "max_words_ratio": 1.1
 }

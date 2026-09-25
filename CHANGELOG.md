@@ -2,6 +2,27 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-25, review fixes
+
+### Added
+
+- `references/ai-writing-patterns.md`: impersonal hedges ("one might argue", "it could be said", "some would say") under performed hedging; framework, ecosystem, and dynamic (as a noun) join Tier 2 when they name no specific thing, with swaps in the abstract nouns table in `references/structures-and-phrases.md`.
+- `scripts/validate.py`: unknown `checks.json` keys and empty pattern strings fail validation.
+
+### Changed
+
+- Rules that invited additions now say "from the source": the specificity ladder, "Specific beats impressive", the "can help" and "is designed to" swaps, the next-step ending, taking a position in false balance, and the email genre default. A missing genre hedge is flagged, not added.
+- `references/preflight.md`: in light-edit mode only the Preservation and Voice checks can trigger changes.
+- `SKILL.md`: no edit on a single feature of any tier. Rule-of-three and list moves merge overlapping items instead of dropping facts.
+- Gap-marker example is now `[churn figure needed]`, which names no source the text lacks. README examples no longer add a filter feature or a Q1 report, and are described as hand-written target rewrites.
+- `evals/`: model calls run without the user's settings, CLAUDE.md, or MCP servers, and the judge gets its own system prompt. A failed rewrite deletes the previous run's output. The contrast check no longer fails "It's not ready yet, but it will ship"; it now catches "doesn't just". Markdown table rows and images pass the spacing check. "15 May" no longer counts as a hedge. Invented-metric checks catch "40 percent", "10k users", and "next quarter".
+- release-please bumps the pinned tag in the README.
+
+## 2026-09-25, 1.1.0: Claude Code plugin
+
+- `.claude-plugin/`: install as a Claude Code plugin from the `forjd` marketplace. `skills/better-writing/` links to the root files so the plugin and `npx skills add` read the same skill.
+- README: a before/after GIF.
+
 ## 2026-09-22, versioned releases
 
 - release-please cuts semver releases from the conventional commit history (`.github/workflows/release.yml`, `release-please-config.json`). It writes GitHub Release notes and leaves this file hand-written.

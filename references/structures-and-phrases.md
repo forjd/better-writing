@@ -52,7 +52,7 @@ Cut the tell-them-what-you-told-them ending unless the genre genuinely needs a s
 - "Overall", "Ultimately"
 - "At the end of the day"
 
-End on the real point, the next step, or the strongest detail.
+End on the real point, a next step the source gives, or the strongest detail.
 
 ### Emphasis crutches
 
@@ -79,11 +79,11 @@ Prefer plain alternatives when the word is filler. Some entries below (leverage,
 | deep dive | analysis, review |
 | moving forward | next, from now on |
 | circle back | return to |
-| on the same page | agreed, aligned |
+| on the same page | agreed |
 | leverage | use |
 | utilise | use |
 | streamline | simplify, speed up |
-| optimise | improve, tune |
+| optimise | tune, or the measured change |
 | actionable | usable, specific |
 | move the needle | make a difference |
 | low-hanging fruit | easy wins |
@@ -117,6 +117,9 @@ A technical-sounding register that reads as precision but usually has a plainer 
 | north star | the goal, the main measure |
 | flywheel | the loop that compounds |
 | load-bearing | essential, what the argument rests on |
+| framework (for a loose idea) | the named method, plan, or rules |
+| ecosystem (outside biology) | the named products, partners, or tools |
+| dynamic (as a noun) | the named behaviour: who does what to whom |
 
 ### Posture adverbs
 
@@ -124,7 +127,7 @@ Remove adverbs that add posture rather than meaning:
 
 - deeply, truly, fundamentally, inherently, inevitably
 - interestingly, importantly, crucially, notably
-- genuinely, honestly, straightforward, and "to be honest" when they vouch for the sentence rather than describe anything. Anthropic's own system prompt bans these for the same reason: a writer who is honest by default does not need to say so, and the modifier reads as the opposite.
+- genuinely, honestly, and "to be honest" when they vouch for the sentence rather than describe anything. Anthropic's own system prompt bans these for the same reason: a writer who is honest by default does not need to say so, and the modifier reads as the opposite.
 
 An adverb propping up a weak verb usually means the verb is wrong: "runs quickly" becomes "is fast" or the measured number, "significantly improves" becomes the delta. Try the stronger verb before deleting the adverb.
 
@@ -307,7 +310,7 @@ Reflexive both-sidesing that never resolves, plus stacked hedges:
 - "On one hand X, on the other hand Y... ultimately it is complex and multifaceted."
 - "may potentially in some cases"
 
-Fix by taking a position where the genre allows confidence. Note the opposite duty in academic, legal, and medical prose, where a genuine hedge protects accuracy and should be kept or even added.
+Fix by stating the position the source already leans towards, where the genre allows confidence. If the source holds no position, cut the stacked hedges down to one and do not choose a side for the writer. Note the opposite duty in academic, legal, and medical prose, where a genuine hedge protects accuracy and should be kept; where one is missing, flag it rather than adding it.
 
 ### List-itis
 
@@ -371,13 +374,13 @@ Constructions that frame a point before making it. Each is ordinary English, so 
 
 - Delete the first sentence if it only introduces the topic.
 - Replace abstract nouns with the object or action.
-- When threes repeat across a piece, replace three-item lists with the strongest one or two items.
-- Replace "can help" with the actual outcome.
-- Replace "is designed to" with what it does.
+- When threes repeat across a piece, merge list items that overlap in meaning. Keep every item that carries a distinct fact.
+- Replace "can help" with the actual outcome if the source states it, keeping any hedge the source put on it.
+- Replace "is designed to" with what it does only when the source says it does it; otherwise the design intent is the true claim and stays.
 - Replace "users are able to" with "users can".
 - Replace "there are" openings with a stronger subject.
 - Merge duplicate sentences rather than cycling synonyms.
 - Move the actor to the front of the sentence.
 - Split any sentence you have to backtrack to parse. One idea per sentence.
 - Replace a sentence that names a feeling with the mechanism, a number, or a date.
-- End on the concrete next step, not a flourish.
+- End on the concrete next step the source already gives, or on its strongest fact. Never write a new next step to replace a flourish.

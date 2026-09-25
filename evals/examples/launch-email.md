@@ -1,1 +1,1 @@
-The new analytics dashboard goes live on Monday 15 June. It replaces the weekly CSV export. Data refreshes every hour instead of every seven days, and you can filter by team, project, or date range. Log in and open the Reports tab to try it.
+The new analytics dashboard goes live on Monday 15 June. It replaces the weekly CSV export. Data refreshes every hour instead of every seven days, and you can see it across teams, projects, and date ranges. Log in and open the Reports tab to try it.

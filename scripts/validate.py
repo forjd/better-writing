@@ -38,6 +38,11 @@ ROOT = Path(__file__).resolve().parent.parent
 
 errors = []
 
+CHECK_KEYS = {
+    "name", "brief", "required", "required_regex", "banned", "banned_regex",
+    "max_words_ratio", "min_words_ratio", "voice_drift",
+}
+
 KNOWN_VOICE_KEYS = {
     "contraction_rate",
     "first_person_rate",
@@ -194,6 +199,13 @@ def check_fixtures():
             errors.append(f"{rel}/checks.json: top level must be an object")
             continue
 
+        unknown = sorted(set(checks) - CHECK_KEYS)
+        check(
+            not unknown,
+            f"{rel}/checks.json: unknown keys {unknown} (a misspelled key "
+            "silently disables its check)",
+        )
+
         brief = checks.get("brief")
         check(
             isinstance(brief, str) and brief.strip(),
@@ -205,8 +217,10 @@ def check_fixtures():
                 value = checks[key]
                 check(
                     isinstance(value, list)
-                    and all(isinstance(item, str) for item in value),
-                    f"{rel}/checks.json: {key} must be a list of strings",
+                    and all(isinstance(item, str) and item.strip()
+                            for item in value),
+                    f"{rel}/checks.json: {key} must be a list of non-empty "
+                    "strings",
                 )
 
         for key in ("max_words_ratio", "min_words_ratio"):

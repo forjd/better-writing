@@ -52,7 +52,7 @@ This section sets the dials for each genre. A tell in one genre is correct in an
 
 - Lead with the action or decision.
 - Keep goodwill, but cut servility.
-- Use concrete asks, owners, dates, and next steps.
+- Put the concrete asks, owners, dates, and next steps the source gives up front. Do not add ones it lacks.
 - Preserve relationship context. Direct does not mean blunt.
 
 ### Chat and short messages
@@ -130,7 +130,7 @@ The checks that make a rewrite read as written rather than assembled. Each is a 
 - Cohesion. Read the grammatical subjects of a paragraph's sentences in order. They should name a small set of recurring topics. If every sentence has a fresh subject, the paragraph is not about anything.
 - Proportion. At most one emphasised sentence per paragraph: a figure of speech, an intensifier, a tricolon, or a short punchline. AI prose deploys the same level of special effects to every sentence regardless of importance. The last sentence is not automatically the emphasised one.
 - Connectors only where order fails. If the paragraphs already hold their order, "however", "therefore", and "in addition" are scaffolding. AI-assisted prose converges hardest on connective structure, so removing a connector is usually safe and adding one rarely is.
-- The talk test with a named reader. For any sentence the swap test flags, ask whether this writer would say it aloud to the audience in the brief. If not, write what they would say. For a draft from scratch, write the two-sentence spoken version first and build the draft from it.
+- The talk test with a named reader. For any sentence the swap test flags, ask whether this writer would say it aloud to the audience in the brief. If not, return to the writer's own wording from the source, or ask. For a draft from scratch, write the two-sentence spoken version first and build the draft from it.
 - Curse of knowledge. List every term, acronym, and internal name the text does not define. For each, decide whether the brief's audience knows it. Define or cut the ones they do not.
 - A stock phrase marks where the writer stopped thinking. The fix is to find the thought that was skipped, not to swap in a synonym.
 
@@ -160,7 +160,7 @@ When a sentence feels vague, climb this ladder until it becomes useful:
 1. Name the actor.
 2. Name the object or system.
 3. Name the action.
-4. Add a number, date, place, example, source, or consequence.
+4. If the source gives one, use its number, date, place, example, source, or consequence. If it gives none, mark the gap (see Fact safety below); never supply one.
 5. Apply the swap test: if the sentence could sit unchanged in another company's or project's copy, it says nothing about this one.
 6. Cut the sentence if it still only says "this is important".
 
@@ -168,7 +168,7 @@ When a sentence feels vague, climb this ladder until it becomes useful:
 
 Concrete prose can tempt an agent to fabricate. Do not do that.
 
-- If a fact is missing, ask for it, mark the gap with a clear placeholder such as `[figure needed from the Q1 report]`, or write around it honestly. Never fill the gap with an invented specific.
+- If a fact is missing, ask for it, mark the gap with a clear placeholder such as `[churn figure needed]`, or write around it honestly. Never fill the gap with an invented specific.
 - Mark uncertain claims as uncertain without using filler.
 - Do not turn "some people say" into named experts unless the source is available.
 - Do not add invented anecdotes to make a piece sound human.

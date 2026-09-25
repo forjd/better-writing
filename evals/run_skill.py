@@ -98,6 +98,14 @@ no change note, no diagnostic audit, no closing remark.
 """
 
 
+# Keep the user's own settings out of eval runs: without these, `claude -p`
+# loads ~/.claude/CLAUDE.md, auto-memory, plugins, and MCP servers, so results
+# depend on whose machine ran them.
+ISOLATION_FLAGS = ["--setting-sources", "", "--strict-mcp-config",
+                   "--no-session-persistence"]
+JUDGE_SYSTEM = "You are an evaluation judge. Follow the prompt's reply format exactly."
+
+
 def build_system_prompt(with_skill=True):
     if not with_skill:
         return BASELINE_HEADER
@@ -136,9 +144,11 @@ def rewrite(model, system_path, brief, input_text):
 def claude_text(model, prompt, system_path=None, timeout=CLAUDE_TIMEOUT,
                 retries=MAX_RETRIES):
     cmd = ["claude", "-p", prompt, "--model", model, "--tools", "",
-           "--output-format", "text"]
+           "--output-format", "text", *ISOLATION_FLAGS]
     if system_path is not None:
         cmd += ["--system-prompt-file", str(system_path)]
+    else:
+        cmd += ["--system-prompt", JUDGE_SYSTEM]
     last_exc = None
     for attempt in range(retries + 1):
         try:
@@ -335,15 +345,18 @@ def main():
             print(f"{fixture_dir.name}: FAIL (bad fixture: missing 'brief')")
             all_ok = False
             continue
+        rewrite_path = out_dir / f"{fixture_dir.name}.md"
         try:
             text = rewrite(args.model, system_path, brief, input_text)
         except subprocess.CalledProcessError as exc:
             print(f"{fixture_dir.name}: FAIL (claude exited {exc.returncode})")
             if exc.stderr:
                 print(exc.stderr.strip())
-            # Refresh stale claims so a previous pass does not linger.
+            # Remove the previous run's rewrite and claims so later checks
+            # and compare_outputs.py do not score stale text.
             try:
                 claims_path.unlink(missing_ok=True)
+                rewrite_path.unlink(missing_ok=True)
             except OSError:
                 pass
             all_ok = False
@@ -352,11 +365,11 @@ def main():
             print(f"{fixture_dir.name}: FAIL ({exc})")
             try:
                 claims_path.unlink(missing_ok=True)
+                rewrite_path.unlink(missing_ok=True)
             except OSError:
                 pass
             all_ok = False
             continue
-        rewrite_path = out_dir / f"{fixture_dir.name}.md"
         rewrite_path.write_text(text, encoding="utf-8")
         try:
             ok = run_one(fixture_dir, rewrite_path)

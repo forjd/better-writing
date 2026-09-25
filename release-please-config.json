@@ -10,6 +10,10 @@
         "SKILL.md",
         {
           "type": "generic",
+          "path": "README.md"
+        },
+        {
+          "type": "generic",
           "path": "agents/openai.yaml"
         },
         {

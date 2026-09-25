@@ -22,8 +22,8 @@
     "elevate"
   ],
   "banned_regex": [
-    "\\d+(\\.\\d+)?\\s*%",
-    "\\d[\\d,]*\\+?\\s*(users|teams|customers|companies)",
+    "\\d+(\\.\\d+)?\\s*(?:%|per\\s*cent\\b|percent\\b)",
+    "\\d[\\d,.]*\\s*[km]?\\+?\\s*(?:[a-z]+\\s+)?(?:users|teams|customers|companies)\\b",
     "\\baward(?:s|ed|-winning)?\\b|\\brated\\b|\\btrusted by\\b"
   ],
   "max_words_ratio": 0.9
