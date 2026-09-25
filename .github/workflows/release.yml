@@ -5,10 +5,8 @@ on:
     branches: [main]
 
 # release-please opens and updates the release PR, then tags and publishes
-# the GitHub Release when that PR merges.
-permissions:
-  contents: write
-  pull-requests: write
+# the GitHub Release when that PR merges. Write access is granted per job.
+permissions: {}
 
 concurrency:
   group: release
@@ -18,8 +16,17 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          # Pushes made with the default GITHUB_TOKEN do not trigger other
+          # workflows, so release PRs would merge without CI. A fine-grained
+          # PAT or GitHub App token in RELEASE_PLEASE_TOKEN (contents and
+          # pull requests: read and write) fixes that; without it this falls
+          # back to the default token.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}

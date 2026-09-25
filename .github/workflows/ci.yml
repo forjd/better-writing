@@ -9,9 +9,10 @@ on:
 permissions:
   contents: read
 
+# Cancel superseded PR runs only, so every commit on main keeps a finished run.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   validate:
@@ -38,3 +39,17 @@ jobs:
         run: python3 scripts/validate.py
       - name: Eval checker self-test
         run: python3 evals/run_evals.py --all evals/examples
+
+  plugin-manifests:
+    # validate.py checks names and versions; this checks the full plugin and
+    # marketplace schema with the CLI that loads them. No credentials needed.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Validate marketplace manifest
+        run: npx -y @anthropic-ai/claude-code@2.1.283 plugin validate .
+      - name: Validate plugin manifest
+        run: npx -y @anthropic-ai/claude-code@2.1.283 plugin validate .claude-plugin/plugin.json
