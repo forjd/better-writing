@@ -18,6 +18,8 @@ Checks:
   and default_prompt mentions the skill trigger.
 - Release version: SKILL.md metadata.version is semver and matches every
   agents/*.yaml version and the release-please manifest, once it has one.
+- Claude Code plugin: .claude-plugin/plugin.json and marketplace.json parse,
+  their names match SKILL.md, and their versions match metadata.version.
 
 Tap symlinks require a checkout with symlink support (git core.symlinks=true).
 They survive `git clone` but not GitHub's Download ZIP or a Windows checkout
@@ -373,6 +375,38 @@ def check_agents(expected_name=None, expected_version=None):
         )
 
 
+def check_plugin(expected_name=None, expected_version=None):
+    plugin_dir = ROOT / ".claude-plugin"
+    manifests = {}
+    for filename in ("plugin.json", "marketplace.json"):
+        path = plugin_dir / filename
+        rel = path.relative_to(ROOT).as_posix()
+        try:
+            manifests[filename] = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            errors.append(f"{rel}: unreadable ({exc})")
+    entries = []
+    if "plugin.json" in manifests:
+        entries.append((".claude-plugin/plugin.json", manifests["plugin.json"]))
+    if "marketplace.json" in manifests:
+        plugins = manifests["marketplace.json"].get("plugins") or []
+        check(plugins, ".claude-plugin/marketplace.json: no plugins listed")
+        entries += [(".claude-plugin/marketplace.json", entry) for entry in plugins]
+    for rel, entry in entries:
+        if expected_name:
+            check(
+                entry.get("name") == expected_name,
+                f"{rel}: name {entry.get('name')!r} does not match "
+                f"SKILL.md name {expected_name!r}",
+            )
+        if expected_version:
+            check(
+                entry.get("version") == expected_version,
+                f"{rel}: version {entry.get('version')!r} does not match "
+                f"SKILL.md metadata.version {expected_version!r}",
+            )
+
+
 def check_tap():
     skills_dir = ROOT / "skills"
     if not skills_dir.is_dir():
@@ -500,7 +534,9 @@ def check_tap():
 def main():
     skill_name = check_frontmatter()
     check_fixtures()
-    check_agents(skill_name, check_version())
+    version = check_version()
+    check_agents(skill_name, version)
+    check_plugin(skill_name, version)
     check_tap()
     if errors:
         for message in errors:

@@ -8,7 +8,26 @@ An agent skill for prose that sounds clear, specific, and human.
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827?style=for-the-badge)](./LICENSE)
 [![skills.sh](https://skills.sh/b/forjd/better-writing)](https://skills.sh/forjd/better-writing)
 
+<img src="./docs/before-after.gif" alt="A 90-word launch email is audited: filler phrases are struck out in red, facts are highlighted in green, and the 45-word rewrite keeps every fact." width="820">
+
 </div>
+
+## Quick install
+
+Any agent that reads skills (Claude Code, Codex, Cursor, and others):
+
+```bash
+npx skills add forjd/better-writing
+```
+
+Claude Code plugin:
+
+```text
+/plugin marketplace add forjd/better-writing
+/plugin install better-writing@forjd
+```
+
+More options are under [Installation](#installation).
 
 ## What it is
 
@@ -116,6 +135,26 @@ DISABLE_TELEMETRY=1 npx skills add forjd/better-writing
 DISABLE_TELEMETRY=1 bunx skills add forjd/better-writing
 ```
 
+### Claude Code plugin
+
+The repo is also a Claude Code plugin marketplace. In Claude Code:
+
+```text
+/plugin marketplace add forjd/better-writing
+/plugin install better-writing@forjd
+```
+
+Or from a shell:
+
+```bash
+claude plugin marketplace add forjd/better-writing
+claude plugin install better-writing@forjd
+```
+
+Run `/plugin marketplace update forjd` to pick up new releases.
+
+### Manual install
+
 You can also copy the folder into your agent skills directory if your agent runtime supports local skill discovery.
 
 To pin a release rather than track `main`, clone its tag and copy that checkout:
@@ -169,6 +208,7 @@ Use my writing sample below as the voice reference, then rewrite the article int
 | --- | --- |
 | [SKILL.md](./SKILL.md) | Core skill instructions and metadata. |
 | [agents/openai.yaml](./agents/openai.yaml) | UI metadata for compatible agent clients. |
+| [.claude-plugin/](./.claude-plugin/) | Claude Code plugin and marketplace manifests. |
 | [references/ai-writing-patterns.md](./references/ai-writing-patterns.md) | AI-writing tells, confidence tiers, near-conclusive artefacts, and false-positive checks. |
 | [references/genre-tells.md](./references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, fiction, and code. |
 | [references/preflight.md](./references/preflight.md) | Final quality checks before delivery. |
