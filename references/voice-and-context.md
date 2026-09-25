@@ -113,6 +113,7 @@ Imitation from a sample has limits, and the procedure below is built around them
 
 - Hedges, first-person markers, and idiosyncratic word choices from the sample survive unless one fails a clarity test you can quote. An unusual word that appears twice in the sample is the writer's, not a tell.
 - Match the sample's punctuation and openers rather than replacing them with generic "good writing". Preserve recurring quirks when they feel intentional and do not hurt clarity.
+- Use the writer's quirks at the rate the sample uses them, never all at once. A phrase the writer uses once per piece appears once. Packing every signature opener, aside, and recurring word into one draft reads as impersonation.
 - In informal genres (blog, forum, chat, personal email) edit less. The safer strategy is subtraction, because imitation fails there.
 
 ### After editing
