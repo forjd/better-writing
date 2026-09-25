@@ -8,7 +8,7 @@ An agent skill for prose that sounds clear, specific, and human.
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827?style=for-the-badge)](./LICENSE)
 [![skills.sh](https://skills.sh/b/forjd/better-writing)](https://skills.sh/forjd/better-writing)
 
-<img src="./docs/before-after.gif" alt="A 90-word launch email is audited: filler phrases are struck out in red, facts are highlighted in green, and the 45-word rewrite keeps every fact." width="820">
+<img src="./docs/before-after.gif" alt="A 90-word launch email is audited: filler phrases are struck out in red, facts are highlighted in green, and the 46-word rewrite keeps every fact." width="820">
 
 </div>
 
