@@ -218,6 +218,7 @@ Use my writing sample below as the voice reference, then rewrite the article int
 | [evals/](./evals/) | Fixture texts, a checker with voice-drift metrics, a pre-ChatGPT human corpus for false-positive reports, a model runner with an added-claims judge, and a pairwise comparison against a no-skill baseline. |
 | [skills/better-writing/](./skills/better-writing/) | Tap layout for managers that expect `skills/<name>/`; relative symlinks back to the root files. |
 | [scripts/validate.py](./scripts/validate.py) | Repo checks run by CI: frontmatter, fixtures, symlinks, and agent config. |
+| [scripts/lint_prose.py](./scripts/lint_prose.py) | Prose lint run by CI: the repo docs pass the skill's own audit. |
 | [CHANGELOG.md](./CHANGELOG.md) | Dated history of the pattern catalogue. |
 
 `SKILL.md` stays concise so agents can load it quickly. The detailed audit material lives in `references/` and is loaded only when needed. The `evals/` directory is repo tooling; agents do not load it.
@@ -234,14 +235,15 @@ Use my writing sample below as the voice reference, then rewrite the article int
 
 ## Validation
 
-CI runs two checks on every push to main and every pull request:
+CI runs three checks on every push to main and every pull request:
 
 ```bash
 python3 scripts/validate.py                      # frontmatter, version, fixture, symlink, and agent config checks
+python3 scripts/lint_prose.py                    # repo docs pass the skill's own audit, with measured exclusions
 python3 evals/run_evals.py --all evals/examples  # checker self-test
 ```
 
-Neither exercises a model. The self-test proves the checker agrees with the hand-written known-good outputs, nothing more. To test the skill itself, run the model runner described under [Evaluation](#evaluation). It needs credentials, so it is not part of CI.
+Neither exercises a model. The self-test proves the checker agrees with the hand-written known-good outputs, nothing more. The prose lint proves the repo's own docs contain no live slop: it skips code fences, blockquotes, inline code and quoted mentions, then asserts zero violations. To test the skill itself, run the model runner described under [Evaluation](#evaluation). It needs credentials, so it is not part of CI.
 
 You can also validate the skill with the checker from Anthropic's [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) skill:
 
@@ -318,7 +320,7 @@ Keep the skill lean. Put core workflow guidance in [SKILL.md](./SKILL.md), and m
 
 Before opening a pull request:
 
-1. Run `python3 scripts/validate.py`. CI runs it on every pull request as well.
+1. Run `python3 scripts/validate.py` and `python3 scripts/lint_prose.py`. CI runs both on every pull request as well.
 2. Run `python3 evals/run_skill.py` before and after the change if you touched the pattern lists or `SKILL.md`, and say in the pull request what changed in the two reports.
 3. Date any pattern addition, change, or retirement in [CHANGELOG.md](./CHANGELOG.md).
 4. Use a [conventional commit](https://www.conventionalcommits.org/) title for the pull request, since release-please sets the version from it: `feat:` for new patterns or checks, `fix:` for corrections, and `feat!:` or a `BREAKING CHANGE:` footer for anything listed under [Releases](#releases). Do not edit version numbers by hand.
