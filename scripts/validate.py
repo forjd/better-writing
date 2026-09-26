@@ -292,6 +292,60 @@ def check_fixtures():
         )
 
 
+def check_splits():
+    """evals/splits.json must partition every fixture into dev and heldout.
+
+    The dev set is for tuning; heldout is read once for confirmation, so a
+    fixture that drifts between the sets (or sits in neither) silently
+    breaks the independence the split exists to protect.
+    """
+    splits_path = ROOT / "evals" / "splits.json"
+    fixtures_dir = ROOT / "evals" / "fixtures"
+    try:
+        fixtures = sorted(p.name for p in fixtures_dir.iterdir() if p.is_dir())
+    except OSError:
+        fixtures = []
+    try:
+        splits = json.loads(splits_path.read_text(encoding="utf-8"))
+    except OSError:
+        errors.append("evals/splits.json: missing file")
+        return
+    except ValueError as exc:
+        errors.append(f"evals/splits.json: invalid JSON ({exc})")
+        return
+    if not isinstance(splits, dict):
+        errors.append("evals/splits.json: top level must be an object")
+        return
+    for key in ("dev", "heldout"):
+        value = splits.get(key)
+        check(isinstance(value, list) and value,
+              f"evals/splits.json[{key!r}] must be a non-empty list of names")
+        if isinstance(value, list):
+            check(all(isinstance(n, str) and n for n in value),
+                  f"evals/splits.json[{key!r}] must hold non-empty strings")
+            if all(isinstance(n, str) for n in value):
+                check(len(set(value)) == len(value),
+                      f"evals/splits.json[{key!r}] lists a fixture twice")
+    unknown = sorted(set(splits) - {"dev", "heldout"})
+    check(not unknown,
+          f"evals/splits.json: unknown keys {unknown} (known: dev, heldout)")
+    for key in ("dev", "heldout"):
+        value = splits.get(key)
+        if not (isinstance(value, list)
+                and all(isinstance(n, str) and n for n in value)):
+            # Shape already reported above; set() below needs strings, so
+            # stop here instead of crashing on unhashable entries.
+            return
+    dev, heldout = set(splits["dev"]), set(splits["heldout"])
+    overlap = sorted(dev & heldout)
+    check(not overlap,
+          f"evals/splits.json: {overlap} in both dev and heldout")
+    covered = sorted(dev | heldout)
+    check(covered == fixtures,
+          "evals/splits.json: dev + heldout must cover every fixture exactly "
+          f"once (fixtures: {fixtures}, covered: {covered})")
+
+
 def check_version():
     """Return SKILL.md metadata.version, which release-please bumps."""
     try:
@@ -548,6 +602,7 @@ def check_tap():
 def main():
     skill_name = check_frontmatter()
     check_fixtures()
+    check_splits()
     version = check_version()
     check_agents(skill_name, version)
     check_plugin(skill_name, version)
