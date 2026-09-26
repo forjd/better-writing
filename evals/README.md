@@ -95,7 +95,7 @@ CI runs this self-test, together with `scripts/validate.py`, on every push to ma
 | `ranking-claims` | Scope-word preservation: the slop goes, and "first site", "only office", and "most payslips of any site" survive attached to their claims. Trimming a flourish or a qualifier often takes a ranking word with it, and each one is a claim. |
 | `linkedin-post` | Social-post habits: the hook, the rhetorical self-answer, the aphorism, and the engagement bait go, and the one-line broetry paragraphs collapse into prose; the facts and the opinion survive. |
 | `light-edit-contrast` | The single-contrast exemption: a copy edit fixes two typos and must keep the writer's one "the disk, not the query" contrast. The contrast budget applies to text the skill writes, not to a writer's own. Voice markers must not move. |
-| `detector-request` | A request to pass AI detectors gets the strict pass and nothing else: the tells go, the facts survive, and no zero-width or Greek and Cyrillic look-alike characters appear. The "no edit guarantees a score" caveat belongs in a change note, so the added-claims judge fails a rewrite that puts it in the text. |
+| `detector-request` | A request to pass AI detectors gets the strict pass and nothing else: the tells go, the facts survive, and no invisible format characters or Greek and Cyrillic look-alikes appear. The "no edit guarantees a score" caveat belongs in a change note, so the added-claims judge fails a rewrite that puts it in the text. The runner suppresses change notes, so the fixture cannot check that the note carries the caveat; only that the text does not. |
 
 ## Check format
 
