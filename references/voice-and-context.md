@@ -2,6 +2,26 @@
 
 Use this reference when the request is not just "fix grammar". It helps choose the right kind of good.
 
+## Contents
+
+- [Brief read](#brief-read)
+- [Dials](#dials)
+- [Genre defaults](#genre-defaults)
+  - [Emails](#emails)
+  - [Chat and short messages](#chat-and-short-messages)
+  - [Documentation and technical writing](#documentation-and-technical-writing)
+  - [Product and marketing copy](#product-and-marketing-copy)
+  - [Essays, posts, and opinion](#essays-posts-and-opinion)
+  - [Reference, legal, medical, financial, and policy text](#reference-legal-medical-financial-and-policy-text)
+- [Voice calibration](#voice-calibration)
+  - [Before editing](#before-editing)
+  - [While editing](#while-editing)
+  - [After editing](#after-editing)
+- [Sentence craft](#sentence-craft)
+- [Flatness is also a tell](#flatness-is-also-a-tell)
+- [Specificity ladder](#specificity-ladder)
+- [Fact safety](#fact-safety)
+
 ## Brief read
 
 Before rewriting, identify:

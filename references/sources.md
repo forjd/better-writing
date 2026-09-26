@@ -2,6 +2,13 @@
 
 This skill is a new synthesis informed by these public sources:
 
+## Contents
+
+- [Corpus and detection research (2023–2025)](#corpus-and-detection-research-20232025)
+- [2026-09-01 research refresh](#2026-09-01-research-refresh)
+- [2026-09-22 research refresh](#2026-09-22-research-refresh)
+- [2026-09-25 research refresh](#2026-09-25-research-refresh)
+
 - `blader/humanizer`: https://github.com/blader/humanizer
   AI-writing pattern taxonomy, voice calibration, false-positive caution, and draft-audit-final loop.
 - `hardikpandya/stop-slop`: https://github.com/hardikpandya/stop-slop
