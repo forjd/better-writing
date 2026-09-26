@@ -10,7 +10,7 @@
       "name": "better-writing",
       "source": "./",
       "description": "Rewrite, draft, and review prose so it is clear, specific, and human, without inventing facts or flattening the writer's voice.",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "category": "productivity"
     }
   ]
