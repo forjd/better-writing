@@ -74,17 +74,42 @@ Fix by cutting the over-represented phrase for the plain one, ending on the last
 
 Exemptions: a writer's deliberate voice, including ornate or mannered prose, is theirs to keep. Flag it, do not strip it.
 
+## Conversational replies: PR and issue comments, review replies, chat threads
+
+The failure here is usually shape, not vocabulary: a cleaned-up reply that still reads as a generated technical memo. It explains the diagnosis, proves the diagnosis, explains the backfill, and only then gets to the point. Humans in a thread rely on shared context instead: if the other person already understands the bug, there is no need to re-establish the root cause.
+
+Rule: the "new information" test reaches the surrounding conversation, not just the text being rewritten. Every sentence must add information this reader, in this thread, did not already have.
+
+Tells:
+
+- re-stating the problem the thread already established: "As you reported, the export fails when…", "To recap the issue…"
+- diagnosis-proof-backfill-point ordering: explanation before the verdict. The verdict goes first.
+- closing summaries of what a short thread just decided: "To summarise, we agreed…", "In summary, the plan is…"
+- markdown scaffolding the venue does not render or expect: headings, bold-label bullets, and tables in a three-line review reply. Exempt venues that do render markdown and expect structure (a PR description, a long issue).
+- chatbot-adjacent courtesy openers with no content: "Great question!", "Thanks for raising this!" followed by the memo.
+
+Fix by leading with the verdict, decision, or action, then only what is new: what changes, who owns it, and when. One thing per message in chat. Keep identifiers, filenames, and version numbers exact, and keep enough warmth for the relationship; direct does not mean curt.
+
+## Commit messages
+
+Tells:
+
+- vague subjects that say a change happened without saying which: "fix bug", "update stuff", "address comments", "minor tweaks"
+- commit-speak preambles: a summary that opens "Major refactor:" or "Comprehensive update:", or leads with "Rebuilt X" and "Upgraded X". Tier 2.
+- bodies that narrate the diff line by line instead of stating what changed and why
+- gitmoji or emoji where the project does not use them
+- change notes that list what was left alone: "while preserving the original meaning", "retained all key points", "ensured consistency throughout". A person reports what they changed; the reader assumes the rest stayed.
+
+Fix with an imperative subject naming what and, where the diff cannot show it, why ("Retry the export once on lock timeout, not three times"). Keep the subject short enough to scan (about 50 characters, hard limit 72), keep identifiers, flags, filenames, and version numbers exact, and match the project's existing convention for trailers and scopes.
+
 ## Code, pull requests, and documentation
 
 Tells:
 
 - comments that restate the obvious: "// loop over the items", "This function is responsible for"
 - diff-anchored prose in docs and PRs: "we added", "now we handle", "this was changed to". Documentation should describe how the system works in the present tense.
-- verbose PR descriptions that narrate the diff line by line instead of stating intent and risk
-- gitmoji or emoji in commit messages where the project does not use them
+- verbose PR descriptions that narrate the diff line by line instead of stating intent and risk. State the intent, the risk, and how to verify; see Commit messages above for the analogous rule at commit scale.
 - over-defensive caveats and reimplementation of code that already exists
-- change notes and edit summaries that list what was left alone: "while preserving the original meaning", "retained all key points", "ensured consistency throughout". A person reports what they changed; the reader assumes the rest stayed.
-- commit-speak preambles: a summary that opens "Major refactor:" or "Comprehensive update:", or leads with "Rebuilt X" and "Upgraded X". Tier 2.
 - spec-sheet negation ("No configuration is required") and verbs that give code a home or an owner ("the config lives in", "this module owns", "the fix lands in"). Tier 3: both are normal in developer writing, so flag them only inside a cluster.
 
 Fix by deleting comments that repeat the code, describing behaviour in the present tense, and keeping identifiers, flags, filenames, version numbers, and exit codes exact.
