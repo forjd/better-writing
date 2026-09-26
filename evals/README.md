@@ -15,6 +15,15 @@ python3 evals/run_skill.py --model claude-sonnet-5 launch-email plain-human
 
 The runner builds a system prompt from `SKILL.md` plus every file in `references/`, sends each fixture's `input.md` with its `brief` through `claude -p` with no tools and none of your own settings (`--setting-sources ""`, so your `~/.claude/CLAUDE.md`, memory, plugins, and MCP servers stay out of the run), saves the rewrite to `evals/outputs/<fixture-name>.md` (gitignored), and runs the checker on it. It needs the Claude Code CLI on PATH with working credentials. Run it before and after any change to `SKILL.md` or the pattern lists and compare the reports, and read the outputs, since a pass count says nothing about whether the prose reads well. The report's first line names the model, because length and formatting defaults differ between models.
 
+That default is the **always-on** arm: the whole skill sits in the system prompt at once. No real harness works that way — they announce the skill by its ~100-token plugin description, load `SKILL.md` on trigger, and read individual references on demand — so the always-on pass rate is an upper bound, and it cannot see description or progressive-disclosure changes at all. The **progressive** arm measures the real config instead: its system prompt carries only the plugin description plus `SKILL.md`, and the model gets the Read tool (confined to the repo working directory) so it fetches the `references/` files the skill points at, and only those:
+
+```bash
+python3 evals/run_skill.py --arm progressive
+python3 evals/run_skill.py --arm both --repeats 5
+```
+
+`--arm both` keeps the always-on arm for comparison and reports the paired per-fixture difference (progressive minus always-on) with an interval. A skill change that only rewords the description or restructures references should move the progressive arm and leave always-on flat; if both move together, the change is in `SKILL.md` body text both arms share.
+
 After the checker, the runner makes a second model call that lists every claim in the rewrite that neither the input nor the brief states or implies: a next step, a line about what has happened since, an opinion, verdict, thanks, or joke the source lacks. It also lists claims whose strength changed on the way, such as a hope restated as something that has happened ("paving the way for a rollout" becoming "the rollout continues") or an emphasis restated as a cause. One listed claim fails the fixture, and the list is saved next to the rewrite as `<fixture-name>.claims.json`. This exists because the substring checker cannot see invention: a rewrite that added "nobody has asked to bring the stand-up back" to the LinkedIn fixture passed every substring check. Read a flagged claim before acting on it.
 
 The judge sees the brief, so a fact the brief supplies ("the churn numbers are not available") is not listed. Its answer is the last JSON array of strings in the reply, since a judge sometimes answers, second-guesses itself, and answers again. A reply with no such array is asked once more, and if that fails too the fixture fails as a judge error, not as an invented claim.
@@ -34,6 +43,30 @@ python3 evals/run_evals.py --all my-outputs
 ```
 
 The checker exits non-zero on any failure.
+
+## Sampling: repeats and intervals
+
+One unrepeated generation per fixture cannot resolve small changes: with 13 binary fixtures, an exact McNemar test needs at least 6 of 13 to flip in the same direction before p < 0.05. Pass `--repeats K` (use 5 or more when sizing a skill change; size K against the variance probe in [FOR-113](/FOR/issues/FOR-113) rather than guessing) to generate K independent rewrites per fixture per arm. The CLI exposes no temperature setting, so repeats are independent default-sampling generations:
+
+```bash
+python3 evals/run_skill.py --arm both --repeats 5 --no-judge  # cheap sweep
+python3 evals/run_skill.py --arm both --repeats 5             # with the claim judge
+```
+
+Multi-arm or multi-repeat runs land in `<out>/<arm>/` as `<fixture>.r<k>.md` (plus `<fixture>.r<k>.claims.json` when judged); the first repeat is also copied to the legacy `<fixture>.md` name so `run_evals.py --all` and `compare_outputs.py` work on each arm directory unchanged. The default single run keeps the historical flat layout exactly, plus a new `summary.json`.
+
+Every run writes `<out>/summary.json`: per-fixture pass rates with Wilson 95% intervals, the per-fixture progressive-minus-always-on difference with a Newcombe 95% interval, and the paired mean difference over fixtures with a t interval. The same numbers print to stdout. Read the interval before claiming a win: with K=5 a single-fixture 5/5 vs 4/5 split is still a [-0.62, +0.26] wash.
+
+## Dev and held-out fixtures
+
+`evals/splits.json` partitions the 13 fixtures into a 9-fixture tuned **dev** set and a 4-fixture never-read **held-out** set (`detector-request`, `marketing-copy`, `plain-human`, `ranking-claims` — spanning strict-pass, booster/template, false-positive, and scope-word behaviour). The fixtures' banned lists were written by the same hand as the skill's phrase catalogue, so tuning against all 13 overfits to the author's own tells; the split is the guardrail:
+
+```bash
+python3 evals/run_skill.py --split dev --arm both --repeats 5    # tune here
+python3 evals/run_skill.py --split heldout --arm both            # confirm once
+```
+
+Tune on dev. Read the held-out fixtures (and their outputs) once, for confirmation, not iteration: a second look makes them dev fixtures. `scripts/validate.py` fails if the split stops covering every fixture exactly once, so add new fixtures to one side explicitly.
 
 ## Baseline and pairwise comparison
 
