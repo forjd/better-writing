@@ -323,13 +323,19 @@ def check_splits():
         if isinstance(value, list):
             check(all(isinstance(n, str) and n for n in value),
                   f"evals/splits.json[{key!r}] must hold non-empty strings")
-            check(len(set(value)) == len(value),
-                  f"evals/splits.json[{key!r}] lists a fixture twice")
+            if all(isinstance(n, str) for n in value):
+                check(len(set(value)) == len(value),
+                      f"evals/splits.json[{key!r}] lists a fixture twice")
     unknown = sorted(set(splits) - {"dev", "heldout"})
     check(not unknown,
           f"evals/splits.json: unknown keys {unknown} (known: dev, heldout)")
-    if not all(isinstance(splits.get(k), list) for k in ("dev", "heldout")):
-        return
+    for key in ("dev", "heldout"):
+        value = splits.get(key)
+        if not (isinstance(value, list)
+                and all(isinstance(n, str) and n for n in value)):
+            # Shape already reported above; set() below needs strings, so
+            # stop here instead of crashing on unhashable entries.
+            return
     dev, heldout = set(splits["dev"]), set(splits["heldout"])
     overlap = sorted(dev & heldout)
     check(not overlap,

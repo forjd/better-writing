@@ -20,8 +20,10 @@ Two loading arms measure the real config instead of only an upper bound:
   see this much context at once, so its pass rate is an upper bound.
 - progressive: the system prompt carries only the installed skill metadata
   (the plugin description, ~100 tokens) plus SKILL.md, and the model may Read
-  references/*.md on demand from the working directory, the way a real
-  harness loads SKILL.md on trigger and individual references on demand.
+  references/*.md on demand from a staging dir holding only the skill
+  (<out>/_skill_root, rebuilt every run), the way a real harness loads
+  SKILL.md on trigger and individual references on demand. Staging keeps the
+  grading rubric (checks.json, examples/) out of the Read tool's reach.
 
 Pass --arm progressive for the real-config arm only, or --arm both to run
 the two side by side and report the paired per-fixture difference. The
@@ -59,6 +61,7 @@ import argparse
 import json
 import math
 import re
+import shutil
 import statistics
 import subprocess
 import sys
@@ -115,13 +118,31 @@ def progressive_footer():
     listed = "\n".join(f"- references/{name}" for name in names)
     return f"""Reference files you may read on demand with the Read tool, from the
 working directory, when this brief calls for them; read only the ones you
-need, never the whole set up front:
+need, never the whole set up front. The working directory holds the skill
+(SKILL.md) and its references/ only: stay inside it.
 
 {listed}
 
 Output rules for this run: return only the final rewritten text. No preamble,
 no change note, no diagnostic audit, no closing remark.
 """
+
+
+def stage_skill_root(out_dir):
+    """Copy SKILL.md and references/ into out_dir/_skill_root; return it.
+
+    The progressive arm runs with cwd here so the Read tool sees exactly
+    what a real harness serves — the skill and its references — and never
+    the grading rubric (evals/fixtures/*/checks.json, evals/examples/*),
+    which lives outside the staging dir. Rebuilt on every run, so a repeat
+    always measures the current working tree.
+    """
+    stage = Path(out_dir) / "_skill_root"
+    shutil.rmtree(stage, ignore_errors=True)
+    stage.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(ROOT / "SKILL.md", stage / "SKILL.md")
+    shutil.copytree(ROOT / "references", stage / "references")
+    return stage
 
 
 JUDGE_PROMPT = """You are checking a rewrite for invented content.
@@ -698,20 +719,35 @@ def main():
         # Read-and-judge only: never create or touch the --out directory.
         return judge_only(judge_model, Path(args.judge_only), fixtures)
 
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
     if args.no_skill:
         arm_configs = [("baseline", BASELINE_HEADER, "", None)]
-    elif args.arm == "both":
-        arm_configs = [
-            ("always-on", build_system_prompt(True, "always-on"), "", None),
-            ("progressive", build_system_prompt(True, "progressive"),
-             "Read", str(ROOT)),
-        ]
-    elif args.arm == "progressive":
-        arm_configs = [("progressive", build_system_prompt(True, "progressive"),
-                        "Read", str(ROOT))]
     else:
-        arm_configs = [("always-on", build_system_prompt(True, "always-on"),
-                        "", None)]
+        # The progressive arm reads from a staging dir holding only the
+        # skill, never the repo root: with the Read tool enabled, a repo
+        # cwd would expose the grading rubric (checks.json, examples/).
+        stage = None
+        if args.arm in ("progressive", "both"):
+            try:
+                stage = str(stage_skill_root(out_dir))
+            except OSError as exc:
+                print(f"FAIL (cannot stage skill root in {out_dir}: {exc})")
+                return 2
+        progressive_cfg = ("progressive",
+                           build_system_prompt(True, "progressive"),
+                           "Read", stage)
+        if args.arm == "both":
+            arm_configs = [
+                ("always-on", build_system_prompt(True, "always-on"), "", None),
+                progressive_cfg,
+            ]
+        elif args.arm == "progressive":
+            arm_configs = [progressive_cfg]
+        else:
+            arm_configs = [("always-on", build_system_prompt(True, "always-on"),
+                            "", None)]
     arms = [label for label, _, _, _ in arm_configs]
 
     print(f"model: {args.model}" + ("" if args.no_judge else f", judge: {judge_model}")
@@ -719,8 +755,6 @@ def main():
           + f", arm(s): {', '.join(arms)}"
           + f", repeats: {args.repeats}, split: {args.split}")
 
-    out_dir = Path(args.out)
-    out_dir.mkdir(parents=True, exist_ok=True)
     # Flat legacy layout only for the historical default: one always-on (or
     # baseline) pass with a single repeat. Anything else gets one
     # subdirectory per arm so runs stay comparable and re-runnable.
