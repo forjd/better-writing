@@ -177,7 +177,7 @@ These patterns feel pre-baked:
 - A clipped negative tail after the claim: "Deploys run on every merge, no guessing."
 - "X rather than Y" and "rather than X, Y" used as a reflex (common in Grok output).
 
-Fix by stating the point directly. This is a Tier 1 structure when it repeats: see Negative parallelism in `ai-writing-patterns.md`.
+Fix by stating the point directly. This is a Tier 1 structure when it repeats: see Negative parallelism in `ai-writing-patterns.md`. In text you write, budget one per piece, and use it only where the source or brief names the misconception it corrects. When editing, the writer's single contrast stays; see False positives in `ai-writing-patterns.md`.
 
 A specific escalating variant climbs from a modest claim to a grand abstraction, often carried by an em dash: "Support isn't just a department, it's the heartbeat of the company." Watch for the jump to a lofty noun such as "paradigm", "engine", "revolution", or "heartbeat". Fix by making the plain claim and cutting the inflation.
 
