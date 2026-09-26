@@ -1,0 +1,1 @@
+We spent most of Thursday chasing the slow dashboard. Everyone assumed the new report query was the culprit, so I rewrote it twice. The bottleneck was the disk, not the query. The log volume had filled up and every write was waiting on it. Once ops cleared it, pages loaded in under a second again. It is fixed for now, and you should receive the weekly report on time.

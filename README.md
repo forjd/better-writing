@@ -267,7 +267,7 @@ See [references/sources.md](./references/sources.md) for fuller source notes.
 
 ## Evaluation
 
-Pattern lists are easy to break: one well-meaning edit and the skill starts flagging human writing or missing a new tell. The [evals/](./evals/) directory holds eleven fixture texts seeded with known tells and known facts, a dependency-free checker that verifies a rewrite removed the tells *and* kept the facts, and a runner that produces the rewrites with a real model.
+Pattern lists are easy to break: one well-meaning edit and the skill starts flagging human writing or missing a new tell. The [evals/](./evals/) directory holds thirteen fixture texts seeded with known tells and known facts, a dependency-free checker that verifies a rewrite removed the tells *and* kept the facts, and a runner that produces the rewrites with a real model.
 
 ```bash
 python3 evals/run_skill.py                                          # run every fixture through claude-opus-5, check, then judge for added claims
