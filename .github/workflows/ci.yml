@@ -37,6 +37,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Repo checks (frontmatter, fixtures, symlinks, agent configs)
         run: python3 scripts/validate.py
+      - name: Prose lint (repo docs pass the skill's own audit)
+        run: python3 scripts/lint_prose.py
       - name: Eval checker self-test
         run: python3 evals/run_evals.py --all evals/examples
 
