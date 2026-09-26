@@ -160,7 +160,7 @@ You can also copy the folder into your agent skills directory if your agent runt
 To pin a release rather than track `main`, clone its tag and copy that checkout:
 
 ```bash
-git clone --branch v1.1.1 https://github.com/forjd/better-writing.git # x-release-please-version
+git clone --branch v1.2.0 https://github.com/forjd/better-writing.git # x-release-please-version
 ```
 
 The installed version is `metadata.version` in the `SKILL.md` frontmatter.
