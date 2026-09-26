@@ -334,8 +334,9 @@ def claude_text(model, prompt, system_path=None, timeout=CLAUDE_TIMEOUT,
     # tools="" disables every tool (the always-on arm and the judge: the
     # whole skill already sits in the system prompt, so there is nothing to
     # fetch). The progressive arm passes tools="Read" so the model can fetch
-    # references/*.md on demand from cwd (the repo root), the way a real
-    # harness loads references only when the skill points at them.
+    # references/*.md on demand from cwd (the per-run <out>/_skill_root
+    # staging dir), the way a real harness loads references only when the
+    # skill points at them.
     cmd = ["claude", "-p", prompt, "--model", model, "--tools", tools,
            "--output-format", "text", *ISOLATION_FLAGS]
     if system_path is not None:
