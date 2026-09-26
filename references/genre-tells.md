@@ -98,7 +98,7 @@ Tells:
 - commit-speak preambles: a summary that opens "Major refactor:" or "Comprehensive update:", or leads with "Rebuilt X" and "Upgraded X". Tier 2.
 - bodies that narrate the diff line by line instead of stating what changed and why
 - gitmoji or emoji where the project does not use them
-- change notes that list what was left alone: "while preserving the original meaning", "retained all key points". A person reports what they changed; the reader assumes the rest stayed.
+- change notes that list what was left alone: "while preserving the original meaning", "retained all key points", "ensured consistency throughout". A person reports what they changed; the reader assumes the rest stayed.
 
 Fix with an imperative subject naming what and, where the diff cannot show it, why ("Retry the export once on lock timeout, not three times"). Keep the subject short enough to scan (about 50 characters, hard limit 72), keep identifiers, flags, filenames, and version numbers exact, and match the project's existing convention for trailers and scopes.
 
@@ -108,7 +108,7 @@ Tells:
 
 - comments that restate the obvious: "// loop over the items", "This function is responsible for"
 - diff-anchored prose in docs and PRs: "we added", "now we handle", "this was changed to". Documentation should describe how the system works in the present tense.
-- verbose PR descriptions that narrate the diff line by line instead of stating intent and risk. State the intent, the risk, and how to verify; see Commit messages above for the same rule at commit scale.
+- verbose PR descriptions that narrate the diff line by line instead of stating intent and risk. State the intent, the risk, and how to verify; see Commit messages above for the analogous rule at commit scale.
 - over-defensive caveats and reimplementation of code that already exists
 - spec-sheet negation ("No configuration is required") and verbs that give code a home or an owner ("the config lives in", "this module owns", "the fix lands in"). Tier 3: both are normal in developer writing, so flag them only inside a cluster.
 
