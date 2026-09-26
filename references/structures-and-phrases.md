@@ -2,6 +2,45 @@
 
 Use this reference for the stricter "anti-slop" pass. Apply it with judgement. The point is to cut generic scaffolding, not to sand off every trace of style.
 
+## Contents
+
+- [Phrases to cut or replace](#phrases-to-cut-or-replace)
+  - [Throat-clearing](#throat-clearing)
+  - [Stock openers](#stock-openers)
+  - [Mechanical transitions](#mechanical-transitions)
+  - [Essay-scaffold closers](#essay-scaffold-closers)
+  - [Emphasis crutches](#emphasis-crutches)
+  - [Business jargon](#business-jargon)
+  - [Abstract metaphor nouns](#abstract-metaphor-nouns)
+  - [Posture adverbs](#posture-adverbs)
+  - [Empty importance](#empty-importance)
+  - [Mood instead of mechanism](#mood-instead-of-mechanism)
+- [Structures to avoid](#structures-to-avoid)
+  - [Binary contrast](#binary-contrast)
+  - [Negative listing](#negative-listing)
+  - [Dramatic fragmentation](#dramatic-fragmentation)
+  - [Rhetorical setups](#rhetorical-setups)
+  - [False agency](#false-agency)
+  - [Narrator from a distance](#narrator-from-a-distance)
+  - [Question-answer habit](#question-answer-habit)
+  - [Repetitive paragraph endings](#repetitive-paragraph-endings)
+  - [Stating the moral](#stating-the-moral)
+  - [Shadowboxing](#shadowboxing)
+  - [Phantom alternatives](#phantom-alternatives)
+  - [Editorial scar tissue](#editorial-scar-tissue)
+  - [Countdown and tail negation](#countdown-and-tail-negation)
+  - [Rhetorical self-answer](#rhetorical-self-answer)
+  - [Over-signposting](#over-signposting)
+  - [False balance](#false-balance)
+  - [List-itis](#list-itis)
+  - [Fractal recap](#fractal-recap)
+  - [Invented compound jargon](#invented-compound-jargon)
+  - [Aphorism formula](#aphorism-formula)
+  - [Meta-commentary joiners](#meta-commentary-joiners)
+  - [Engagement bait](#engagement-bait)
+  - [Announced counts and framing clauses](#announced-counts-and-framing-clauses)
+- [Quick rewrite moves](#quick-rewrite-moves)
+
 ## Phrases to cut or replace
 
 ### Throat-clearing

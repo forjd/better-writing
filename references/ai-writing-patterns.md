@@ -2,6 +2,49 @@
 
 Use this reference to find clusters of AI-generated prose. Do not treat any single pattern as proof. Many human writers use one or two of these naturally.
 
+## Contents
+
+- [How to use this catalogue](#how-to-use-this-catalogue)
+- [Near-conclusive artefacts](#near-conclusive-artefacts)
+- [Content patterns](#content-patterns)
+  - [Significance inflation](#significance-inflation)
+  - [Notability padding](#notability-padding)
+  - [Superficial present-participle analysis](#superficial-present-participle-analysis)
+  - [Promotional language](#promotional-language)
+  - [Vague attribution](#vague-attribution)
+  - [Speculation from absence](#speculation-from-absence)
+  - [Vague connection](#vague-connection)
+  - [Process narration](#process-narration)
+  - [Formulaic challenges and future sections](#formulaic-challenges-and-future-sections)
+- [Language patterns](#language-patterns)
+  - [Overused AI vocabulary](#overused-ai-vocabulary)
+  - [Nominalisation and noun density](#nominalisation-and-noun-density)
+  - [Copula avoidance](#copula-avoidance)
+  - [Negative parallelism](#negative-parallelism)
+  - [Rule of three](#rule-of-three)
+  - [Synonym cycling and close-repetition avoidance](#synonym-cycling-and-close-repetition-avoidance)
+  - [Sentence length](#sentence-length)
+  - [Mannered prose](#mannered-prose)
+  - [Passive voice and subjectless fragments](#passive-voice-and-subjectless-fragments)
+- [Formatting and style patterns](#formatting-and-style-patterns)
+  - [Dash dependence](#dash-dependence)
+  - [Colon as connector](#colon-as-connector)
+  - [Mechanical bold and inline headers](#mechanical-bold-and-inline-headers)
+  - [Title-case headings](#title-case-headings)
+  - [Heading restated by its first sentence](#heading-restated-by-its-first-sentence)
+  - [Summary-shaped and paired headings](#summary-shaped-and-paired-headings)
+  - [Document skeleton tells](#document-skeleton-tells)
+  - [Over-compression](#over-compression)
+  - [Hyphenated pairs after the noun](#hyphenated-pairs-after-the-noun)
+  - [Decorative emoji](#decorative-emoji)
+  - [Curly quotes](#curly-quotes)
+- [Communication artefacts](#communication-artefacts)
+  - [Sycophancy](#sycophancy)
+- [Filler, performed hedging, and fake depth](#filler-performed-hedging-and-fake-depth)
+- [Model fingerprints (diagnostic only)](#model-fingerprints-diagnostic-only)
+- [False positives](#false-positives)
+- [Human signals to preserve](#human-signals-to-preserve)
+
 ## How to use this catalogue
 
 One feature is never a verdict. The reliable signal is a cluster of tells plus the absence of genre adaptation. AI prose stays at one pleasant altitude no matter the audience; human prose shifts register, takes sides, and varies its rhythm. Treat uniform tone across a whole piece as the most durable tell of all.
