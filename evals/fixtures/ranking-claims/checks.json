@@ -25,5 +25,5 @@
     "\\d+(\\.\\d+)?\\s*(?:%|per\\s*cent\\b|percent\\b)",
     "\\d[\\d,]*\\s*payslips"
   ],
-  "max_words_ratio": 0.7
+  "max_words_ratio": 0.85
 }

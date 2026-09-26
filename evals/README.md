@@ -91,7 +91,7 @@ CI runs this self-test, together with `scripts/validate.py`, on every push to ma
 | `over-signposting` | Structural slop: ordinal signposting, stacked connectives, list-itis, and bold-label bullets go; all four facts survive. |
 | `plain-human` | The false-positive regression: a plain human note with a single `delve` and one em dash must come back essentially unchanged, not over-edited. Voice markers must not move. |
 | `marketing-copy` | Booster verbs, "isn't just", and template hooks go; the product name, the two features, and the price survive; no invented percentages, user counts, or awards appear. |
-| `academic-hedge` | Genre exemption: the passive methods sentence and the hedges ("suggest", "may inhibit", "sample size was small") must survive while "it is important to note" and the "future research" closer go. |
+| `academic-hedge` | Genre exemption: the passive methods sentence and the hedges ("suggest", "may inhibit", "sample size was small") must survive while "it is important to note" goes. The brief is a copy edit, so the "future research" closer, a real recommendation, stays. |
 | `ranking-claims` | Scope-word preservation: the slop goes, and "first site", "only office", and "most payslips of any site" survive attached to their claims. Trimming a flourish or a qualifier often takes a ranking word with it, and each one is a claim. |
 | `linkedin-post` | Social-post habits: the hook, the rhetorical self-answer, the aphorism, and the engagement bait go, and the one-line broetry paragraphs collapse into prose; the facts and the opinion survive. |
 
