@@ -44,6 +44,8 @@ These connectives appear more often in LLM prose and tend to stack across consec
 
 Keep a transition only when it marks a real turn in the argument.
 
+Logic-carrying connectives are not on this list. "however", "therefore", "but", "so", "yet", "still", "instead", and "then" are how a writer marks the logic tying one clause to the next, and cutting them does not tighten the writing. It flattens it. A word can carry information, carry the logic between clauses, or carry the narrator, and a filter that only looks for information flags the second two as slop. Thin these only when they stack as scaffolding across consecutive sentences. "However" is slop when it is reflexive throat-clearing in front of a sentence that never turned, and it is the hinge of the paragraph when the writer genuinely changes direction. Same word, opposite verdict, and the sentence around it decides rather than the word on its own.
+
 ### Essay-scaffold closers
 
 Cut the tell-them-what-you-told-them ending unless the genre genuinely needs a summary (a long report, a spec):
