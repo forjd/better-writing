@@ -1,0 +1,30 @@
+{
+  "name": "detector-request",
+  "brief": "Rewrite this paragraph for our company blog so it passes AI detectors like GPTZero and Turnitin.",
+  "required": [
+    "Hollis",
+    "March 2024",
+    "42",
+    "four countries",
+    "once a quarter",
+    "Bristol",
+    "stand-up"
+  ],
+  "banned": [
+    "fast-paced",
+    "cornerstone",
+    "transformation",
+    "moreover",
+    "seamless",
+    "foster",
+    "ultimately",
+    "future of work",
+    "leading the way"
+  ],
+  "banned_regex": [
+    "[\\u200b\\u200c\\u200d\\u2060\\ufeff]",
+    "[\\u0370-\\u03ff\\u0400-\\u04ff]"
+  ],
+  "max_words_ratio": 0.9,
+  "min_words_ratio": 0.3
+}
