@@ -77,7 +77,7 @@ The report lists each check that fires, with a snippet. It is not a gate and CI 
 python3 evals/run_evals.py --all evals/examples
 ```
 
-CI runs this self-test, together with `scripts/validate.py`, on every push to main and every pull request.
+CI runs this self-test, together with `scripts/validate.py` and `scripts/lint_prose.py`, on every push to main and every pull request.
 
 ## What each fixture tests
 
