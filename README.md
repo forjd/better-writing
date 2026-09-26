@@ -8,7 +8,7 @@ An agent skill for prose that sounds clear, specific, and human.
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827?style=for-the-badge)](./LICENSE)
 [![skills.sh](https://skills.sh/b/forjd/better-writing)](https://skills.sh/forjd/better-writing)
 
-<img src="./docs/before-after.gif" alt="A 90-word launch email is audited: filler phrases are struck out in red, facts are highlighted in green, and the 46-word rewrite keeps every fact." width="820">
+<img src="./docs/before-after.gif" alt="A 90-word launch email is audited: filler phrases are struck out in red, facts are highlighted in green, and the 47-word rewrite keeps every fact." width="820">
 
 </div>
 
@@ -58,7 +58,7 @@ Before:
 
 After:
 
-> The new analytics dashboard goes live on Monday 15 June. It replaces the weekly CSV export. Data refreshes every hour instead of every seven days, and you can see it across teams, projects, and date ranges. Log in and open the Reports tab to try it.
+> Our new analytics dashboard goes live on Monday 15 June. It replaces the weekly CSV export. Data refreshes every hour instead of every seven days, and you can view it across teams, projects, and date ranges. To start using it, log in and open the Reports tab.
 
 Every fact survived: the date, the CSV export, the hourly refresh, the teams, projects, and date ranges, and the Reports tab. Everything else went.
 
