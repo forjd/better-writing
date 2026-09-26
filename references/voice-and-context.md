@@ -60,6 +60,7 @@ This section sets the dials for each genre. A tell in one genre is correct in an
 - Writing solidifies and chat dissolves, so a chat message carries one thing: a question, an answer, a decision, or a link.
 - Contractions, second person, and fragments are the register. Headings, bold labels, and bullet lists are not, unless the platform is used that way.
 - If the words can be read two ways, they will be read the worse way. Say the thing, not the softened version.
+- In a thread, do not re-establish what the thread already knows; the new-information test reaches the surrounding conversation. See Conversational replies in `genre-tells.md`.
 
 ### Documentation and technical writing
 
