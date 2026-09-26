@@ -58,10 +58,10 @@ BEFORE = (
     "navigate to the [f:Reports tab] after logging in. [s:Exciting times lie ahead!]"
 )
 AFTER = (
-    "The new [f:analytics dashboard] goes live on [f:Monday 15 June]. It replaces the "
+    "Our new [f:analytics dashboard] goes live on [f:Monday 15 June]. It replaces the "
     "[f:weekly CSV export]. Data refreshes [f:every hour] instead of [f:every seven days], "
-    "and you can see it across [f:teams, projects, and date ranges]. Log in and open the "
-    "[f:Reports tab] to try it."
+    "and you can view it across [f:teams, projects, and date ranges]. To start using it, "
+    "log in and open the [f:Reports tab]."
 )
 
 
