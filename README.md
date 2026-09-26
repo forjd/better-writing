@@ -29,6 +29,12 @@ Claude Code plugin:
 
 More options are under [Installation](#installation).
 
+## What it will not do
+
+**Beating AI detectors is explicitly a non-goal.** Better Writing improves clarity, specificity, and voice fit. It does not lower AI-detector scores, and no edit can guarantee one. Detector scores are deliberately not a check in the [evaluation harness](./evals/) — see [why detector scores are not a check](./evals/README.md#why-detector-scores-are-not-a-check).
+
+If you ask it to pass a detector, it runs the strict pass and says so in the change note, without evasion tricks such as synonym swaps, inserted typos, look-alike characters, or translation round-trips. They make the prose worse, and leading detectors are now trained on humaniser output. See [Guardrails](./SKILL.md#guardrails).
+
 ## What it is
 
 Better Writing is an agent skill for rewriting, drafting, and reviewing prose. Most de-slop skills delete AI tells and converge everything toward one generic "casual human" register. This one adds what those skip:
