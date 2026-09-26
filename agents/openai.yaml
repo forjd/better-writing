@@ -5,7 +5,7 @@
 # across README and agent configs. validate.py cross-checks name/version
 # and requires one of these trigger spellings in this file.
 name: better-writing
-version: "1.1.1" # x-release-please-version
+version: "1.2.0" # x-release-please-version
 
 interface:
   display_name: "Better Writing"
