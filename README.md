@@ -284,6 +284,7 @@ python3 evals/run_skill.py                                          # run every 
 python3 evals/run_evals.py evals/fixtures/launch-email my-rewrite.md  # check a rewrite you produced some other way
 python3 evals/run_skill.py --no-skill --no-judge --out evals/baseline # the same briefs with no skill loaded
 python3 evals/compare_outputs.py evals/baseline evals/outputs         # pairwise judge, both orders, unlabelled
+python3 evals/run_triggers.py --repeats 3                           # does the description load the skill on prose tasks, and only those?
 ```
 
 The runner needs the Claude Code CLI on PATH with working credentials. Run it before and after any change to `SKILL.md` or the references and compare the two reports. The added-claims judge exists because the substring checker cannot see invention; a rewrite that added "nobody has asked to bring the stand-up back" to the LinkedIn fixture passed every substring check. The baseline and pairwise comparison exist because a pass count cannot show the skill beat the unaided model.

@@ -1,0 +1,86 @@
+{
+  "should_trigger": [
+    {
+      "id": "tighten-email",
+      "prompt": "Tighten this email to the team: \"Hi all, I just wanted to reach out and touch base regarding the fact that the Thursday meeting has been moved to 3pm going forward. Thanks so much!\""
+    },
+    {
+      "id": "sounds-like-ai",
+      "prompt": "This paragraph from our quarterly report sounds like ChatGPT wrote it. Make it sound like a person wrote it:\n\nIn today's fast-paced landscape, our team has leveraged cutting-edge tools to drive meaningful growth, underscoring our commitment to excellence and paving the way for a brighter future."
+    },
+    {
+      "id": "review-readme-intro",
+      "prompt": "Review the intro to our README and tell me what makes it hard to read. Don't rewrite it, just list the problems:\n\nWelcome to Fluxbase! Fluxbase is a revolutionary, next-generation, blazing-fast data platform that empowers developers to seamlessly unlock the full potential of their data."
+    },
+    {
+      "id": "draft-announcement",
+      "prompt": "Draft a short email telling customers that the mobile app will be offline for maintenance on Saturday 12 October from 2am to 4am UK time. Keep it plain."
+    },
+    {
+      "id": "linkedin-post",
+      "prompt": "Rewrite this LinkedIn post so it doesn't read like engagement bait:\n\nI got fired today.\n\nAnd it was the best thing that ever happened to me.\n\nHere's what I learned. 👇"
+    },
+    {
+      "id": "error-copy",
+      "prompt": "Improve the copy for this form error message so users know what to do: \"An unexpected error has occurred. Please try again later.\" It shows when the postcode field fails validation."
+    },
+    {
+      "id": "salesy-product-copy",
+      "prompt": "This product description is far too salesy. Fix it:\n\nMeet the Kettle Pro — not just a kettle, but a game-changing revolution in your kitchen. Boil 1.7 litres in under three minutes and elevate your mornings like never before."
+    },
+    {
+      "id": "proofread-blog",
+      "prompt": "Proofread the opening of my blog post and keep my voice:\n\nI have been meaning to write this post for about six months, which tells you everything about my relationship with deadlines. Its about the time our backup script deleted the backups."
+    },
+    {
+      "id": "cover-letter",
+      "prompt": "Make this cover letter paragraph less generic:\n\nI am a highly motivated and results-driven professional with a passion for excellence. I thrive in fast-paced environments and am confident I would be a valuable asset to your team."
+    },
+    {
+      "id": "release-notes-from-bullets",
+      "prompt": "Turn these bullets into release notes for users:\n- fixed crash when exporting CSV with empty rows\n- added --dry-run flag to sync\n- dropped Python 3.9 support"
+    }
+  ],
+  "should_not_trigger": [
+    {
+      "id": "fix-variable-typo",
+      "prompt": "Fix the typo in this Python function name and give me just the corrected line: def recieve_message(msg): return msg"
+    },
+    {
+      "id": "write-unit-test",
+      "prompt": "Write a unit test for this function using unittest:\n\ndef add(a, b):\n    return a + b"
+    },
+    {
+      "id": "summarise-log",
+      "prompt": "Summarise what went wrong in this log:\n\n2026-09-28 10:02:11 INFO starting worker\n2026-09-28 10:02:12 ERROR connection refused: db:5432\n2026-09-28 10:02:17 ERROR connection refused: db:5432\n2026-09-28 10:02:22 FATAL giving up after 3 retries"
+    },
+    {
+      "id": "translate",
+      "prompt": "Translate \"Good morning, the meeting has moved to Thursday\" into French."
+    },
+    {
+      "id": "extract-dates",
+      "prompt": "Extract every date from this email as ISO 8601, one per line:\n\nHi Sam, the audit starts on 3 March and the report is due 17 April. The follow-up call is on the 2nd of May."
+    },
+    {
+      "id": "json-to-yaml",
+      "prompt": "Convert this JSON to YAML: {\"name\": \"api\", \"replicas\": 3, \"ports\": [80, 443]}"
+    },
+    {
+      "id": "postcode-regex",
+      "prompt": "Write a regex that matches UK postcodes such as SW1A 1AA and M1 1AE."
+    },
+    {
+      "id": "explain-bash",
+      "prompt": "Explain what this command does: find . -name '*.tmp' -mtime +7 -delete"
+    },
+    {
+      "id": "sql-query",
+      "prompt": "Write a SQL query that returns the three most recent orders for each customer from an orders table with columns id, customer_id, and created_at."
+    },
+    {
+      "id": "count-words",
+      "prompt": "How many words are in this sentence? \"The quick brown fox jumps over the lazy dog.\""
+    }
+  ]
+}
