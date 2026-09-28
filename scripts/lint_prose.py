@@ -221,6 +221,9 @@ ARTEFACTS = [
 LENTICULAR_RE = re.compile(r"【[^】]*†[^】]*】")
 PUA_RE = re.compile(r"[\ue000-\uf8ff]")
 ZERO_WIDTH_RE = re.compile(r"[\u200b\u200c\u200d\u2060\ufeff]")
+# A joiner straight after an emoji (or its variation selector) is part of a
+# ZWJ sequence such as a family emoji, not a hidden character.
+EMOJI_BEFORE_ZWJ_RE = re.compile(r"[\U0001F000-\U0001FAFF\u2600-\u27BF\uFE0F]$")
 NUMERIC_RANGE_DASH_RE = re.compile(r"[\w\d][—–][\w\d]")
 
 
@@ -321,9 +324,8 @@ def check_invisible(cleaned_text, raw_map):
     for match in ZERO_WIDTH_RE.finditer(cleaned_text):
         ch = match.group(0)
         # Legitimate carve-outs: joiner inside emoji sequences, BOM at byte 0.
-        if ch == "\u200d" and re.match(
-            r".(?:\U0001F000-\U0001FAFF|\u2600-\u27BF|\uFE0F)$",
-            cleaned_text[max(0, match.start() - 2):match.start()],
+        if ch == "\u200d" and EMOJI_BEFORE_ZWJ_RE.search(
+            cleaned_text[max(0, match.start() - 1):match.start()]
         ):
             continue
         if ch == "\ufeff" and match.start() == 0:

@@ -320,6 +320,12 @@ def strip_preamble(text):
     # Drop a leading "Rewrite:" label line.
     if lines and re.match(r"^rewrite\s*:\s*$", lines[0].strip(), re.I):
         lines.pop(0)
+    # A preamble often introduces a fenced block ("Here's the rewrite:\n```"),
+    # so the fence only surfaces once the preamble is gone.
+    if lines and re.match(r"^```(?:markdown|md|text)?\s*$", lines[0].strip()):
+        lines.pop(0)
+        if lines and lines[-1].strip() == "```":
+            lines.pop()
     return "\n".join(lines).strip() + ("\n" if lines else "")
 
 
