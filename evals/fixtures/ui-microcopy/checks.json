@@ -1,0 +1,30 @@
+{
+  "name": "ui-microcopy",
+  "brief": "Rewrite these three strings from our file-sharing app: a button label, an upload error, and an empty state. Keep the three labelled lines.",
+  "required": [
+    "Button:",
+    "Error:",
+    "Empty state:"
+  ],
+  "required_regex": [
+    "\\b25\\s?MB\\b",
+    "(?im)^\\W*Button:\\W*(?:[^\\s]+\\s*){1,3}$"
+  ],
+  "banned": [
+    "click here",
+    "seamless",
+    "oops",
+    "something went wrong",
+    "inconvenience",
+    "apologise",
+    "please try again",
+    "journey",
+    "why not",
+    "it looks like",
+    "very first"
+  ],
+  "banned_regex": [
+    "!"
+  ],
+  "max_words_ratio": 0.7
+}

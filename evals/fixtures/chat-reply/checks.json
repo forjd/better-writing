@@ -1,0 +1,29 @@
+{
+  "name": "chat-reply",
+  "brief": "Tighten my reply in this Slack thread. Context: Sam asked in the thread whether the staging deploy is blocked, and the thread already knows the migration failed on the orders table last night because the lock timeout was too short. Keep the facts that are new to the thread.",
+  "required": [
+    "Jonas",
+    "0042",
+    "5 minutes"
+  ],
+  "required_regex": [
+    "\\b(?:3\\s?pm|3\\s?p\\.m\\.|15:00)\\b",
+    "^\\W*(?:yes|yep|yeah|still|blocked|it is|it's)\\b",
+    "\\b(?:post|update|let you know|shout|ping)\\b"
+  ],
+  "banned": [
+    "great question",
+    "to recap",
+    "for everyone",
+    "last night",
+    "hope this helps",
+    "let me know if you have any other questions",
+    "next steps"
+  ],
+  "banned_regex": [
+    "\\*\\*",
+    "(?m)^#+\\s",
+    "(?m)^\\s*[-*•]\\s"
+  ],
+  "max_words_ratio": 0.6
+}
