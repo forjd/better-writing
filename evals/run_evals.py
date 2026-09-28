@@ -214,14 +214,22 @@ HEDGE = re.compile(
 MODES = ("rewrite", "draft", "review")
 
 
+# A quoted span: straight or curly double quotes, or inline code, on one line.
+QUOTED = re.compile(r'"[^"\n]*"|“[^”\n]*”|`[^`\n]*`')
+
+
 def longest_copied_run(source, output):
-    """Length in words of the longest word run the output copies from source.
+    """Length in words of the longest unquoted word run output copies from source.
 
     Words are compared lowercased, so punctuation and case do not matter.
-    A review quotes short spans; a rewrite keeps whole sentences.
+    Quoted spans are removed from the output first: a review quotes what it
+    discusses, even a whole sentence it praises, while a rewrite restates
+    the source as its own text, outside quotation marks.
     """
     a = [w.lower() for w in WORD.findall(source)]
-    b = [w.lower() for w in WORD.findall(output)]
+    # Replace each quote with a marker word so the runs either side of it
+    # cannot join into one.
+    b = [w.lower() for w in WORD.findall(QUOTED.sub(" 0quoted0 ", output))]
     best = 0
     prev = [0] * (len(b) + 1)
     for x in a:
@@ -378,8 +386,8 @@ def check_rewrite(checks, input_text, rewrite_text):
     if max_copied is not None:
         run = longest_copied_run(norm_input, norm_rewrite)
         results.append((run <= max_copied,
-                        f"longest copied run {run} words <= {max_copied} "
-                        "(quotes, not a rewrite)"))
+                        f"longest unquoted copied run {run} words <= "
+                        f"{max_copied} (quotes, not a rewrite)"))
 
     drift = checks.get("voice_drift")
     if drift:
