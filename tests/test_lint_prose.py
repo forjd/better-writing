@@ -68,23 +68,23 @@ class ExclusionTest(unittest.TestCase):
 
 class InvisibleCharTest(unittest.TestCase):
     def test_zero_width_space_fails(self):
-        self.assertTrue(lp.check_invisible("a​b", [1]))
+        self.assertTrue(lp.check_invisible("a\u200bb", [1]))
 
     def test_stray_joiner_fails(self):
-        self.assertTrue(lp.check_invisible("a‍b", [1]))
+        self.assertTrue(lp.check_invisible("a\u200db", [1]))
 
     def test_joiner_inside_emoji_sequence_passes(self):
         # Regression: the carve-out regex lacked its character class, so
         # every ZWJ sequence (family, profession emoji) was flagged.
-        self.assertEqual(lp.check_invisible("\U0001F468‍\U0001F469", [1]), [])
-        self.assertEqual(lp.check_invisible("Hi ❤️‍\U0001F525", [1]), [])
+        self.assertEqual(lp.check_invisible("\U0001F468\u200d\U0001F469", [1]), [])
+        self.assertEqual(lp.check_invisible("Hi \u2764\ufe0f\u200d\U0001F525", [1]), [])
 
     def test_leading_bom_passes(self):
-        self.assertEqual(lp.check_invisible("﻿Text", [1]), [])
-        self.assertTrue(lp.check_invisible("Te﻿xt", [1]))
+        self.assertEqual(lp.check_invisible("\ufeffText", [1]), [])
+        self.assertTrue(lp.check_invisible("Te\ufeffxt", [1]))
 
     def test_private_use_and_lenticular_fail(self):
-        self.assertTrue(lp.check_invisible("xy", [1]))
+        self.assertTrue(lp.check_invisible("x\ue200y", [1]))
         self.assertTrue(lp.check_invisible("See 【4†source】.", [1]))
 
 
