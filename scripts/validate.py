@@ -42,7 +42,8 @@ errors = []
 
 CHECK_KEYS = {
     "name", "brief", "required", "required_regex", "banned", "banned_regex",
-    "max_words_ratio", "min_words_ratio", "voice_drift",
+    "max_words_ratio", "min_words_ratio", "voice_drift", "mode",
+    "max_copied_words",
 }
 
 KNOWN_VOICE_KEYS = {
@@ -233,6 +234,21 @@ def check_fixtures():
                     f"{rel}/checks.json: {key} must be a positive number",
                 )
 
+        if "mode" in checks:
+            check(
+                checks["mode"] in ("rewrite", "draft", "review"),
+                f"{rel}/checks.json: mode must be rewrite, draft, or review",
+            )
+
+        if "max_copied_words" in checks:
+            value = checks["max_copied_words"]
+            check(
+                isinstance(value, int) and not isinstance(value, bool)
+                and value > 0,
+                f"{rel}/checks.json: max_copied_words must be a positive "
+                "integer",
+            )
+
         if "voice_drift" in checks:
             drift = checks["voice_drift"]
             if not isinstance(drift, dict):
@@ -256,10 +272,11 @@ def check_fixtures():
             or checks.get("banned_regex")
             or checks.get("max_words_ratio") is not None
             or checks.get("min_words_ratio") is not None
-            or checks.get("voice_drift"),
+            or checks.get("voice_drift")
+            or checks.get("max_copied_words") is not None,
             f"{rel}/checks.json: defines no required, required_regex, banned, "
             "banned_regex, "
-            "max/min_words_ratio, or voice_drift checks",
+            "max/min_words_ratio, voice_drift, or max_copied_words checks",
         )
         for key in ("required_regex", "banned_regex"):
             patterns = checks.get(key, [])

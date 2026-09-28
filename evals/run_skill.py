@@ -80,12 +80,18 @@ MAX_RETRIES = 2
 
 ARMS = ("always-on", "progressive")
 
+# One output rule for every arm and the baseline, so the arms differ only in
+# how the skill is loaded. Review fixtures ask for findings, not a rewrite.
+OUTPUT_RULES = """Output rules for this run: return only what the brief asks for. For a rewrite
+or a draft, that is the final text alone: no preamble, no change note, no
+diagnostic audit, no closing remark. For a review, it is the findings alone,
+with no rewritten version.
+"""
+
 SYSTEM_HEADER = """You are running the better-writing skill. Its instructions and reference
 material follow. Apply them to the user's request.
 
-Output rules for this run: return only the final rewritten text. No preamble,
-no change note, no diagnostic audit, no closing remark.
-"""
+""" + OUTPUT_RULES
 
 
 def plugin_description():
@@ -123,9 +129,7 @@ need, never the whole set up front. The working directory holds the skill
 
 {listed}
 
-Output rules for this run: return only the final rewritten text. No preamble,
-no change note, no diagnostic audit, no closing remark.
-"""
+""" + OUTPUT_RULES
 
 
 def stage_skill_root(out_dir):
@@ -187,9 +191,7 @@ else. Reply with [] if there are none."""
 
 BASELINE_HEADER = """You are a careful editor. Apply the user's request to the text.
 
-Output rules for this run: return only the final rewritten text. No preamble,
-no change note, no diagnostic audit, no closing remark.
-"""
+""" + OUTPUT_RULES
 
 
 # Keep the user's own settings out of eval runs: without these, `claude -p`
@@ -462,6 +464,10 @@ def judge_only(judge_model, out_dir, fixtures):
         claims_path = out_dir / f"{fixture_dir.name}.claims.json"
         try:
             checks, input_text = load_fixture(fixture_dir)
+            if checks.get("mode") == "review":
+                print(f"{fixture_dir.name}: judge skipped (review mode)")
+                claims_path.unlink(missing_ok=True)
+                continue
             text = rewrite_path.read_text(encoding="utf-8")
             claims = judge_added_claims(judge_model, checks.get("brief", ""),
                                         input_text, text)
@@ -543,7 +549,9 @@ def generate_and_score(model, judge_model, system_path, tools, cwd,
     except (OSError, ValueError, KeyError) as exc:
         print(f"{label}: FAIL (bad fixture: {exc})")
         ok = False
-    if no_judge:
+    if no_judge or checks.get("mode") == "review":
+        # A review's findings are verdicts on the source by design, so the
+        # added-claims judge does not apply to them.
         # Delete stale claims so reruns without a judge do not look judged.
         try:
             claims_path.unlink(missing_ok=True)
