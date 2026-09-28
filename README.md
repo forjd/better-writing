@@ -226,6 +226,8 @@ Use my writing sample below as the voice reference, then rewrite the article int
 | [scripts/validate.py](./scripts/validate.py) | Repo checks run by CI: frontmatter, fixtures, symlinks, and agent config. |
 | [scripts/lint_prose.py](./scripts/lint_prose.py) | Prose lint run by CI: the repo docs pass the skill's own audit. |
 | [CHANGELOG.md](./CHANGELOG.md) | Dated history of the pattern catalogue. |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | How to change the skill, check the change, and open a pull request. |
+| [SECURITY.md](./SECURITY.md) | How to report a vulnerability privately. |
 
 `SKILL.md` stays concise so agents can load it quickly. The detailed audit material lives in `references/` and is loaded only when needed. The `evals/` directory is repo tooling; agents do not load it.
 
@@ -322,17 +324,7 @@ New patterns, checks, and fixtures are minor versions. Corrections are patches. 
 
 ## Contributing
 
-Keep the skill lean. Put core workflow guidance in [SKILL.md](./SKILL.md), and move detailed pattern lists or examples into [references/](./references/).
-
-Before opening a pull request:
-
-1. Run `python3 scripts/validate.py` and `python3 scripts/lint_prose.py`. CI runs both on every pull request as well.
-2. Run `python3 evals/run_skill.py` before and after the change if you touched the pattern lists or `SKILL.md`, and say in the pull request what changed in the two reports.
-3. Date any pattern addition, change, or retirement in [CHANGELOG.md](./CHANGELOG.md).
-4. Use a [conventional commit](https://www.conventionalcommits.org/) title for the pull request, since release-please sets the version from it: `feat:` for new patterns or checks, `fix:` for corrections, and `feat!:` or a `BREAKING CHANGE:` footer for anything listed under [Releases](#releases). Do not edit version numbers by hand.
-5. Check that new prose uses British English and sentence-case headings. The repo's own docs follow the catalogue.
-6. Avoid adding bulky documentation that the agent does not need.
-7. Keep examples factual, concise, and easy to audit.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for what to change where, the checks to run, and how to title a pull request. To report a security issue, follow [SECURITY.md](./SECURITY.md).
 
 ## Licence
 
