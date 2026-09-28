@@ -1,0 +1,1 @@
+Since 09:12 UTC, some customers in the EU may be seeing card payments fail at checkout. We have not yet identified the cause. Other regions and bank transfers are not affected. Our next update will be by 10:30 UTC.

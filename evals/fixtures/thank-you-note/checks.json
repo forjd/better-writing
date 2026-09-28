@@ -1,0 +1,35 @@
+{
+  "name": "thank-you-note",
+  "brief": "Rewrite this thank-you note to a colleague so it sounds like a person wrote it. Warm but plain. Keep the specifics.",
+  "required": [
+    "Ana",
+    "on-call",
+    "August",
+    "deploy script",
+    "Monday",
+    "June",
+    "Dan"
+  ],
+  "required_regex": [
+    "\\bthank",
+    "\\btwo weeks\\b|\\b2 weeks\\b|\\bfortnight\\b"
+  ],
+  "banned": [
+    "take a moment",
+    "heartfelt",
+    "unwavering",
+    "above and beyond",
+    "speaks volumes",
+    "invaluable",
+    "means the world",
+    "testament",
+    "deeply grateful",
+    "journey",
+    "warmest regards",
+    "dedication"
+  ],
+  "banned_regex": [
+    "!"
+  ],
+  "max_words_ratio": 0.75
+}

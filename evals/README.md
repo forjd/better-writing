@@ -46,7 +46,7 @@ The checker exits non-zero on any failure.
 
 ## Sampling: repeats and intervals
 
-One unrepeated generation per fixture cannot resolve small changes: with 13 binary fixtures, an exact McNemar test needs at least 6 of 13 to flip in the same direction before p < 0.05. Pass `--repeats K` (use 5 or more when sizing a skill change, and more if a fixture's pass rate swings between runs) to generate K independent rewrites per fixture per arm. The CLI exposes no temperature setting, so repeats are independent default-sampling generations:
+One unrepeated generation per fixture cannot resolve small changes: with 22 binary fixtures, an exact McNemar test needs at least 6 of 22 to flip in the same direction before p < 0.05. Pass `--repeats K` (use 5 or more when sizing a skill change, and more if a fixture's pass rate swings between runs) to generate K independent rewrites per fixture per arm. The CLI exposes no temperature setting, so repeats are independent default-sampling generations:
 
 ```bash
 python3 evals/run_skill.py --arm both --repeats 5 --no-judge  # cheap sweep
@@ -59,14 +59,14 @@ Every run writes `<out>/summary.json`: per-fixture pass rates with Wilson 95% in
 
 ## Dev and held-out fixtures
 
-`evals/splits.json` partitions the 20 fixtures into a 13-fixture tuned **dev** set and a 7-fixture never-read **held-out** set (`chat-reply`, `detector-request`, `docs-page`, `marketing-copy`, `plain-human`, `ranking-claims`, `review-findings` — spanning conversational register, strict-pass, reference docs, booster/template, false-positive, scope-word, and review behaviour). The fixtures' banned lists were written by the same hand as the skill's phrase catalogue, so tuning against all 20 overfits to the author's own tells; the split is the guardrail:
+`evals/splits.json` partitions the 22 fixtures into a 13-fixture tuned **dev** set and a 9-fixture never-read **held-out** set (`chat-reply`, `detector-request`, `docs-page`, `incident-update`, `marketing-copy`, `plain-human`, `ranking-claims`, `review-findings`, `thank-you-note` — spanning conversational register, strict-pass, reference docs, no-invention under pressure, booster/template, false-positive, scope-word, review, and warmth behaviour). The fixtures' banned lists were written by the same hand as the skill's phrase catalogue, so tuning against all 22 overfits to the author's own tells; the split is the guardrail:
 
 ```bash
 python3 evals/run_skill.py --split dev --arm both --repeats 5    # tune here
 python3 evals/run_skill.py --split heldout --arm both            # confirm once
 ```
 
-Tune on dev. Read the held-out fixtures (and their outputs) once, for confirmation, not iteration: a second look makes them dev fixtures. `scripts/validate.py` fails if the split stops covering every fixture exactly once, so add new fixtures to one side explicitly.
+Tune on dev. Read the held-out fixtures (and their outputs) once, for confirmation, not iteration: a second look makes them dev fixtures. `scripts/validate.py` fails if the split stops covering every fixture exactly once or the held-out set drops below 8, so add new fixtures to one side explicitly. Grow the held-out set with new fixtures rather than by moving dev ones, so earlier dev and held-out numbers stay comparable.
 
 ## Baseline and pairwise comparison
 
@@ -151,6 +151,8 @@ CI runs this self-test, together with `scripts/validate.py` and `scripts/lint_pr
 | `docs-page` | Reference docs: diff-anchored wording ("we added", "now", "new", "was changed to") becomes present tense while the flags, path, default, date format, and exit code stay exact. |
 | `draft-from-notes` | Drafting: bullet notes become a short all-staff email in prose. Every date, name, extension, and the car park survive, with no invented thanks, apology, "reach out", or signature placeholder; the added-claims judge catches any other addition. |
 | `review-findings` | Review mode: the output names the five planted tells (stock opener, "game-changer", the unsourced 90%, the not-X-but-Y line, the unfilled sign-off) by quoting them, and does not rewrite the draft: no run of more than 15 input words, and no "revised version". |
+| `incident-update` | No invention under pressure: a status-page update loses the apology, "rest assured", and commitment boilerplate, keeps the times, region, and unaffected services, and still says the cause is not known. Naming a cause ("due to", "caused by") fails. |
+| `thank-you-note` | Warmth without gush: "heartfelt gratitude", "above and beyond", and "means the world" go, the thanks and every specific (the two weeks of on-call, the Monday deploy script) stay, and there is no exclamation mark. |
 
 ## Check format
 

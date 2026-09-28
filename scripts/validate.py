@@ -46,6 +46,10 @@ CHECK_KEYS = {
     "max_copied_words",
 }
 
+# Below this, a change tuned on dev can overfit without the held-out
+# numbers showing it (issue #42).
+MIN_HELDOUT = 8
+
 KNOWN_VOICE_KEYS = {
     "contraction_rate",
     "first_person_rate",
@@ -356,6 +360,9 @@ def check_splits():
             # stop here instead of crashing on unhashable entries.
             return
     dev, heldout = set(splits["dev"]), set(splits["heldout"])
+    check(len(heldout) >= MIN_HELDOUT,
+          f"evals/splits.json: heldout has {len(heldout)} fixtures, needs at "
+          f"least {MIN_HELDOUT} (move new fixtures there, not dev ones)")
     overlap = sorted(dev & heldout)
     check(not overlap,
           f"evals/splits.json: {overlap} in both dev and heldout")
