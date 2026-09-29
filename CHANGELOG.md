@@ -2,6 +2,10 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-29, CI on release PRs
+
+- Release: the release workflow now starts CI on the release PR branch with `workflow_dispatch`, the one event the default `GITHUB_TOKEN` can trigger. Release PRs get checks without a stored token, so the `RELEASE_PLEASE_TOKEN` fallback is gone.
+
 ## 2026-09-28, reference summary
 
 - `evals/baselines/claude-opus-5.summary.json`: a committed `--arm both --repeats 5` run with the judge, over all 22 fixtures. Always-on passes 93/110 (0.85) and progressive 77/110 (0.70); the paired difference is -0.15 [-0.24, -0.05].

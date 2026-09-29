@@ -19,14 +19,29 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    outputs:
+      pr-branch: ${{ fromJSON(steps.release.outputs.pr || '{}').headBranchName }}
     steps:
       - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        id: release
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-          # Pushes made with the default GITHUB_TOKEN do not trigger other
-          # workflows, so release PRs would merge without CI. A fine-grained
-          # PAT or GitHub App token in RELEASE_PLEASE_TOKEN (contents and
-          # pull requests: read and write) fixes that; without it this falls
-          # back to the default token.
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+
+  release-pr-ci:
+    # Pushes made with the default GITHUB_TOKEN trigger no other workflows,
+    # so the release PR would get no CI. workflow_dispatch is the documented
+    # exception, so start CI on the release branch explicitly. The run
+    # reports on the PR's head commit.
+    needs: release-please
+    if: needs.release-please.outputs.pr-branch != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+    steps:
+      - name: Dispatch CI on the release PR branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ needs.release-please.outputs.pr-branch }}
+        run: gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"

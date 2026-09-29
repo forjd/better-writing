@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  # release.yml dispatches this on release PRs, whose pushes (made with the
+  # default GITHUB_TOKEN) trigger no pull_request run.
+  workflow_dispatch:
 
 # Least privilege for checkout + stdlib Python checks.
 permissions:
