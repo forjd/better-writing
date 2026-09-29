@@ -3,7 +3,7 @@ name: better-writing
 description: Rewrite, draft, and review prose so it is clear, specific, human, and fits its context. Use when improving emails, reports, documentation, marketing copy, UI text, or posts that sound generic, AI-written, verbose, salesy, or formulaic, and when the user asks to humanise/humanize, de-AI, fix text that sounds like ChatGPT, light edit, copy edit, proofread, or keep my voice. Covers voice calibration, anti-slop audits, and preflight checks.
 license: MIT
 metadata:
-  version: "1.2.1" # x-release-please-version
+  version: "1.3.0" # x-release-please-version
 ---
 
 # Better Writing
