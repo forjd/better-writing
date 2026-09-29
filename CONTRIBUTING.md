@@ -14,12 +14,13 @@ Pull requests adding tells are welcome. Bring at least one real example of the t
 
 ## Checking a change
 
-Run the repo checks. CI runs the same three on every pull request:
+Run the repo checks. CI runs the same four on every pull request:
 
 ```bash
 python3 scripts/validate.py                  # frontmatter, fixtures, splits, symlinks, agent configs
 python3 scripts/lint_prose.py                # the repo docs pass the skill's own audit
 python3 evals/run_evals.py --all evals/examples  # checker self-test against the hand-written examples
+python3 -m unittest discover -s tests            # unit tests for the scripts and the eval statistics
 ```
 
 If you touched `SKILL.md` or anything in `references/`, run the evals with a real model before and after the change:
