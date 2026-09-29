@@ -1,0 +1,28 @@
+{
+  "name": "commit-message",
+  "brief": "Rewrite this commit message. The project uses conventional commits with a scope, such as fix(export): ..., and no emoji. Keep identifiers and numbers exact.",
+  "required": [
+    "LockTimeout",
+    "backup"
+  ],
+  "required_regex": [
+    "\\b90\\s?(?:seconds|secs?|s)\\b",
+    "(?m)^fix\\(export\\): [^\\n]{1,58}$",
+    "\\b(?:once|one retry|single retry|1)\\b"
+  ],
+  "banned": [
+    "major refactor",
+    "comprehensive update",
+    "this commit",
+    "then we",
+    "first, we",
+    "we also",
+    "ensured consistency",
+    "preserving",
+    "for everything else"
+  ],
+  "banned_regex": [
+    "[\\U0001F300-\\U0001FAFF\\u2600-\\u27BF]"
+  ],
+  "max_words_ratio": 0.8
+}

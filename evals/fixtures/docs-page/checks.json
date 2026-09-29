@@ -1,0 +1,33 @@
+{
+  "name": "docs-page",
+  "brief": "Rewrite this section of our CLI reference documentation in plain, present-tense reference style. Keep every command, flag, path, default, and exit code exact.",
+  "required": [
+    "sync",
+    "--since",
+    "--dry-run",
+    "ISO 8601",
+    "2026-09-01",
+    "7 days",
+    "~/.config/acme/sync.toml"
+  ],
+  "required_regex": [
+    "\\b(?:code|status)\\W{0,3}3\\b"
+  ],
+  "banned": [
+    "in this release",
+    "powerful",
+    "we added",
+    "we've added",
+    "we have added",
+    "now we handle",
+    "is responsible for",
+    "it's worth noting",
+    "seamless",
+    "was changed to"
+  ],
+  "banned_regex": [
+    "!",
+    "\\b(?:new|now)\\b"
+  ],
+  "max_words_ratio": 0.9
+}

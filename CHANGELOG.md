@@ -2,6 +2,10 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-28, venue fixtures
+
+- `evals/fixtures/`: five fixtures for the venues the skill claims but the harness never measured. `pr-review-reply` and `chat-reply` test the conversational-replies rule (lead with the verdict, do not re-establish what the thread knows), `commit-message` the commit-message rule, and `ui-microcopy` and `docs-page` the UI and reference-docs registers. `chat-reply` and `docs-page` join the held-out split.
+
 ## 2026-09-25, CI and release hardening
 
 - CI validates the plugin and marketplace manifests with `claude plugin validate`, and only cancels superseded runs on pull requests.

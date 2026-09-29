@@ -1,0 +1,32 @@
+{
+  "name": "pr-review-reply",
+  "brief": "Rewrite my reply in this GitHub pull request review thread. Context: Priya's review comment reported that export_csv times out on accounts with more than 50,000 rows, and earlier in the thread we both agreed the cause is the unbatched query. The comment box renders markdown, but this is a short review reply. Keep every fact that is new to the thread.",
+  "required": [
+    "a41f9c2",
+    "backfill",
+    "tonight"
+  ],
+  "required_regex": [
+    "\\b11\\b",
+    "\\b5,?000\\b",
+    "\\b(?:another look|re-?review|take a look|look again)\\b",
+    "^\\W*(?:[^.!?\\n]*\\b(?:a41f9c2|pushed|fix(?:ed|es)?)\\b)"
+  ],
+  "banned": [
+    "great question",
+    "thanks for raising",
+    "as you reported",
+    "to recap",
+    "to summarise",
+    "in summary",
+    "root cause",
+    "50,000 rows",
+    "60-second"
+  ],
+  "banned_regex": [
+    "(?m)^#+\\s",
+    "\\*\\*[^*\\n]+:?\\*\\*",
+    "\\bunbatched\\b"
+  ],
+  "max_words_ratio": 0.6
+}

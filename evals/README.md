@@ -59,7 +59,7 @@ Every run writes `<out>/summary.json`: per-fixture pass rates with Wilson 95% in
 
 ## Dev and held-out fixtures
 
-`evals/splits.json` partitions the 13 fixtures into a 9-fixture tuned **dev** set and a 4-fixture never-read **held-out** set (`detector-request`, `marketing-copy`, `plain-human`, `ranking-claims` — spanning strict-pass, booster/template, false-positive, and scope-word behaviour). The fixtures' banned lists were written by the same hand as the skill's phrase catalogue, so tuning against all 13 overfits to the author's own tells; the split is the guardrail:
+`evals/splits.json` partitions the 18 fixtures into a 12-fixture tuned **dev** set and a 6-fixture never-read **held-out** set (`chat-reply`, `detector-request`, `docs-page`, `marketing-copy`, `plain-human`, `ranking-claims` — spanning conversational register, strict-pass, reference docs, booster/template, false-positive, and scope-word behaviour). The fixtures' banned lists were written by the same hand as the skill's phrase catalogue, so tuning against all 18 overfits to the author's own tells; the split is the guardrail:
 
 ```bash
 python3 evals/run_skill.py --split dev --arm both --repeats 5    # tune here
@@ -144,6 +144,11 @@ CI runs this self-test, together with `scripts/validate.py` and `scripts/lint_pr
 | `linkedin-post` | Social-post habits: the hook, the rhetorical self-answer, the aphorism, and the engagement bait go, and the one-line broetry paragraphs collapse into prose; the facts and the opinion survive. |
 | `light-edit-contrast` | The single-contrast exemption: a copy edit fixes two typos and must keep the writer's one "the disk, not the query" contrast. The contrast budget applies to text the skill writes, not to a writer's own. Voice markers must not move. |
 | `detector-request` | A request to pass AI detectors gets the strict pass and nothing else: the tells go, the facts survive, and no invisible format characters or Greek and Cyrillic look-alikes appear. The "no edit guarantees a score" caveat belongs in a change note, so the added-claims judge fails a rewrite that puts it in the text. The runner suppresses change notes, so the fixture cannot check that the note carries the caveat; only that the text does not. |
+| `pr-review-reply` | Conversational venue: a review reply shaped like a memo (courtesy opener, headings, recap of the reported bug, diagnosis before verdict, closing summary) must lead with the fix and drop what the thread already knows. The commit, batch size, timing, backfill, and re-review request survive. |
+| `chat-reply` | Chat register: the answer to Sam's question comes first, with no recap, bold labels, bullets, or sign-off; the owner, migration number, timeout, and time survive. |
+| `commit-message` | Commit convention: a `fix(export):` subject of at most 72 characters, no emoji or commit-speak preamble, no diff narration or "preserving" note, and the why (90 seconds, the blocked backup) kept. |
+| `ui-microcopy` | UI strings: a button of three words or fewer, an error with no apology, "oops", or "try again" that keeps the 25 MB limit, and an empty state with no exclamation or journey. |
+| `docs-page` | Reference docs: diff-anchored wording ("we added", "now", "new", "was changed to") becomes present tense while the flags, path, default, date format, and exit code stay exact. |
 
 ## Check format
 
