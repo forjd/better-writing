@@ -1,0 +1,31 @@
+{
+  "name": "incident-update",
+  "brief": "Rewrite this status page update so it is plain and useful to customers during the incident. Keep every fact, and do not guess at anything the update does not say.",
+  "required": [
+    "09:12 UTC",
+    "10:30 UTC",
+    "EU",
+    "card payments",
+    "bank transfers"
+  ],
+  "required_regex": [
+    "(?:\\b(?:cause|why)\\b[^.]*\\b(?:yet|unknown|not known|investigating)\\b)|(?:\\b(?:yet|unknown|not known|investigating)\\b[^.]*\\b(?:cause|why)\\b)|\\bnot yet (?:identified|known)\\b"
+  ],
+  "banned": [
+    "sincerely apologise",
+    "inconvenience",
+    "rest assured",
+    "world-class",
+    "tirelessly",
+    "around the clock",
+    "extremely seriously",
+    "fully committed",
+    "seamless",
+    "you deserve",
+    "patience and understanding"
+  ],
+  "banned_regex": [
+    "\\b(?:caused by|due to|because of|root cause|our provider)\\b"
+  ],
+  "max_words_ratio": 0.7
+}

@@ -2,6 +2,11 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-28, larger held-out split
+
+- `evals/fixtures/`: `incident-update` (no invented cause in a status update) and `thank-you-note` (warmth without gush), both held out. The held-out set grows from 4 to 9 of 22 fixtures without moving any dev fixture, so earlier dev numbers stay comparable.
+- `scripts/validate.py`: fails if the held-out set has fewer than 8 fixtures.
+
 ## 2026-09-28, drafting and review fixtures
 
 - `evals/fixtures/`: `draft-from-notes` turns bullet notes into an email, and `review-findings` asks for findings without a rewrite. Before these, every fixture was a rewrite or copy edit, although the skill also drafts and reviews. `review-findings` joins the held-out split.
