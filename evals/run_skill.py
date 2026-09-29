@@ -47,6 +47,11 @@ Pass --judge-only DIR to re-run only the claim check on rewrites already
 saved in DIR as <fixture-name>.md, for example to test a change to the
 judge prompt against earlier runs without generating new rewrites.
 
+Pass --baseline SUMMARY to print per-fixture pass-rate changes against a
+saved summary.json (the committed reference is evals/baselines/<model>.
+summary.json). Add --compare-summary FILE to compare a saved run instead of
+generating one.
+
 Pass --no-skill to produce a baseline with the same brief and no skill
 loaded, into a different --out directory, then compare the two with
 evals/compare_outputs.py.
@@ -65,6 +70,7 @@ import shutil
 import statistics
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -92,6 +98,29 @@ SYSTEM_HEADER = """You are running the better-writing skill. Its instructions an
 material follow. Apply them to the user's request.
 
 """ + OUTPUT_RULES
+
+
+def run_metadata():
+    """Record what a summary measured: skill version, commit, and date.
+
+    A saved summary is only comparable to another run of the same skill
+    text, so the version from SKILL.md and the git commit travel with it.
+    Either is None when it cannot be read.
+    """
+    try:
+        front = (ROOT / "SKILL.md").read_text(encoding="utf-8-sig")
+        match = re.search(r'^\s+version:\s*"?([^"\s#]+)"?', front, re.M)
+        version = match.group(1) if match else None
+    except OSError:
+        version = None
+    try:
+        commit = subprocess.run(
+            ["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True, check=True).stdout.strip() or None
+    except (OSError, subprocess.CalledProcessError):
+        commit = None
+    return {"skill_version": version, "commit": commit,
+            "date": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
 
 
 def plugin_description():
@@ -631,7 +660,8 @@ def build_summary(model, judge_model, no_judge, arms, repeats, split,
         overall["paired_ci95"] = [lo, hi]
     return {"model": model, "judge_model": None if no_judge else judge_model,
             "no_judge": no_judge, "arms": list(arms), "repeats": repeats,
-            "split": split, "fixtures": fixtures, "overall": overall}
+            "split": split, **run_metadata(), "fixtures": fixtures,
+            "overall": overall}
 
 
 def print_summary(summary):
@@ -660,6 +690,64 @@ def print_summary(summary):
                   f"[{dlo:+.2f}, {dhi:+.2f}]")
 
 
+def load_summary(path):
+    """Read a summary.json payload; raise ValueError if it is not one."""
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not (isinstance(data, dict) and isinstance(data.get("fixtures"), dict)
+            and isinstance(data.get("arms"), list)):
+        raise ValueError(f"{path} is not a run_skill.py summary.json")
+    return data
+
+
+def print_baseline_diff(summary, baseline):
+    """Print per-fixture pass-rate changes against a saved summary.
+
+    Each change carries a Newcombe 95% interval, so a one-repeat wobble
+    does not read as a regression. Settings that make two runs
+    incomparable (model, judge, repeats) are printed as warnings first.
+    """
+    print(f"against baseline: {baseline.get('model')}, skill "
+          f"{baseline.get('skill_version')} at {baseline.get('commit')}, "
+          f"{baseline.get('date')}")
+    for key in ("model", "judge_model", "repeats", "split"):
+        if summary.get(key) != baseline.get(key):
+            print(f"  WARN {key} differs: baseline {baseline.get(key)!r}, "
+                  f"this run {summary.get(key)!r}")
+    arms = [a for a in summary["arms"] if a in baseline["arms"]]
+    if not arms:
+        print(f"  no arm in common (baseline: {', '.join(baseline['arms'])})")
+        return
+    for arm in arms:
+        print(f"{arm}, this run minus baseline:")
+        names = sorted(set(summary["fixtures"]) | set(baseline["fixtures"]))
+        totals = [0, 0, 0, 0]  # new pass, new n, old pass, old n
+        for name in names:
+            new = summary["fixtures"].get(name, {}).get(arm)
+            old = baseline["fixtures"].get(name, {}).get(arm)
+            if new is None or old is None:
+                print(f"  {name}: only in "
+                      f"{'this run' if old is None else 'baseline'}")
+                continue
+            for i, v in enumerate((new["pass"], new["n"],
+                                   old["pass"], old["n"])):
+                totals[i] += v
+            lo, hi = newcombe_diff_interval(new["pass"], new["n"],
+                                            old["pass"], old["n"])
+            print(f"  {name}: {old['pass']}/{old['n']} -> "
+                  f"{new['pass']}/{new['n']}, "
+                  f"diff {new['rate'] - old['rate']:+.2f} "
+                  f"[{lo:+.2f}, {hi:+.2f}]")
+        # Overall covers shared fixtures only: a fixture added since the
+        # baseline would otherwise move the total without any change.
+        new_pass, new_n, old_pass, old_n = totals
+        if new_n and old_n:
+            lo, hi = newcombe_diff_interval(new_pass, new_n, old_pass, old_n)
+            print(f"  overall, shared fixtures: {old_pass}/{old_n} -> "
+                  f"{new_pass}/{new_n}, diff "
+                  f"{new_pass / new_n - old_pass / old_n:+.2f} "
+                  f"[{lo:+.2f}, {hi:+.2f}]")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--model", default=DEFAULT_MODEL)
@@ -683,8 +771,33 @@ def main():
     parser.add_argument("--out", default=str(ROOT / "evals" / "outputs"))
     parser.add_argument("--judge-only", metavar="DIR",
                         help="only re-run the claim check on rewrites saved in DIR")
+    parser.add_argument("--baseline", metavar="SUMMARY",
+                        help="print per-fixture changes against a saved "
+                        "summary.json, such as evals/baselines/*.json")
+    parser.add_argument("--compare-summary", metavar="SUMMARY",
+                        help="with --baseline: compare this saved summary "
+                        "instead of generating a new run")
     parser.add_argument("fixtures", nargs="*", help="fixture names (default: all)")
     args = parser.parse_args()
+
+    baseline = None
+    if args.baseline:
+        try:
+            baseline = load_summary(args.baseline)
+        except (OSError, ValueError) as exc:
+            print(f"FAIL (cannot read baseline: {exc})")
+            return 2
+    if args.compare_summary:
+        if baseline is None:
+            print("--compare-summary needs --baseline")
+            return 2
+        try:
+            summary = load_summary(args.compare_summary)
+        except (OSError, ValueError) as exc:
+            print(f"FAIL (cannot read summary: {exc})")
+            return 2
+        print_baseline_diff(summary, baseline)
+        return 0
 
     fixtures = sorted(p for p in FIXTURES_DIR.iterdir() if p.is_dir())
 
@@ -734,7 +847,9 @@ def main():
         # Read-and-judge only: never create or touch the --out directory.
         return judge_only(judge_model, Path(args.judge_only), fixtures)
 
-    out_dir = Path(args.out)
+    # Absolute, because the progressive arm runs `claude` with its cwd in the
+    # staging dir: a relative --out would point --system-prompt-file there.
+    out_dir = Path(args.out).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
 
     if args.no_skill:
@@ -832,6 +947,8 @@ def main():
     else:
         print(f"summary saved in {summary_path}")
     print_summary(summary)
+    if baseline is not None:
+        print_baseline_diff(summary, baseline)
 
     print(f"rewrites saved in {out_dir}")
     return 0 if all_ok else 1

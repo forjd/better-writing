@@ -2,6 +2,12 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-28, reference summary
+
+- `evals/baselines/claude-opus-5.summary.json`: a committed `--arm both --repeats 5` run with the judge, over all 22 fixtures. Always-on passes 93/110 (0.85) and progressive 77/110 (0.70); the paired difference is -0.15 [-0.24, -0.05].
+- `evals/run_skill.py`: summaries record the skill version, commit, and date. `--baseline SUMMARY` prints per-fixture changes against a saved summary with Newcombe intervals, and `--compare-summary FILE` does the same for a saved run without generating one.
+- `evals/run_skill.py`: `--out` is resolved to an absolute path. A relative `--out` made every progressive-arm call fail, because the progressive arm runs `claude` from the staging directory, where the relative system-prompt path does not exist.
+
 ## 2026-09-28, larger held-out split
 
 - `evals/fixtures/`: `incident-update` (no invented cause in a status update) and `thank-you-note` (warmth without gush), both held out. The held-out set grows from 4 to 9 of 22 fixtures without moving any dev fixture, so earlier dev numbers stay comparable.

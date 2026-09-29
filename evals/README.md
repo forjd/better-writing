@@ -57,6 +57,21 @@ Multi-arm or multi-repeat runs land in `<out>/<arm>/` as `<fixture>.r<k>.md` (pl
 
 Every run writes `<out>/summary.json`: per-fixture pass rates with Wilson 95% intervals, the per-fixture progressive-minus-always-on difference with a Newcombe 95% interval, and the paired mean difference over fixtures with a t interval. The same numbers print to stdout. Read the interval before claiming a win: with K=5 a single fixture at progressive 4/5 vs always-on 5/5 is still a [-0.62, +0.26] wash.
 
+## Reference summary
+
+`evals/baselines/` holds a committed `summary.json` for each model, recorded with `--arm both --repeats 5` and the judge. Each summary also records the skill version, the commit, and the date. Compare a new run against the reference instead of re-running the old skill first:
+
+```bash
+python3 evals/run_skill.py --arm both --repeats 5 --baseline evals/baselines/claude-opus-5.summary.json
+python3 evals/run_skill.py --baseline evals/baselines/claude-opus-5.summary.json --compare-summary evals/outputs/summary.json
+```
+
+The second form compares a saved run without generating anything. For each arm the two runs share, the report prints each fixture's pass count before and after, the change with a Newcombe 95% interval, and an overall change computed over the fixtures both runs contain, so a fixture added since the reference does not move the total. It warns first when the model, judge, repeat count, or split differs, since those make the numbers incomparable.
+
+The first reference (skill 1.2.1, 28 September 2026) passes 93/110 always-on and 77/110 progressive, a paired difference of -0.15 [-0.24, -0.05]. The progressive arm loses most on `chatbot-artefacts` (1/5 against 5/5; four rewrites keep the unfilled `[Your Name]`) and `marketing-copy` (1/5 against 4/5; three keep "whether you're"). `detector-request` fails 0/5 in both arms: each always-on rewrite puts a claim about detectors, such as "no edit can guarantee a score", into the text, where the judge counts it as added. `ui-microcopy` passes 2/5 in both, because the judge counts "try a smaller file" as a next step the source never gave. The recorded commit is the parent of the one that adds the file, and the fixtures and checker it ran against are the ones committed beside it.
+
+This is not the `--no-skill` baseline below. That one measures the skill against the unaided model; the reference summary measures the skill against its own earlier version. Re-record the reference when a skill change lands, the default model changes, or fixtures are added or edited, and say which in the commit.
+
 ## Dev and held-out fixtures
 
 `evals/splits.json` partitions the 22 fixtures into a 13-fixture tuned **dev** set and a 9-fixture never-read **held-out** set (`chat-reply`, `detector-request`, `docs-page`, `incident-update`, `marketing-copy`, `plain-human`, `ranking-claims`, `review-findings`, `thank-you-note` — spanning conversational register, strict-pass, reference docs, no-invention under pressure, booster/template, false-positive, scope-word, review, and warmth behaviour). The fixtures' banned lists were written by the same hand as the skill's phrase catalogue, so tuning against all 22 overfits to the author's own tells; the split is the guardrail:
