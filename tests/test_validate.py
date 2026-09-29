@@ -108,6 +108,10 @@ class SplitsTest(RepoCase):
         super().setUp()
         for name in ("a", "b", "c"):
             (self.root / "evals" / "fixtures" / name).mkdir(parents=True)
+        # Three fixtures cannot meet the real held-out minimum, so lower it
+        # here; test_heldout_minimum checks the floor itself.
+        self.addCleanup(setattr, validate, "MIN_HELDOUT", validate.MIN_HELDOUT)
+        validate.MIN_HELDOUT = 1
 
     def splits(self, data):
         self.write("evals/splits.json", json.dumps(data))
@@ -133,6 +137,11 @@ class SplitsTest(RepoCase):
         self.splits({"dev": ["a", "a", "b"], "heldout": ["c"], "extra": []})
         self.assertError("lists a fixture twice")
         self.assertError("unknown keys ['extra']")
+
+    def test_heldout_minimum(self):
+        validate.MIN_HELDOUT = 2
+        self.splits({"dev": ["a", "b"], "heldout": ["c"]})
+        self.assertError("heldout has 1 fixtures, needs at least 2")
 
     def test_invalid_json(self):
         self.write("evals/splits.json", "{")
