@@ -1,0 +1,37 @@
+{
+  "name": "draft-from-notes",
+  "mode": "draft",
+  "brief": "Draft a short all-staff email from these notes. Plain and friendly. Use only the facts in the notes.",
+  "required": [
+    "10 October",
+    "13 October",
+    "car park B",
+    "VPN",
+    "Mark Ellis",
+    "4410"
+  ],
+  "required_regex": [
+    "\\bfrom home\\b|\\bremotely\\b",
+    "\\b(?:6\\s?pm|6\\s?p\\.m\\.|18:00)\\b"
+  ],
+  "banned": [
+    "hope this email finds you well",
+    "hope this finds you well",
+    "excited",
+    "delighted",
+    "rest assured",
+    "seamless",
+    "don't hesitate",
+    "reach out",
+    "inconvenience",
+    "thank you for your understanding",
+    "thanks for your understanding",
+    "notes"
+  ],
+  "banned_regex": [
+    "[\\U0001F300-\\U0001FAFF\\u2600-\\u27BF]",
+    "\\[[^\\]]*(?:name|sender|signature)[^\\]]*\\]"
+  ],
+  "min_words_ratio": 0.9,
+  "max_words_ratio": 2.2
+}

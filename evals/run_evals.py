@@ -211,6 +211,37 @@ HEDGE = re.compile(
     r"tends? to|not sure)\b", re.I)
 
 
+MODES = ("rewrite", "draft", "review")
+
+
+# A quoted span: straight or curly double quotes, or inline code, on one line.
+QUOTED = re.compile(r'"[^"\n]*"|“[^”\n]*”|`[^`\n]*`')
+
+
+def longest_copied_run(source, output):
+    """Length in words of the longest unquoted word run output copies from source.
+
+    Words are compared lowercased, so punctuation and case do not matter.
+    Quoted spans are removed from the output first: a review quotes what it
+    discusses, even a whole sentence it praises, while a rewrite restates
+    the source as its own text, outside quotation marks.
+    """
+    a = [w.lower() for w in WORD.findall(source)]
+    # Replace each quote with a marker word so the runs either side of it
+    # cannot join into one.
+    b = [w.lower() for w in WORD.findall(QUOTED.sub(" 0quoted0 ", output))]
+    best = 0
+    prev = [0] * (len(b) + 1)
+    for x in a:
+        cur = [0] * (len(b) + 1)
+        for j, y in enumerate(b, 1):
+            if x == y:
+                cur[j] = prev[j - 1] + 1
+                best = max(best, cur[j])
+        prev = cur
+    return best
+
+
 MATTR_WINDOW = 25
 # A sentence ends at ., !, or ? followed by whitespace or the end of the
 # text, so "3.5", "v2.4.0", and ".env" do not split.
@@ -322,10 +353,17 @@ def check_rewrite(checks, input_text, rewrite_text):
         ok = re.search(pattern, norm_rewrite) is None
         results.append((ok, f"well formed: {desc}"))
 
+    mode = checks.get("mode", "rewrite")
+    if mode not in MODES:
+        results.append((False, f"mode must be one of {', '.join(MODES)}, "
+                               f"got {mode!r}"))
+
+    # A review quotes the tells it finds, so the structure checks, which
+    # guard text the skill writes, do not apply to its output.
     # Collapse newlines/whitespace for structure checks so scaffolds split
     # across lines or sentences still match.
     contrast_text = re.sub(r"\s+", " ", norm_rewrite)
-    for pattern, desc in CONTRAST:
+    for pattern, desc in (() if mode == "review" else CONTRAST):
         try:
             ok = re.search(pattern, contrast_text, re.I) is None
         except re.error as exc:
@@ -343,6 +381,13 @@ def check_rewrite(checks, input_text, rewrite_text):
         if min_ratio is not None:
             results.append((ratio >= min_ratio,
                             f"length ratio {ratio:.2f} >= {min_ratio} (no over-cutting)"))
+
+    max_copied = checks.get("max_copied_words")
+    if max_copied is not None:
+        run = longest_copied_run(norm_input, norm_rewrite)
+        results.append((run <= max_copied,
+                        f"longest unquoted copied run {run} words <= "
+                        f"{max_copied} (quotes, not a rewrite)"))
 
     drift = checks.get("voice_drift")
     if drift:

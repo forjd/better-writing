@@ -2,6 +2,12 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-09-28, drafting and review fixtures
+
+- `evals/fixtures/`: `draft-from-notes` turns bullet notes into an email, and `review-findings` asks for findings without a rewrite. Before these, every fixture was a rewrite or copy edit, although the skill also drafts and reviews. `review-findings` joins the held-out split.
+- `evals/run_evals.py`: a `mode` field (`rewrite`, `draft`, `review`) and a `max_copied_words` check, which ignores quoted spans. Review mode skips the structure checks, since a review quotes the tells it finds.
+- `evals/run_skill.py`: the output rule asks for what the brief asks for, which is findings alone for a review, and review fixtures skip the added-claims judge. The rule is one constant shared by both arms and the baseline.
+
 ## 2026-09-28, venue fixtures
 
 - `evals/fixtures/`: five fixtures for the venues the skill claims but the harness never measured. `pr-review-reply` and `chat-reply` test the conversational-replies rule (lead with the verdict, do not re-establish what the thread knows), `commit-message` the commit-message rule, and `ui-microcopy` and `docs-page` the UI and reference-docs registers. `chat-reply` and `docs-page` join the held-out split.

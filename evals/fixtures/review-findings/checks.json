@@ -1,0 +1,16 @@
+{
+  "name": "review-findings",
+  "mode": "review",
+  "brief": "Review this draft for our product blog. List the problems, quote the words at fault, and say briefly why each is a problem. Do not rewrite the draft.",
+  "required_regex": [
+    "fast-paced|digital landscape|never been more important",
+    "game[- ]?changer",
+    "90\\s?%|studies show",
+    "not just|peace of mind",
+    "\\[Your Name\\]|placeholder|sign-?off"
+  ],
+  "banned_regex": [
+    "(?im)^\\W*(?:revised|rewritten|suggested|improved|edited)\\s+(?:version|draft|text)\\b"
+  ],
+  "max_copied_words": 15
+}
