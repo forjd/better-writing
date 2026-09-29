@@ -46,7 +46,7 @@ The checker exits non-zero on any failure.
 
 ## Sampling: repeats and intervals
 
-One unrepeated generation per fixture cannot resolve small changes: with 13 binary fixtures, an exact McNemar test needs at least 6 of 13 to flip in the same direction before p < 0.05. Pass `--repeats K` (use 5 or more when sizing a skill change; size K against the variance probe in [FOR-113](/FOR/issues/FOR-113) rather than guessing) to generate K independent rewrites per fixture per arm. The CLI exposes no temperature setting, so repeats are independent default-sampling generations:
+One unrepeated generation per fixture cannot resolve small changes: with 13 binary fixtures, an exact McNemar test needs at least 6 of 13 to flip in the same direction before p < 0.05. Pass `--repeats K` (use 5 or more when sizing a skill change, and more if a fixture's pass rate swings between runs) to generate K independent rewrites per fixture per arm. The CLI exposes no temperature setting, so repeats are independent default-sampling generations:
 
 ```bash
 python3 evals/run_skill.py --arm both --repeats 5 --no-judge  # cheap sweep
