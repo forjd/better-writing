@@ -80,6 +80,21 @@ python3 evals/compare_outputs.py evals/baseline evals/outputs
 
 The comparison shows the judge the brief, the source, and both rewrites, unlabelled and in both orders, and counts a win only when the same rewrite wins both ways. Judges prefer low-perplexity text and the first item shown, and they agree with human writing preferences only about three quarters of the time, so treat a loss as a flag to read both outputs, not a verdict. Never label which output came from the skill: labelled authorship shifts judge preference by tens of points.
 
+## Trigger eval
+
+Both arms above load the skill unconditionally, so neither can tell whether a real harness would load it at all. That decision rests on the `description` line in `SKILL.md`, which is all the model sees until it calls the Skill tool. `run_triggers.py` measures it:
+
+```bash
+python3 evals/run_triggers.py --repeats 3
+python3 evals/run_triggers.py tighten-email write-unit-test   # a subset, by id
+```
+
+It stages the skill as a plugin (manifest, `SKILL.md`, `references/`) under `<out>/_plugin`, then sends each prompt in `triggers.json` through `claude -p --plugin-dir` with the same isolation flags as the rewrite runner, the read-only tools `Skill,Read,Glob,Grep`, and an empty working directory. The model sees better-writing in the skill listing next to the built-in skills. A run counts as a trigger when the model calls the Skill tool for better-writing, and the run is stopped at that call, so no prompt goes on to do the work.
+
+`triggers.json` holds two sets. `should_trigger` covers rewriting, drafting, reviewing, and copy editing across genres; its trigger rate is recall. `should_not_trigger` holds near misses that mention a typo, an email, or a log but are code, data, or translation tasks; its trigger rate is the false-trigger rate. The runner prints both with Wilson 95% intervals and writes them, with per-prompt counts and any other skills the model called, to `<out>/summary.json` (default `evals/outputs/triggers/`).
+
+Run it before and after any change to the `description` line. The first run, on `claude-opus-5` with three repeats, triggered on 30 of 30 should-trigger runs and 0 of 30 should-not runs. Swapping the description for an unrelated one (CSV conversion) dropped recall to 0 of 6, so the measurement does respond to the description. With both sets at their limits, a change can only show up as a regression; add harder near misses if you need to see an improvement.
+
 ## Why detector scores are not a check
 
 Do not add an AI-detector score to this harness.

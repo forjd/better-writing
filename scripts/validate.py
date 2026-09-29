@@ -7,6 +7,8 @@ Checks:
 - Each fixture in evals/fixtures/ has an input.md and a checks.json with a
   brief, at least one check, valid JSON, and compiling regexes, plus a
   known-good output in evals/examples/<fixture>.md (and no stray examples).
+- evals/triggers.json holds non-empty should_trigger and should_not_trigger
+  lists of {id, prompt}, with unique slug ids.
 - Every symlink under skills/ resolves to a file inside the repo, and each
   tap directory contains a SKILL.md.
 - Tap parity: every references/*.md and agents/*.yaml has a matching
@@ -346,6 +348,50 @@ def check_splits():
           f"once (fixtures: {fixtures}, covered: {covered})")
 
 
+def check_triggers():
+    """evals/triggers.json must hold two non-empty sets of {id, prompt}.
+
+    run_triggers.py reports each set as its own rate, so an empty set or a
+    duplicate id would quietly change what the rate means.
+    """
+    path = ROOT / "evals" / "triggers.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except OSError:
+        errors.append("evals/triggers.json: missing file")
+        return
+    except ValueError as exc:
+        errors.append(f"evals/triggers.json: invalid JSON ({exc})")
+        return
+    sets = ("should_trigger", "should_not_trigger")
+    if not isinstance(data, dict):
+        errors.append("evals/triggers.json: top level must be an object")
+        return
+    unknown = sorted(set(data) - set(sets))
+    check(not unknown,
+          f"evals/triggers.json: unknown keys {unknown} (known: {', '.join(sets)})")
+    seen = set()
+    for key in sets:
+        cases = data.get(key)
+        if not (isinstance(cases, list) and cases):
+            errors.append(f"evals/triggers.json[{key!r}] must be a non-empty list")
+            continue
+        for index, case in enumerate(cases):
+            where = f"evals/triggers.json[{key!r}][{index}]"
+            if not (isinstance(case, dict) and set(case) == {"id", "prompt"}):
+                errors.append(f"{where} must be an object with exactly id and prompt")
+                continue
+            case_id, prompt = case["id"], case["prompt"]
+            if not (isinstance(case_id, str)
+                    and re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", case_id)):
+                errors.append(f"{where}: id must be a lowercase-hyphenated slug")
+                continue
+            check(case_id not in seen, f"{where}: duplicate id {case_id!r}")
+            seen.add(case_id)
+            check(isinstance(prompt, str) and prompt.strip(),
+                  f"{where}: prompt must be a non-empty string")
+
+
 def check_version():
     """Return SKILL.md metadata.version, which release-please bumps."""
     try:
@@ -603,6 +649,7 @@ def main():
     skill_name = check_frontmatter()
     check_fixtures()
     check_splits()
+    check_triggers()
     version = check_version()
     check_agents(skill_name, version)
     check_plugin(skill_name, version)
