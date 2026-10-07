@@ -1,7 +1,10 @@
 """Error paths in scripts/validate.py, run against temporary repo trees."""
 
+import io
 import json
 import os
+import shutil
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -152,54 +155,84 @@ class SplitsTest(RepoCase):
         self.assertError("invalid JSON")
 
 
-@unittest.skipUnless(symlinks_supported(), "symlinks unavailable")
 class LayoutTest(RepoCase):
     def setUp(self):
         super().setUp()
         self.write(SKILL_PATH, "skill")
-        self.write("README.md", "readme")
+        self.write("LICENSE", "licence")
+        self.write(f"{SKILL_DIR}/LICENSE", "licence")
         self.skill = self.root / SKILL_DIR
-        os.symlink(os.path.join("..", "..", "README.md"), self.skill / "README.md")
 
     def test_valid_layout(self):
         validate.check_layout()
         self.assertEqual(validate.errors, [])
 
-    def test_root_skill_md(self):
+    def test_old_root_paths(self):
         self.write("SKILL.md", "skill")
+        self.write("references/one.md", "x")
+        self.write("agents/demo.yaml", "x")
         validate.check_layout()
-        self.assertError("must not exist at the repo root")
+        for old in ("SKILL.md", "references", "agents"):
+            self.assertError(f"{old}: must not exist at the repo root")
 
-    def test_symlinked_skill_file(self):
+    @unittest.skipUnless(symlinks_supported(), "symlinks unavailable")
+    def test_broken_root_symlink(self):
+        os.symlink("gone.md", self.root / "SKILL.md")
+        validate.check_layout()
+        self.assertError("SKILL.md: must not exist at the repo root")
+
+    @unittest.skipUnless(symlinks_supported(), "symlinks unavailable")
+    def test_symlinks_anywhere_under_skills(self):
         self.write("notes.md", "x")
-        (self.skill / "references").mkdir()
-        os.symlink(os.path.join("..", "..", "..", "notes.md"),
-                   self.skill / "references" / "one.md")
+        os.remove(self.skill / "SKILL.md")
+        os.symlink(os.path.join("..", "..", "notes.md"), self.skill / "SKILL.md")
+        (self.root / "skills" / "other").mkdir()
+        os.symlink(os.path.join("..", "..", "notes.md"),
+                   self.root / "skills" / "other" / "notes.md")
         validate.check_layout()
-        self.assertError("must be a real file, not a symlink")
-        self.assertError("unexpected symlink")
+        hits = [e for e in validate.errors if "must be a real file" in e]
+        self.assertEqual(len(hits), 2, validate.errors)
 
-    def test_broken_symlink(self):
-        os.symlink(os.path.join("..", "..", "gone.md"), self.skill / "gone.md")
+    def test_license_differs(self):
+        self.write(f"{SKILL_DIR}/LICENSE", "stale")
         validate.check_layout()
-        self.assertError("broken symlink")
-        self.assertError("unexpected symlink")
+        self.assertError("differs from the root LICENSE")
 
-    def test_missing_mirror(self):
-        self.write("LICENSE", "x")
+    def test_license_missing(self):
+        os.remove(self.skill / "LICENSE")
         validate.check_layout()
-        self.assertError("expected symlink to root counterpart LICENSE")
+        self.assertError(f"{SKILL_DIR}/LICENSE: missing or unreadable")
 
-    def test_escaping_symlink(self):
-        outside = tempfile.TemporaryDirectory()
-        self.addCleanup(outside.cleanup)
-        target = Path(outside.name) / "README.md"
-        target.write_text("elsewhere", encoding="utf-8")
-        os.remove(self.skill / "README.md")
-        os.symlink(target, self.skill / "README.md")
+    def test_missing_skill_folder(self):
+        shutil.rmtree(self.skill)
         validate.check_layout()
-        self.assertError("symlink escapes the repo")
-        self.assertError("content differs")
+        self.assertError(f"{SKILL_DIR}: missing directory")
+
+    @unittest.skipUnless(shutil.which("git"), "git unavailable")
+    def test_symlink_in_git_index(self):
+        # A checkout without symlink support writes a committed symlink as a
+        # plain file, so only the index shows it.
+        git = ["git", "-C", str(self.root)]
+        subprocess.run(git + ["init", "-q"], check=True)
+        blob = subprocess.run(git + ["hash-object", "-w", "LICENSE"],
+                              capture_output=True, text=True,
+                              check=True).stdout.strip()
+        for mode, rel in (("100644", f"{SKILL_DIR}/LICENSE"),
+                          ("120000", f"{SKILL_DIR}/README.md")):
+            subprocess.run(git + ["update-index", "--add", "--cacheinfo",
+                                  f"{mode},{blob},{rel}"], check=True)
+        validate.check_layout()
+        self.assertEqual(validate.errors, [
+            f"{SKILL_DIR}/README.md: tracked as a symlink (git mode 120000); "
+            "commit a real file"])
+
+
+class MainTest(RepoCase):
+    def test_main_runs_layout_check(self):
+        self.write("SKILL.md", "skill")
+        with mock.patch("sys.stdout", new=io.StringIO()):
+            self.assertEqual(validate.main(), 1)
+        self.assertError("SKILL.md: must not exist at the repo root")
 
 
 if __name__ == "__main__":

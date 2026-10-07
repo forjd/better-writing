@@ -165,7 +165,7 @@ Use one method, not both. Claude Code loads each install separately, so with bot
 
 You can also copy [`skills/better-writing/`](./skills/better-writing/) into your agent skills directory if your agent runtime supports local skill discovery. Copy that folder only, not the whole repo.
 
-To pin a release rather than track `main`, clone its tag and copy that folder from the checkout:
+To pin a release rather than track `main`, clone its tag and copy that folder from the checkout. Tags before v2.0.0 keep the skill at the repo root, so for those, copy the root instead:
 
 ```bash
 git clone --branch v1.3.0 https://github.com/forjd/better-writing.git # x-release-please-version
@@ -311,7 +311,7 @@ The skill follows the standard agent-skill layout (`SKILL.md` plus lazily loaded
 - **OpenAI-compatible clients**: [agents/openai.yaml](./skills/better-writing/agents/openai.yaml) provides display metadata and allows implicit invocation.
 - **Other runtimes**: anything that reads `SKILL.md` frontmatter will pick it up; the references are plain Markdown loaded on demand.
 
-The skill lives in `skills/better-writing/`, the `skills/<name>/` layout that skills.sh and Claude Code plugins both read. skills.sh copies that folder only, so its installs never pick up the plugin manifests or the repo tooling. The skill files in it are real files. Its README.md, LICENSE and CHANGELOG.md are relative symlinks to the root files, which survive `git clone` but not GitHub's Download ZIP or a Windows checkout without symlink support. The skill still works in those copies; only those three files become one-line path stubs.
+The skill lives in `skills/better-writing/`, the `skills/<name>/` layout that skills.sh and Claude Code plugins both read. skills.sh copies that folder only, so its installs never pick up the plugin manifests or the repo tooling. It holds real files only, including its own copy of LICENSE, so a plain copy, GitHub's Download ZIP and a Windows checkout all give a complete skill.
 
 ## Releases
 

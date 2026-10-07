@@ -12,11 +12,9 @@ Checks:
   known-good output in evals/examples/<fixture>.md (and no stray examples).
 - evals/triggers.json holds non-empty should_trigger and should_not_trigger
   lists of {id, prompt}, with unique slug ids.
-- Layout: no SKILL.md at the repo root, and SKILL.md, references/*.md and
-  agents/*.yaml are real files, not symlinks.
-- Mirrors: the skill folder holds README.md, LICENSE and CHANGELOG.md as
-  symlinks to the root files, byte-identical, and no other symlinks.
-- Every symlink under skills/ resolves to a file inside the repo.
+- Layout: no SKILL.md, references/ or agents/ at the repo root, and no
+  symlinks under skills/, on disk or in the git index.
+- The skill folder's LICENSE is byte-identical to the root LICENSE.
 - agents/*.yaml schema: top-level name matches SKILL.md, version present,
   and default_prompt mentions the skill trigger.
 - Release version: SKILL.md metadata.version is semver and matches every
@@ -24,15 +22,11 @@ Checks:
 - Claude Code plugin: .claude-plugin/plugin.json and marketplace.json parse,
   their names match SKILL.md, and their versions match metadata.version.
 
-The mirrors need a checkout with symlink support (git core.symlinks=true).
-They survive `git clone` but not GitHub's Download ZIP or a Windows checkout
-without symlink support. The skill files are real files, so those checkouts
-still hold a working skill.
-
 Exits non-zero if any check fails.
 """
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -64,8 +58,10 @@ KNOWN_VOICE_KEYS = {
     "sentence_length_sd",
 }
 
-# Top-level root files mirrored into the skill folder as symlinks.
-EXPECTED_TOP_SYMLINKS = {"README.md", "LICENSE", "CHANGELOG.md"}
+# Where the skill lived before 2.0.0. None of these may come back.
+OLD_ROOT_PATHS = ("SKILL.md", "references", "agents")
+# Root files the skill folder ships a copy of.
+SKILL_COPIES = ("LICENSE",)
 
 
 def check(condition, message):
@@ -557,115 +553,60 @@ def check_plugin(expected_name=None, expected_version=None):
 
 
 def check_layout():
-    # A root SKILL.md makes skills.sh install the whole repo, .claude-plugin/
-    # included, and Claude Code then loads that copy twice: as a skill and as
-    # a skills-directory plugin.
-    check(
-        not (ROOT / "SKILL.md").exists(),
-        f"SKILL.md: must not exist at the repo root; the skill lives in {SKILL_MD}",
-    )
+    # The skill used to live at the root. A root SKILL.md makes skills.sh
+    # install the whole repo, .claude-plugin/ included, and Claude Code then
+    # loads that copy twice: as a skill and as a skills-directory plugin. A
+    # root references/ or agents/ is a stale copy nothing ships, such as a
+    # file a merge brought back. lexists, so a broken symlink counts too.
+    for old in OLD_ROOT_PATHS:
+        check(
+            not os.path.lexists(ROOT / old),
+            f"{old}: must not exist at the repo root; the skill lives in "
+            f"{SKILL_DIR.as_posix()}/",
+        )
     skills_dir = ROOT / "skills"
     skill = skill_root()
     if not skill.is_dir():
         errors.append(f"{SKILL_DIR.as_posix()}: missing directory")
         return
-    # Real files, so every installer and every checkout gets a working skill.
-    skill_files = [skill / "SKILL.md"]
-    skill_files += sorted((skill / "references").glob("*.md"))
-    skill_files += sorted((skill / "agents").glob("*.yaml"))
-    for path in skill_files:
+    # No symlinks: a plain copy, Download ZIP and a Windows checkout would
+    # turn them into links that point outside the skill or into path stubs.
+    for path in sorted(skills_dir.rglob("*")):
         check(
             not path.is_symlink(),
             f"{path.relative_to(ROOT)}: must be a real file, not a symlink",
         )
-    # Mirrors: the top-level docs (README, LICENSE, CHANGELOG) are symlinks
-    # back to the root files.
-    expected = {skill / top for top in EXPECTED_TOP_SYMLINKS if (ROOT / top).is_file()}
-    expected_symlinks = sorted(expected)
-    for want in expected_symlinks:
-        check(
-            want.is_symlink(),
-            f"{want.relative_to(ROOT)}: expected symlink to root counterpart "
-            f"{want.name} is missing (want core.symlinks=true checkout)",
-        )
-    actual_symlinks = {p for p in skills_dir.rglob("*") if p.is_symlink()}
-    for extra in sorted(actual_symlinks - expected):
-        errors.append(
-            f"{extra.relative_to(ROOT)}: unexpected symlink "
-            f"(allowlist: README.md, LICENSE, CHANGELOG.md in {SKILL_DIR.as_posix()})"
-        )
-    # Byte-identical content: each mirror must match its root counterpart.
-    for want in expected_symlinks:
-        if not want.is_symlink() or not want.exists():
-            continue
+    # Root files the skill ships its own copy of, byte for byte.
+    for name in SKILL_COPIES:
+        copy = skill / name
+        rel = copy.relative_to(ROOT).as_posix()
         try:
-            same = want.read_bytes() == (ROOT / want.name).read_bytes()
+            same = copy.read_bytes() == (ROOT / name).read_bytes()
         except OSError as exc:
-            errors.append(f"{want.relative_to(ROOT)}: unreadable ({exc})")
+            errors.append(f"{rel}: missing or unreadable ({exc})")
             continue
-        check(
-            same,
-            f"{want.relative_to(ROOT)}: content differs from "
-            f"{want.name} (stale copy or wrong target)",
-        )
-    for path in sorted(skills_dir.rglob("*")):
-        if not path.is_symlink():
-            continue
-        rel = path.relative_to(ROOT)
-        try:
-            target = path.resolve()
-        except OSError as exc:
-            errors.append(f"{rel}: cannot resolve symlink ({exc})")
-            continue
-        try:
-            link_target = path.readlink()
-        except OSError:
-            link_target = target
-        check(path.exists(), f"{rel}: broken symlink -> {link_target}")
-        try:
-            inside = target.is_relative_to(ROOT)
-        except AttributeError:  # Python < 3.9 fallback
-            try:
-                target.relative_to(ROOT)
-                inside = True
-            except ValueError:
-                inside = False
-        check(inside, f"{rel}: symlink escapes the repo -> {target}")
-    # Best-effort git index check: tracked mirrors must be mode 120000.
+        check(same, f"{rel}: differs from the root {name}; copy it again")
+    # A checkout without symlink support turns a committed symlink into a
+    # plain file, which the checks above cannot see, so ask git as well.
     # Skipped when git is unavailable (e.g. source tarball without .git).
-    if expected_symlinks and (ROOT / ".git").exists():
-        try:
-            proc = subprocess.run(
-                ["git", "-C", str(ROOT), "ls-files", "-s"],
-                capture_output=True,
-                text=True,
-                timeout=10,
-            )
-        except (OSError, subprocess.SubprocessError):
-            proc = None
-        if proc is not None and proc.returncode == 0:
-            modes = {}
-            for line in proc.stdout.splitlines():
-                if "\t" not in line:
-                    continue
-                meta, fpath = line.split("\t", 1)
-                parts = meta.split()
-                if not parts:
-                    continue
-                modes[fpath] = parts[0]
-            for want in expected_symlinks:
-                rel_posix = want.relative_to(ROOT).as_posix()
-                mode = modes.get(rel_posix)
-                if mode is None:
-                    errors.append(
-                        f"{rel_posix}: not tracked in git "
-                        "(expected symlink, mode 120000)"
-                    )
-                elif mode != "120000":
-                    errors.append(
-                        f"{rel_posix}: git mode {mode} != 120000 "
-                        "(not a symlink; check core.symlinks=true and re-checkout)"
-                    )
+    if not (ROOT / ".git").exists():
+        return
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(ROOT), "ls-files", "-s", "--", "skills"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return
+    if proc.returncode != 0:
+        return
+    for line in proc.stdout.splitlines():
+        meta, _, fpath = line.partition("\t")
+        if meta.split()[:1] == ["120000"]:
+            errors.append(f"{fpath}: tracked as a symlink (git mode 120000); "
+                          "commit a real file")
 
 
 def main():
