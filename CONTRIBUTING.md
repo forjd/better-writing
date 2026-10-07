@@ -4,7 +4,7 @@ Thanks for helping. This file covers what to change where, how to check a change
 
 ## Keep the skill lean
 
-Put core workflow guidance in [SKILL.md](./SKILL.md), and move detailed pattern lists or examples into [references/](./references/). Agents load `SKILL.md` on every trigger and the references only when needed, so every line in `SKILL.md` costs something.
+Put core workflow guidance in [SKILL.md](./skills/better-writing/SKILL.md), and move detailed pattern lists or examples into [references/](./skills/better-writing/references/). Both live in `skills/better-writing/`. Keep every file the skill needs in that folder as a real file, because skills.sh and manual installs copy that folder only. Do not add a `SKILL.md` at the repo root: skills.sh would then install the whole repo, and Claude Code would load the skill twice. If you change `LICENSE`, copy it to `skills/better-writing/LICENSE` as well; `scripts/validate.py` checks that the two match. Agents load `SKILL.md` on every trigger and the references only when needed, so every line in `SKILL.md` costs something.
 
 Avoid bulky documentation the agent does not need. Keep examples factual, concise, and easy to audit.
 

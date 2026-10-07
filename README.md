@@ -4,7 +4,7 @@
 
 An agent skill for prose that sounds clear, specific, and human.
 
-[![Agent Skill](https://img.shields.io/badge/agent%20skill-better--writing-2563eb?style=for-the-badge)](./SKILL.md)
+[![Agent Skill](https://img.shields.io/badge/agent%20skill-better--writing-2563eb?style=for-the-badge)](./skills/better-writing/SKILL.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827?style=for-the-badge)](./LICENSE)
 [![skills.sh](https://skills.sh/b/forjd/better-writing)](https://skills.sh/forjd/better-writing)
 
@@ -33,7 +33,7 @@ More options are under [Installation](#installation).
 
 **Beating AI detectors is explicitly a non-goal.** Better Writing improves clarity, specificity, and voice fit. It does not lower AI-detector scores, and no edit can guarantee one. Detector scores are deliberately not a check in the [evaluation harness](./evals/) — see [why detector scores are not a check](./evals/README.md#why-detector-scores-are-not-a-check).
 
-If you ask it to pass a detector, it runs the strict pass and says so in the change note, without evasion tricks such as synonym swaps, inserted typos, look-alike characters, or translation round-trips. They make the prose worse, and leading detectors are now trained on humaniser output. See [Guardrails](./SKILL.md#guardrails).
+If you ask it to pass a detector, it runs the strict pass and says so in the change note, without evasion tricks such as synonym swaps, inserted typos, look-alike characters, or translation round-trips. They make the prose worse, and leading detectors are now trained on humaniser output. See [Guardrails](./skills/better-writing/SKILL.md#guardrails).
 
 ## What it is
 
@@ -159,11 +159,13 @@ claude plugin install better-writing@forjd
 
 Run `/plugin marketplace update forjd` to pick up new releases.
 
+Use one method, not both. Claude Code loads each install separately, so with both you get the skill twice.
+
 ### Manual install
 
-You can also copy the folder into your agent skills directory if your agent runtime supports local skill discovery.
+You can also copy [`skills/better-writing/`](./skills/better-writing/) into your agent skills directory if your agent runtime supports local skill discovery. Copy that folder only, not the whole repo.
 
-To pin a release rather than track `main`, clone its tag and copy that checkout:
+To pin a release rather than track `main`, clone its tag and copy that folder from the checkout. Tags before v2.0.0 keep the skill at the repo root, so for those, copy the root instead:
 
 ```bash
 git clone --branch v1.3.0 https://github.com/forjd/better-writing.git # x-release-please-version
@@ -179,7 +181,7 @@ Paste this into your coding agent and it will do the install for you:
 Install the better-writing agent skill from https://github.com/forjd/better-writing.
 
 1. If Node or Bun is available, run `npx skills add forjd/better-writing` (or `bunx skills add forjd/better-writing`) and follow its prompts.
-2. If that is not possible, clone the repo and copy its root folder (the one containing SKILL.md, references/, and agents/) into the skills directory your runtime reads. Name the copied folder better-writing.
+2. If that is not possible, clone the repo and copy its skills/better-writing folder (the one containing SKILL.md, references/, and agents/) into the skills directory your runtime reads. Copy that folder only, not the whole repo, and keep its name, better-writing.
 3. Confirm the installed folder contains SKILL.md with `name: better-writing` in its frontmatter, and that references/ sits next to it.
 4. Tell me where you installed it and whether I need to restart the agent before it can use the skill.
 
@@ -212,18 +214,18 @@ Use my writing sample below as the voice reference, then rewrite the article int
 
 | Path | Purpose |
 | --- | --- |
-| [SKILL.md](./SKILL.md) | Core skill instructions and metadata. |
-| [agents/openai.yaml](./agents/openai.yaml) | UI metadata for compatible agent clients. |
+| [skills/better-writing/](./skills/better-writing/) | The skill. skills.sh and manual installs copy this folder only. |
+| [skills/better-writing/SKILL.md](./skills/better-writing/SKILL.md) | Core skill instructions and metadata. |
+| [skills/better-writing/agents/openai.yaml](./skills/better-writing/agents/openai.yaml) | UI metadata for compatible agent clients. |
+| [skills/better-writing/references/ai-writing-patterns.md](./skills/better-writing/references/ai-writing-patterns.md) | AI-writing tells, confidence tiers, near-conclusive artefacts, and false-positive checks. |
+| [skills/better-writing/references/genre-tells.md](./skills/better-writing/references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, fiction, and code. |
+| [skills/better-writing/references/preflight.md](./skills/better-writing/references/preflight.md) | Final quality checks before delivery. |
+| [skills/better-writing/references/sources.md](./skills/better-writing/references/sources.md) | Source projects and attribution notes. |
+| [skills/better-writing/references/structures-and-phrases.md](./skills/better-writing/references/structures-and-phrases.md) | Slop phrase and structure audit. |
+| [skills/better-writing/references/voice-and-context.md](./skills/better-writing/references/voice-and-context.md) | Audience, genre, dials, voice calibration, and genre exemptions. |
 | [.claude-plugin/](./.claude-plugin/) | Claude Code plugin and marketplace manifests. |
-| [references/ai-writing-patterns.md](./references/ai-writing-patterns.md) | AI-writing tells, confidence tiers, near-conclusive artefacts, and false-positive checks. |
-| [references/genre-tells.md](./references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, fiction, and code. |
-| [references/preflight.md](./references/preflight.md) | Final quality checks before delivery. |
-| [references/sources.md](./references/sources.md) | Source projects and attribution notes. |
-| [references/structures-and-phrases.md](./references/structures-and-phrases.md) | Slop phrase and structure audit. |
-| [references/voice-and-context.md](./references/voice-and-context.md) | Audience, genre, dials, voice calibration, and genre exemptions. |
 | [evals/](./evals/) | Fixture texts, a checker with voice-drift metrics, a pre-ChatGPT human corpus for false-positive reports, a model runner with an added-claims judge, and a pairwise comparison against a no-skill baseline. |
-| [skills/better-writing/](./skills/better-writing/) | Tap layout for managers that expect `skills/<name>/`; relative symlinks back to the root files. |
-| [scripts/validate.py](./scripts/validate.py) | Repo checks run by CI: frontmatter, fixtures, symlinks, and agent config. |
+| [scripts/validate.py](./scripts/validate.py) | Repo checks run by CI: frontmatter, fixtures, layout, symlinks, and agent config. |
 | [scripts/lint_prose.py](./scripts/lint_prose.py) | Prose lint run by CI: the repo docs pass the skill's own audit. |
 | [CHANGELOG.md](./CHANGELOG.md) | Dated history of the pattern catalogue. |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | How to change the skill, check the change, and open a pull request. |
@@ -246,7 +248,7 @@ Use my writing sample below as the voice reference, then rewrite the article int
 CI runs three checks on every push to main and every pull request:
 
 ```bash
-python3 scripts/validate.py                      # frontmatter, version, fixture, symlink, and agent config checks
+python3 scripts/validate.py                      # frontmatter, version, fixture, layout, symlink, and agent config checks
 python3 scripts/lint_prose.py                    # repo docs pass the skill's own audit, with measured exclusions
 python3 evals/run_evals.py --all evals/examples  # checker self-test
 ```
@@ -257,7 +259,7 @@ You can also validate the skill with the checker from Anthropic's [skill-creator
 
 ```bash
 git clone https://github.com/anthropics/skills.git anthropic-skills
-python3 anthropic-skills/skills/skill-creator/scripts/quick_validate.py /path/to/better-writing
+python3 anthropic-skills/skills/skill-creator/scripts/quick_validate.py /path/to/better-writing/skills/better-writing
 ```
 
 This checks the required skill metadata and naming rules.
@@ -273,7 +275,7 @@ Better Writing started as a synthesis of three skills and one reference page. Ea
 | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | Context-first brief reading and explicit quality dials. | Added factual guardrails and a preservation check, so taste decisions never license invented specifics. |
 | [Wikipedia:Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) | The observed-in-the-wild pattern catalogue. | Reorganised for agent use and dated in the [changelog](./CHANGELOG.md) so the list can drift as models do. |
 
-See [references/sources.md](./references/sources.md) for fuller source notes.
+See [references/sources.md](./skills/better-writing/references/sources.md) for fuller source notes.
 
 ## Evaluation
 
@@ -306,18 +308,18 @@ AI tells drift. "Delve" and "tapestry" marked 2023-era output; "it's not just X,
 The skill follows the standard agent-skill layout (`SKILL.md` plus lazily loaded `references/`), so it works in any runtime that discovers skills by folder:
 
 - **Claude Code**: tested; install via skills.sh or copy into your skills directory.
-- **OpenAI-compatible clients**: [agents/openai.yaml](./agents/openai.yaml) provides display metadata and allows implicit invocation.
+- **OpenAI-compatible clients**: [agents/openai.yaml](./skills/better-writing/agents/openai.yaml) provides display metadata and allows implicit invocation.
 - **Other runtimes**: anything that reads `SKILL.md` frontmatter will pick it up; the references are plain Markdown loaded on demand.
 
-The `skills/better-writing/` directory is a tap layout for managers that expect `skills/<name>/`. It is built from relative symlinks back to the root files, which survive `git clone` but not GitHub's Download ZIP or a Windows checkout without symlink support. In those cases install from the repo root, which is the canonical copy.
+The skill lives in `skills/better-writing/`, the `skills/<name>/` layout that skills.sh and Claude Code plugins both read. skills.sh copies that folder only, so its installs never pick up the plugin manifests or the repo tooling. It holds real files only, including its own copy of LICENSE, so a plain copy, GitHub's Download ZIP and a Windows checkout all give a complete skill.
 
 ## Releases
 
-Releases follow [semantic versioning](https://semver.org/) and are cut by [release-please](https://github.com/googleapis/release-please) from the conventional commit history. It keeps a release pull request open on `main` that collects merged commits, bumps `metadata.version` in `SKILL.md` and `version` in `agents/openai.yaml`, and drafts the notes. Merging that pull request tags `vX.Y.Z` and publishes a [GitHub Release](https://github.com/forjd/better-writing/releases). Watch the repo for releases to hear when the catalogue changes.
+Releases follow [semantic versioning](https://semver.org/) and are cut by [release-please](https://github.com/googleapis/release-please) from the conventional commit history. It keeps a release pull request open on `main` that collects merged commits, bumps `metadata.version` in `skills/better-writing/SKILL.md` and `version` in `skills/better-writing/agents/openai.yaml`, and drafts the notes. Merging that pull request tags `vX.Y.Z` and publishes a [GitHub Release](https://github.com/forjd/better-writing/releases). Watch the repo for releases to hear when the catalogue changes.
 
 The skill has no API, so a major version means one of these:
 
-- The install layout changes: the root files, `references/`, `agents/`, or the `skills/better-writing/` tap.
+- The install layout changes: what `skills/better-writing/` holds, or where the skill lives.
 - An eval CLI flag or fixture field is removed or renamed.
 - `SKILL.md` changes behaviour in a way that means people must change how they prompt it.
 

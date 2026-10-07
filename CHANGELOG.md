@@ -2,6 +2,13 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-10-07, one skill folder
+
+- Layout: the skill lives only in `skills/better-writing/`, as real files. The root `SKILL.md`, `references/` and `agents/` are gone. A root `SKILL.md` made skills.sh install the whole repo, `.claude-plugin/` included, and Claude Code then loaded that copy twice: as `better-writing` and as the skills-directory plugin `better-writing:better-writing`. A skills.sh install now copies 140 KB instead of 1.1 MB, with no tests, evals or CI files.
+- Existing skills.sh installs move to the new folder on the next `npx skills update`. Manual installs copy `skills/better-writing/` instead of the repo root. The Claude Code plugin is unchanged.
+- The skill folder holds no symlinks, so a plain copy, Download ZIP or Windows checkout gives a complete skill. It ships its own copy of LICENSE; README.md and CHANGELOG.md stay at the root only.
+- `scripts/validate.py`: fails if `SKILL.md`, `references/` or `agents/` appears at the repo root, if anything under `skills/` is a symlink, or if the skill's LICENSE differs from the root one.
+
 ## 2026-09-29, CI on release PRs
 
 - Release: the release workflow now starts CI on the release PR branch with `workflow_dispatch`, the one event the default `GITHUB_TOKEN` can trigger. Release PRs get checks without a stored token, so the `RELEASE_PLEASE_TOKEN` fallback is gone.

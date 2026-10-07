@@ -38,7 +38,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from run_skill import (DEFAULT_MODEL, ISOLATION_FLAGS, ROOT,  # noqa: E402
-                       wilson_interval)
+                       SKILL_DIR, wilson_interval)
 
 TRIGGERS_PATH = Path(__file__).resolve().parent / "triggers.json"
 SETS = ("should_trigger", "should_not_trigger")
@@ -65,7 +65,7 @@ def stage_plugin(out_dir):
     """Build a minimal plugin under out_dir/_plugin; return (plugin, cwd).
 
     The plugin holds the manifest, SKILL.md, and references/ only, the way
-    the skills/better-writing tap ships them. Rebuilt on every run, so the
+    skills/better-writing ships them. Rebuilt on every run, so the
     eval always measures the current working tree's description. The empty
     cwd keeps the model's read-only tools away from the repo.
     """
@@ -76,8 +76,8 @@ def stage_plugin(out_dir):
     (plugin / ".claude-plugin").mkdir()
     shutil.copy2(ROOT / ".claude-plugin" / "plugin.json",
                  plugin / ".claude-plugin" / "plugin.json")
-    shutil.copy2(ROOT / "SKILL.md", skill_dir / "SKILL.md")
-    shutil.copytree(ROOT / "references", skill_dir / "references")
+    shutil.copy2(SKILL_DIR / "SKILL.md", skill_dir / "SKILL.md")
+    shutil.copytree(SKILL_DIR / "references", skill_dir / "references")
     cwd = Path(out_dir) / "_cwd"
     shutil.rmtree(cwd, ignore_errors=True)
     cwd.mkdir(parents=True)

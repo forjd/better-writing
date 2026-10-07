@@ -1,1 +1,16 @@
-../../../agents/openai.yaml
+# OpenAI agent wrapper for the better-writing skill.
+# Trigger note: `$better-writing` matches the README convention
+# (e.g. "Use $better-writing to rewrite ..."). Kept as `$`, not the
+# `/better-writing` slash-command form, so the prompt text stays identical
+# across README and agent configs. validate.py cross-checks name/version
+# and requires one of these trigger spellings in this file.
+name: better-writing
+version: "1.3.0" # x-release-please-version
+
+interface:
+  display_name: "Better Writing"
+  short_description: "Make prose direct, human, and specific"
+  default_prompt: "Use $better-writing to rewrite this draft so it sounds clear, specific, and natural."
+
+policy:
+  allow_implicit_invocation: true
