@@ -168,7 +168,7 @@ You can also copy [`skills/better-writing/`](./skills/better-writing/) into your
 To pin a release rather than track `main`, clone its tag and copy that folder from the checkout. Tags before v2.0.0 keep the skill at the repo root, so for those, copy the root instead:
 
 ```bash
-git clone --branch v1.3.0 https://github.com/forjd/better-writing.git # x-release-please-version
+git clone --branch v2.0.0 https://github.com/forjd/better-writing.git # x-release-please-version
 ```
 
 The installed version is `metadata.version` in the `SKILL.md` frontmatter.
