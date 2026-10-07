@@ -7,14 +7,14 @@
       "include-component-in-tag": false,
       "skip-changelog": true,
       "extra-files": [
-        "SKILL.md",
+        "skills/better-writing/SKILL.md",
         {
           "type": "generic",
           "path": "README.md"
         },
         {
           "type": "generic",
-          "path": "agents/openai.yaml"
+          "path": "skills/better-writing/agents/openai.yaml"
         },
         {
           "type": "json",

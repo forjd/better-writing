@@ -77,6 +77,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from run_evals import FIXTURES_DIR, load_fixture, run_one  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
+SKILL_DIR = ROOT / "skills" / "better-writing"
 SPLITS_PATH = Path(__file__).resolve().parent / "splits.json"
 
 DEFAULT_MODEL = "claude-opus-5"
@@ -108,7 +109,7 @@ def run_metadata():
     Either is None when it cannot be read.
     """
     try:
-        front = (ROOT / "SKILL.md").read_text(encoding="utf-8-sig")
+        front = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8-sig")
         match = re.search(r'^\s+version:\s*"?([^"\s#]+)"?', front, re.M)
         version = match.group(1) if match else None
     except OSError:
@@ -140,7 +141,7 @@ def plugin_description():
     if isinstance(desc, str) and desc.strip():
         return desc.strip()
     try:
-        front = (ROOT / "SKILL.md").read_text(encoding="utf-8-sig")
+        front = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8-sig")
     except OSError:
         return "better-writing"
     match = re.search(r"^description:\s*(.+?)\s*$", front, re.M)
@@ -149,7 +150,7 @@ def plugin_description():
 
 def progressive_footer():
     """List the reference files the model may fetch on demand."""
-    names = sorted(p.name for p in (ROOT / "references").glob("*.md"))
+    names = sorted(p.name for p in (SKILL_DIR / "references").glob("*.md"))
     listed = "\n".join(f"- references/{name}" for name in names)
     return f"""Reference files you may read on demand with the Read tool, from the
 working directory, when this brief calls for them; read only the ones you
@@ -173,8 +174,8 @@ def stage_skill_root(out_dir):
     stage = Path(out_dir) / "_skill_root"
     shutil.rmtree(stage, ignore_errors=True)
     stage.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(ROOT / "SKILL.md", stage / "SKILL.md")
-    shutil.copytree(ROOT / "references", stage / "references")
+    shutil.copy2(SKILL_DIR / "SKILL.md", stage / "SKILL.md")
+    shutil.copytree(SKILL_DIR / "references", stage / "references")
     return stage
 
 
@@ -245,12 +246,12 @@ def build_system_prompt(with_skill=True, arm="always-on"):
                   f"\"{plugin_description()}\"\n"
                   "Its instructions follow. Apply them to the user's request.\n")
         return "\n".join([header,
-                          (ROOT / "SKILL.md").read_text(encoding="utf-8"),
+                          (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8"),
                           progressive_footer()])
     if arm != "always-on":
         raise ValueError(f"unknown arm {arm!r} (known: {', '.join(ARMS)})")
-    parts = [SYSTEM_HEADER, (ROOT / "SKILL.md").read_text(encoding="utf-8")]
-    for ref in sorted((ROOT / "references").glob("*.md")):
+    parts = [SYSTEM_HEADER, (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")]
+    for ref in sorted((SKILL_DIR / "references").glob("*.md")):
         parts.append(f"\n\n<!-- references/{ref.name} -->\n\n" + ref.read_text(encoding="utf-8"))
     return "\n".join(parts)
 

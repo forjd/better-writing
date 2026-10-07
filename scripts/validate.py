@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Validate repository invariants. Dependency-free; run from anywhere.
 
+The skill lives in skills/better-writing/ (SKILL_DIR); paths below are
+relative to it unless they start with evals/, skills/ or .claude-plugin/.
+
 Checks:
 - SKILL.md frontmatter: name format and length, description length,
   and that every references/ path it mentions exists.
@@ -9,13 +12,11 @@ Checks:
   known-good output in evals/examples/<fixture>.md (and no stray examples).
 - evals/triggers.json holds non-empty should_trigger and should_not_trigger
   lists of {id, prompt}, with unique slug ids.
-- Every symlink under skills/ resolves to a file inside the repo, and each
-  tap directory contains a SKILL.md.
-- Tap parity: every references/*.md and agents/*.yaml has a matching
-  symlink in each tap, and no unexpected symlinks exist (allowlist is the
-  mirrored top files README.md, LICENSE, CHANGELOG.md, SKILL.md plus
-  references/*.md and agents/*.yaml, e.g. agents/openai.yaml).
-- Tap content: each tap symlink is byte-identical to its root counterpart.
+- Layout: no SKILL.md at the repo root, and SKILL.md, references/*.md and
+  agents/*.yaml are real files, not symlinks.
+- Mirrors: the skill folder holds README.md, LICENSE and CHANGELOG.md as
+  symlinks to the root files, byte-identical, and no other symlinks.
+- Every symlink under skills/ resolves to a file inside the repo.
 - agents/*.yaml schema: top-level name matches SKILL.md, version present,
   and default_prompt mentions the skill trigger.
 - Release version: SKILL.md metadata.version is semver and matches every
@@ -23,9 +24,10 @@ Checks:
 - Claude Code plugin: .claude-plugin/plugin.json and marketplace.json parse,
   their names match SKILL.md, and their versions match metadata.version.
 
-Tap symlinks require a checkout with symlink support (git core.symlinks=true).
+The mirrors need a checkout with symlink support (git core.symlinks=true).
 They survive `git clone` but not GitHub's Download ZIP or a Windows checkout
-without symlink support; in those cases use the repo root, which is canonical.
+without symlink support. The skill files are real files, so those checkouts
+still hold a working skill.
 
 Exits non-zero if any check fails.
 """
@@ -37,6 +39,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+# Relative to ROOT, so tests that patch ROOT move the skill with it.
+SKILL_DIR = Path("skills", "better-writing")
+SKILL_MD = (SKILL_DIR / "SKILL.md").as_posix()
 
 errors = []
 
@@ -59,13 +64,17 @@ KNOWN_VOICE_KEYS = {
     "sentence_length_sd",
 }
 
-# Top-level root files mirrored into each tap as symlinks.
-EXPECTED_TOP_SYMLINKS = {"README.md", "LICENSE", "CHANGELOG.md", "SKILL.md"}
+# Top-level root files mirrored into the skill folder as symlinks.
+EXPECTED_TOP_SYMLINKS = {"README.md", "LICENSE", "CHANGELOG.md"}
 
 
 def check(condition, message):
     if not condition:
         errors.append(message)
+
+
+def skill_root():
+    return ROOT / SKILL_DIR
 
 
 def _strip_quotes(value):
@@ -116,48 +125,49 @@ def parse_simple_frontmatter(block):
 
 
 def check_frontmatter():
-    skill_path = ROOT / "SKILL.md"
+    skill_path = skill_root() / "SKILL.md"
     if not skill_path.is_file():
-        errors.append("SKILL.md: missing file")
+        errors.append(f"{SKILL_MD}: missing file")
         return None
     try:
         raw = skill_path.read_bytes().decode("utf-8-sig")
     except (OSError, UnicodeDecodeError) as exc:
-        errors.append(f"SKILL.md: unreadable ({exc})")
+        errors.append(f"{SKILL_MD}: unreadable ({exc})")
         return None
     # Normalize CRLF/CR to LF so the frontmatter match works cross-platform.
     text = raw.replace("\r\n", "\n").replace("\r", "\n")
     # Allow a missing trailing newline after the closing fence.
     match = re.match(r"^---\n(.*?)\n---(?:\n|$)", text, re.S)
-    check(match, "SKILL.md: missing frontmatter block")
+    check(match, f"{SKILL_MD}: missing frontmatter block")
     if not match:
         return None
     frontmatter = parse_simple_frontmatter(match.group(1))
 
     name = frontmatter.get("name")
-    check(name, "SKILL.md: frontmatter has no name")
+    check(name, f"{SKILL_MD}: frontmatter has no name")
     if name:
         check(
             re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", name),
-            f"SKILL.md: name {name!r} must be lowercase letters, digits, and hyphens",
+            f"{SKILL_MD}: name {name!r} must be lowercase letters, digits, and hyphens",
         )
-        check(len(name) <= 64, f"SKILL.md: name is {len(name)} characters, limit 64")
+        check(len(name) <= 64, f"{SKILL_MD}: name is {len(name)} characters, limit 64")
 
     desc = frontmatter.get("description")
-    check(desc, "SKILL.md: frontmatter has no description")
+    check(desc, f"{SKILL_MD}: frontmatter has no description")
     if desc:
         check(
             len(desc) <= 1024,
-            f"SKILL.md: description is {len(desc)} characters, limit 1024",
+            f"{SKILL_MD}: description is {len(desc)} characters, limit 1024",
         )
 
     for ref in sorted(set(re.findall(r"`(references/[A-Za-z0-9_./-]+\.md)`", text))):
         # Traversal guard: refs must stay inside references/.
         parts = Path(ref).parts
         if ".." in parts:
-            errors.append(f"SKILL.md: mentions {ref} with parent traversal")
+            errors.append(f"{SKILL_MD}: mentions {ref} with parent traversal")
             continue
-        check((ROOT / ref).is_file(), f"SKILL.md: mentions {ref} but it does not exist")
+        check((skill_root() / ref).is_file(),
+              f"{SKILL_MD}: mentions {ref} but it does not exist")
 
     return name
 
@@ -419,7 +429,7 @@ def check_triggers():
 def check_version():
     """Return SKILL.md metadata.version, which release-please bumps."""
     try:
-        raw = (ROOT / "SKILL.md").read_bytes().decode("utf-8-sig")
+        raw = (skill_root() / "SKILL.md").read_bytes().decode("utf-8-sig")
     except (OSError, UnicodeDecodeError):
         return None  # check_frontmatter already reported it
     text = raw.replace("\r\n", "\n").replace("\r", "\n")
@@ -432,13 +442,13 @@ def check_version():
         block.group(1) + "\n",
         re.M,
     )
-    check(match, "SKILL.md: frontmatter has no metadata.version")
+    check(match, f"{SKILL_MD}: frontmatter has no metadata.version")
     if not match:
         return None
     version = _strip_quotes(match.group(2))
     check(
         re.fullmatch(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)", version),
-        f"SKILL.md: metadata.version {version!r} is not MAJOR.MINOR.PATCH",
+        f"{SKILL_MD}: metadata.version {version!r} is not MAJOR.MINOR.PATCH",
     )
     manifest_path = ROOT / ".release-please-manifest.json"
     try:
@@ -450,23 +460,24 @@ def check_version():
     if released:
         check(
             released == version,
-            f"SKILL.md: metadata.version {version!r} does not match "
+            f"{SKILL_MD}: metadata.version {version!r} does not match "
             f"release manifest {released!r}",
         )
     return version
 
 
 def check_agents(expected_name=None, expected_version=None):
-    agents_dir = ROOT / "agents"
+    agents_dir = skill_root() / "agents"
+    label = (SKILL_DIR / "agents").as_posix()
     if not agents_dir.is_dir():
-        errors.append("agents: missing directory")
+        errors.append(f"{label}: missing directory")
         return
     try:
         yamls = sorted(agents_dir.glob("*.yaml"))
     except OSError as exc:
-        errors.append(f"agents: unreadable ({exc})")
+        errors.append(f"{label}: unreadable ({exc})")
         return
-    check(yamls, "agents: no *.yaml found")
+    check(yamls, f"{label}: no *.yaml found")
     for path in yamls:
         rel = path.relative_to(ROOT)
         try:
@@ -545,70 +556,58 @@ def check_plugin(expected_name=None, expected_version=None):
             )
 
 
-def check_tap():
+def check_layout():
+    # A root SKILL.md makes skills.sh install the whole repo, .claude-plugin/
+    # included, and Claude Code then loads that copy twice: as a skill and as
+    # a skills-directory plugin.
+    check(
+        not (ROOT / "SKILL.md").exists(),
+        f"SKILL.md: must not exist at the repo root; the skill lives in {SKILL_MD}",
+    )
     skills_dir = ROOT / "skills"
-    if not skills_dir.is_dir():
-        errors.append("skills: tap directory is missing")
+    skill = skill_root()
+    if not skill.is_dir():
+        errors.append(f"{SKILL_DIR.as_posix()}: missing directory")
         return
-    taps = [p for p in skills_dir.iterdir() if p.is_dir()]
-    if not taps:
-        errors.append("skills: tap directory has no skill subdirectories")
-        return
-    references_dir = ROOT / "references"
-    agents_dir = ROOT / "agents"
-    expected_symlinks = []
-    for tap in sorted(p for p in skills_dir.iterdir() if p.is_dir()):
+    # Real files, so every installer and every checkout gets a working skill.
+    skill_files = [skill / "SKILL.md"]
+    skill_files += sorted((skill / "references").glob("*.md"))
+    skill_files += sorted((skill / "agents").glob("*.yaml"))
+    for path in skill_files:
         check(
-            (tap / "SKILL.md").is_file(),
-            f"{tap.relative_to(ROOT)}: tap has no SKILL.md",
+            not path.is_symlink(),
+            f"{path.relative_to(ROOT)}: must be a real file, not a symlink",
         )
-        # Parity: each tap mirrors the root references/*.md, agents/*.yaml,
-        # and the top-level docs (README, LICENSE, CHANGELOG, SKILL.md).
-        expected = set()
-        for top in EXPECTED_TOP_SYMLINKS:
-            if (ROOT / top).is_file():
-                expected.add(tap / top)
-        if references_dir.is_dir():
-            for ref in sorted(references_dir.glob("*.md")):
-                expected.add(tap / "references" / ref.name)
-        if agents_dir.is_dir():
-            for agent in sorted(agents_dir.glob("*.yaml")):
-                expected.add(tap / "agents" / agent.name)
-        expected_symlinks.extend(sorted(expected))
-        for want in sorted(expected):
-            rel = want.relative_to(ROOT)
-            check(
-                want.is_symlink(),
-                f"{rel}: expected symlink to root counterpart "
-                f"{want.relative_to(tap)} is missing (want "
-                f"core.symlinks=true checkout)",
-            )
-        actual_symlinks = {
-            p for p in tap.rglob("*") if p.is_symlink()
-        }
-        for extra in sorted(actual_symlinks - expected):
-            errors.append(
-                f"{extra.relative_to(ROOT)}: unexpected symlink "
-                "(allowlist: README.md, LICENSE, CHANGELOG.md, SKILL.md, "
-                "references/*.md, agents/*.yaml)"
-            )
-        # Byte-identical content: the tap file must match its root counterpart.
-        for want in sorted(expected):
-            if not want.is_symlink() or not want.exists():
-                continue
-            counterpart = ROOT / want.relative_to(tap)
-            if not counterpart.is_file():
-                continue
-            try:
-                same = want.read_bytes() == counterpart.read_bytes()
-            except OSError as exc:
-                errors.append(f"{want.relative_to(ROOT)}: unreadable ({exc})")
-                continue
-            check(
-                same,
-                f"{want.relative_to(ROOT)}: content differs from "
-                f"{counterpart.relative_to(ROOT)} (stale copy or wrong target)",
-            )
+    # Mirrors: the top-level docs (README, LICENSE, CHANGELOG) are symlinks
+    # back to the root files.
+    expected = {skill / top for top in EXPECTED_TOP_SYMLINKS if (ROOT / top).is_file()}
+    expected_symlinks = sorted(expected)
+    for want in expected_symlinks:
+        check(
+            want.is_symlink(),
+            f"{want.relative_to(ROOT)}: expected symlink to root counterpart "
+            f"{want.name} is missing (want core.symlinks=true checkout)",
+        )
+    actual_symlinks = {p for p in skills_dir.rglob("*") if p.is_symlink()}
+    for extra in sorted(actual_symlinks - expected):
+        errors.append(
+            f"{extra.relative_to(ROOT)}: unexpected symlink "
+            f"(allowlist: README.md, LICENSE, CHANGELOG.md in {SKILL_DIR.as_posix()})"
+        )
+    # Byte-identical content: each mirror must match its root counterpart.
+    for want in expected_symlinks:
+        if not want.is_symlink() or not want.exists():
+            continue
+        try:
+            same = want.read_bytes() == (ROOT / want.name).read_bytes()
+        except OSError as exc:
+            errors.append(f"{want.relative_to(ROOT)}: unreadable ({exc})")
+            continue
+        check(
+            same,
+            f"{want.relative_to(ROOT)}: content differs from "
+            f"{want.name} (stale copy or wrong target)",
+        )
     for path in sorted(skills_dir.rglob("*")):
         if not path.is_symlink():
             continue
@@ -632,7 +631,7 @@ def check_tap():
             except ValueError:
                 inside = False
         check(inside, f"{rel}: symlink escapes the repo -> {target}")
-    # Best-effort git index check: tracked tap links must be mode 120000.
+    # Best-effort git index check: tracked mirrors must be mode 120000.
     # Skipped when git is unavailable (e.g. source tarball without .git).
     if expected_symlinks and (ROOT / ".git").exists():
         try:
@@ -677,7 +676,7 @@ def main():
     version = check_version()
     check_agents(skill_name, version)
     check_plugin(skill_name, version)
-    check_tap()
+    check_layout()
     if errors:
         for message in errors:
             print(f"FAIL {message}")

@@ -10,6 +10,9 @@ from unittest import mock
 import _paths  # noqa: F401
 import validate
 
+SKILL_DIR = validate.SKILL_DIR.as_posix()
+SKILL_PATH = validate.SKILL_MD
+
 SKILL = """---
 name: demo-skill
 description: A demo skill used by the tests.
@@ -55,18 +58,18 @@ class RepoCase(unittest.TestCase):
 
 class FrontmatterTest(RepoCase):
     def test_valid(self):
-        self.write("SKILL.md", SKILL.format(version="1.2.3"))
-        self.write("references/one.md", "x")
+        self.write(SKILL_PATH, SKILL.format(version="1.2.3"))
+        self.write(f"{SKILL_DIR}/references/one.md", "x")
         self.assertEqual(validate.check_frontmatter(), "demo-skill")
         self.assertEqual(validate.errors, [])
 
     def test_missing_reference(self):
-        self.write("SKILL.md", SKILL.format(version="1.2.3"))
+        self.write(SKILL_PATH, SKILL.format(version="1.2.3"))
         validate.check_frontmatter()
         self.assertError("mentions references/one.md but it does not exist")
 
     def test_bad_name(self):
-        self.write("SKILL.md", SKILL.format(version="1").replace(
+        self.write(SKILL_PATH, SKILL.format(version="1").replace(
             "demo-skill", "Demo_Skill"))
         validate.check_frontmatter()
         self.assertError("must be lowercase")
@@ -79,25 +82,25 @@ class FrontmatterTest(RepoCase):
 
 class VersionTest(RepoCase):
     def test_matches_manifest(self):
-        self.write("SKILL.md", SKILL.format(version="1.2.3"))
+        self.write(SKILL_PATH, SKILL.format(version="1.2.3"))
         self.write(".release-please-manifest.json", '{".": "1.2.3"}')
         self.assertEqual(validate.check_version(), "1.2.3")
         self.assertEqual(validate.errors, [])
 
     def test_mismatch_with_manifest(self):
-        self.write("SKILL.md", SKILL.format(version="1.2.3"))
+        self.write(SKILL_PATH, SKILL.format(version="1.2.3"))
         self.write(".release-please-manifest.json", '{".": "1.2.4"}')
         validate.check_version()
         self.assertError("does not match release manifest '1.2.4'")
 
     def test_not_semver(self):
-        self.write("SKILL.md", SKILL.format(version="v1.2"))
+        self.write(SKILL_PATH, SKILL.format(version="v1.2"))
         self.write(".release-please-manifest.json", "{}")
         validate.check_version()
         self.assertError("is not MAJOR.MINOR.PATCH")
 
     def test_agent_version_mismatch(self):
-        self.write("agents/demo.yaml", "name: demo-skill\nversion: 1.0.0\n"
+        self.write(f"{SKILL_DIR}/agents/demo.yaml", "name: demo-skill\nversion: 1.0.0\n"
                    "interface:\n  default_prompt: Use $better-writing\n")
         validate.check_agents("demo-skill", "1.2.3")
         self.assertError("version '1.0.0' does not match")
@@ -150,37 +153,51 @@ class SplitsTest(RepoCase):
 
 
 @unittest.skipUnless(symlinks_supported(), "symlinks unavailable")
-class TapTest(RepoCase):
+class LayoutTest(RepoCase):
     def setUp(self):
         super().setUp()
-        self.write("SKILL.md", "skill")
-        self.tap = self.root / "skills" / "demo"
-        self.tap.mkdir(parents=True)
-        os.symlink(os.path.join("..", "..", "SKILL.md"), self.tap / "SKILL.md")
+        self.write(SKILL_PATH, "skill")
+        self.write("README.md", "readme")
+        self.skill = self.root / SKILL_DIR
+        os.symlink(os.path.join("..", "..", "README.md"), self.skill / "README.md")
 
-    def test_valid_tap(self):
-        validate.check_tap()
+    def test_valid_layout(self):
+        validate.check_layout()
         self.assertEqual(validate.errors, [])
 
+    def test_root_skill_md(self):
+        self.write("SKILL.md", "skill")
+        validate.check_layout()
+        self.assertError("must not exist at the repo root")
+
+    def test_symlinked_skill_file(self):
+        self.write("notes.md", "x")
+        (self.skill / "references").mkdir()
+        os.symlink(os.path.join("..", "..", "..", "notes.md"),
+                   self.skill / "references" / "one.md")
+        validate.check_layout()
+        self.assertError("must be a real file, not a symlink")
+        self.assertError("unexpected symlink")
+
     def test_broken_symlink(self):
-        os.symlink(os.path.join("..", "..", "gone.md"), self.tap / "gone.md")
-        validate.check_tap()
+        os.symlink(os.path.join("..", "..", "gone.md"), self.skill / "gone.md")
+        validate.check_layout()
         self.assertError("broken symlink")
         self.assertError("unexpected symlink")
 
     def test_missing_mirror(self):
-        self.write("references/one.md", "x")
-        validate.check_tap()
-        self.assertError("expected symlink to root counterpart")
+        self.write("LICENSE", "x")
+        validate.check_layout()
+        self.assertError("expected symlink to root counterpart LICENSE")
 
     def test_escaping_symlink(self):
         outside = tempfile.TemporaryDirectory()
         self.addCleanup(outside.cleanup)
         target = Path(outside.name) / "README.md"
         target.write_text("elsewhere", encoding="utf-8")
-        self.write("README.md", "here")
-        os.symlink(target, self.tap / "README.md")
-        validate.check_tap()
+        os.remove(self.skill / "README.md")
+        os.symlink(target, self.skill / "README.md")
+        validate.check_layout()
         self.assertError("symlink escapes the repo")
         self.assertError("content differs")
 

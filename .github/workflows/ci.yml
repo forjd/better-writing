@@ -20,10 +20,10 @@ concurrency:
 jobs:
   validate:
     # Matrix covers symlink behaviour (ubuntu+windows) and the supported
-    # Python range (3.12+3.14). Windows leg exists because the
-    # skills/better-writing tap is relative symlinks, which need
-    # core.symlinks=true; a Windows checkout without symlink support fails
-    # validate.py instead of silently shipping copies.
+    # Python range (3.12+3.14). Windows leg exists because the README,
+    # LICENSE and CHANGELOG mirrors in skills/better-writing are relative
+    # symlinks, which need core.symlinks=true; a Windows checkout without
+    # symlink support fails validate.py instead of silently shipping copies.
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:

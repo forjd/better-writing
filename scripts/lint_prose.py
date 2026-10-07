@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Lint the repo's own prose against the skill's own audit. Dependency-free.
 
-Scope: README.md, SKILL.md, CHANGELOG.md, CONTRIBUTING.md and SECURITY.md
-at the repo root. references/ is deliberately out of scope: it IS the tell
-catalogue, so scanning it for tells is meaningless. Run from anywhere; exits non-zero on any violation.
+Scope: README.md, CHANGELOG.md, CONTRIBUTING.md and SECURITY.md at the repo
+root, plus skills/better-writing/SKILL.md. The skill's references/ folder is
+deliberately out of scope: it IS the tell catalogue, so scanning it for tells
+is meaningless. Run from anywhere; exits non-zero on any violation.
 
 Exclusions (each measured and reported below, so a dead exclusion shows up
 as a zero in the report rather than rotting silently):
@@ -56,7 +57,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TARGETS = [
     "README.md",
-    "SKILL.md",
+    "skills/better-writing/SKILL.md",
     "CHANGELOG.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
