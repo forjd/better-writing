@@ -89,10 +89,16 @@ ARMS = ("always-on", "progressive")
 
 # One output rule for every arm and the baseline, so the arms differ only in
 # how the skill is loaded. Review fixtures ask for findings, not a rewrite.
+# The skill asks for a change note in some cases (the detector caveat, cut
+# facts), and the checker and judge score the whole reply as the text, so the
+# rule has to win over the skill explicitly: without that, a detector request
+# came back with the note appended in every run (issue #57).
 OUTPUT_RULES = """Output rules for this run: return only what the brief asks for. For a rewrite
 or a draft, that is the final text alone: no preamble, no change note, no
-diagnostic audit, no closing remark. For a review, it is the findings alone,
-with no rewritten version.
+diagnostic audit, no closing remark. This overrides any instruction in the
+skill to add a change note or a note to the user, including the caveat for a
+detector request: leave the note out, and do not move what it would say into
+the text. For a review, it is the findings alone, with no rewritten version.
 """
 
 SYSTEM_HEADER = """You are running the better-writing skill. Its instructions and reference
