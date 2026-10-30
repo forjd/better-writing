@@ -1,6 +1,6 @@
 {
   "name": "ui-microcopy",
-  "brief": "Rewrite these three strings from our file-sharing app: a button label, an upload error, and an empty state. Keep the three labelled lines.",
+  "brief": "Rewrite these three strings from our file-sharing app: a button label, an upload error, and an empty state. Keep the three labelled lines. The error can tell the user to upload a smaller file.",
   "required": [
     "Button:",
     "Error:",
