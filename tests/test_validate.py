@@ -83,6 +83,32 @@ class FrontmatterTest(RepoCase):
         self.assertEqual(data, {"name": "x", "description": "one two", "other": "q"})
 
 
+class InlineArtefactsTest(RepoCase):
+    BULLET = ("- Near-conclusive artefacts go on sight: placeholders "
+              "(`[Your Name]`), scaffolding (\"Here is the revised version\"). "
+              "See `references/ai-writing-patterns.md`.\n")
+
+    def write_pair(self, ref_text):
+        self.write(SKILL_PATH, SKILL.format(version="1.2.3") + self.BULLET)
+        self.write(f"{SKILL_DIR}/references/ai-writing-patterns.md", ref_text)
+
+    def test_examples_in_reference(self):
+        self.write_pair("`[Your Name]` and \"Here is the revised version\".")
+        validate.check_inline_artefacts()
+        self.assertEqual(validate.errors, [])
+
+    def test_example_missing_from_reference(self):
+        self.write_pair("`[Your Name]` only.")
+        validate.check_inline_artefacts()
+        self.assertError("'Here is the revised version' is not in")
+
+    def test_no_inline_list(self):
+        self.write(SKILL_PATH, SKILL.format(version="1.2.3"))
+        self.write(f"{SKILL_DIR}/references/ai-writing-patterns.md", "x")
+        validate.check_inline_artefacts()
+        self.assertEqual(validate.errors, [])
+
+
 class VersionTest(RepoCase):
     def test_matches_manifest(self):
         self.write(SKILL_PATH, SKILL.format(version="1.2.3"))

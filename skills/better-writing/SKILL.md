@@ -25,10 +25,10 @@ Use this skill to make prose stronger without flattening the writer. The goal is
    - If there is a voice sample, record its profile (sentence lengths, openers, contractions, person, hedges, punctuation, recurring words) before editing and recompute it after. The procedure is under Voice calibration in `references/voice-and-context.md`.
 
 3. Audit the text.
-   - For AI-writing tells, use `references/ai-writing-patterns.md`.
-   - For slop phrases and formulaic structures, use `references/structures-and-phrases.md`.
-   - For genre-specific fingerprints and exemptions, use `references/genre-tells.md`.
-   - Work in order: scan for near-conclusive artefacts first; then count clustered tells in context; then apply genre exemptions. Never edit on a single feature of any tier; near-conclusive artefacts defined in `references/ai-writing-patterns.md` are the sole single-instance exception.
+   - Read `references/ai-writing-patterns.md` and `references/structures-and-phrases.md` before every rewrite, draft, or review. This file does not repeat their tell lists, and an audit from memory misses many of them.
+   - Also read the section of `references/genre-tells.md` for the text's genre: email, social, marketing, academic, fiction, code and docs, conversational replies, or commit messages. It holds that genre's phrase bank and its exemptions.
+   - Work in order: scan for near-conclusive artefacts first; then count clustered tells in context; then apply genre exemptions. Never edit on a single feature of any tier; near-conclusive artefacts are the sole single-instance exception.
+   - Near-conclusive artefacts go on sight, with no corroboration: unedited assistant scaffolding ("Let me know if you need any modifications", "Here is the revised version"), template placeholders the writer forgot to fill (`[Your Name]`, `[Company]`, `[Date]`), leaked citation or tool markup (`oaicite`, `contentReference`), tracking parameters (`?utm_source=chatgpt.com`), and standalone AI-model disclaimers ("As an AI language model"). A deliberate gap marker such as `[churn figure needed]` stays, and so does a slot in a template the user means to fill later, such as a mail-merge field. A legal, medical, or financial disclaimer is not a model disclaimer. The full list is under Near-conclusive artefacts in `references/ai-writing-patterns.md`.
    - Look for clusters of tells, not isolated quirks. The most durable tell is uniform tone that never adapts to audience or genre. Do not destroy valid style just because it is polished.
 
 4. Rewrite. Each bullet below is a target illustrated by a preferred versus dispreferred pair; the ban lists in `references/` are for the audit, not for the rewrite.

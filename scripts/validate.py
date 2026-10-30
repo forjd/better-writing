@@ -7,6 +7,8 @@ relative to it unless they start with evals/, skills/ or .claude-plugin/.
 Checks:
 - SKILL.md frontmatter: name format and length, description length,
   and that every references/ path it mentions exists.
+- SKILL.md's inline near-conclusive artefact examples each appear in
+  references/ai-writing-patterns.md, so the two lists cannot drift apart.
 - Each fixture in evals/fixtures/ has an input.md and a checks.json with a
   brief, at least one check, valid JSON, and compiling regexes, plus a
   known-good output in evals/examples/<fixture>.md (and no stray examples).
@@ -166,6 +168,33 @@ def check_frontmatter():
               f"{SKILL_MD}: mentions {ref} but it does not exist")
 
     return name
+
+
+ARTEFACTS_REF = "references/ai-writing-patterns.md"
+ARTEFACTS_MARKER = "Near-conclusive artefacts go on sight"
+
+
+def check_inline_artefacts():
+    """Every example in SKILL.md's inline artefact list is in the reference.
+
+    The progressive arm often reads SKILL.md alone, so the inline list is the
+    rule the model applies there. Each backticked or double-quoted example
+    in that bullet must still appear in the full list it summarises.
+    """
+    try:
+        skill = (skill_root() / "SKILL.md").read_text(encoding="utf-8-sig")
+        ref = (skill_root() / ARTEFACTS_REF).read_text(encoding="utf-8")
+    except OSError:
+        return  # check_frontmatter reports a missing SKILL.md or reference
+    lines = [ln for ln in skill.splitlines() if ARTEFACTS_MARKER in ln]
+    for line in lines:
+        examples = re.findall(r"`([^`]+)`", line) + re.findall(r'"([^"]+)"', line)
+        for example in examples:
+            if example.startswith("references/"):
+                continue
+            check(example in ref,
+                  f"{SKILL_MD}: inline artefact example {example!r} is not in "
+                  f"{ARTEFACTS_REF}")
 
 
 def _is_number(value):
@@ -611,6 +640,7 @@ def check_layout():
 
 def main():
     skill_name = check_frontmatter()
+    check_inline_artefacts()
     check_fixtures()
     check_splits()
     check_triggers()
