@@ -39,6 +39,18 @@
     {
       "id": "release-notes-from-bullets",
       "prompt": "Turn these bullets into release notes for users:\n- fixed crash when exporting CSV with empty rows\n- added --dry-run flag to sync\n- dropped Python 3.9 support"
+    },
+    {
+      "id": "vague-docstring",
+      "prompt": "This docstring is padded and vague. Rewrite it so a caller knows what the function does and what it returns:\n\ndef retry(fn, attempts=3, delay=1.0):\n    \"\"\"This powerful utility function seamlessly handles the retrying of operations, providing a robust and flexible solution for dealing with failures in a variety of scenarios.\"\"\""
+    },
+    {
+      "id": "ui-label-spelling",
+      "prompt": "Fix the spelling in this settings-page label and give me the corrected text: \"Recieve notifcations when somone mentions you\""
+    },
+    {
+      "id": "soften-slack-message",
+      "prompt": "Make this Slack message to a colleague less blunt before I send it, but keep the point: \"Your PR broke the build again. Please actually run the tests before pushing.\""
     }
   ],
   "should_not_trigger": [
@@ -81,6 +93,46 @@
     {
       "id": "count-words",
       "prompt": "How many words are in this sentence? \"The quick brown fox jumps over the lazy dog.\""
+    },
+    {
+      "id": "write-docstring",
+      "prompt": "Write a docstring for this function:\n\ndef retry(fn, attempts=3, delay=1.0):\n    for i in range(attempts):\n        try:\n            return fn()\n        except Exception:\n            if i == attempts - 1:\n                raise\n            time.sleep(delay)"
+    },
+    {
+      "id": "summarise-article-bullets",
+      "prompt": "Summarise this article in three bullet points:\n\nThe city council voted on Tuesday to close the Elm Street car park from January and turn it into a public square. The project will cost £2.4 million, paid from the regeneration fund. Local traders opposed the plan and said that they will lose customers who drive in. The council said that a new 300-space car park on Mill Road will open in March, and that bus services to the centre will run every ten minutes."
+    },
+    {
+      "id": "explain-error-message",
+      "prompt": "What does this error mean and how do I fix it?\n\nTypeError: Cannot read properties of undefined (reading 'map')\n    at UserList (UserList.jsx:12:18)"
+    },
+    {
+      "id": "affect-vs-effect",
+      "prompt": "When do I use \"affect\" and when do I use \"effect\"? Give me a rule I can remember."
+    },
+    {
+      "id": "meeting-action-items",
+      "prompt": "Pull the action items out of these meeting notes as a checklist with an owner for each:\n\nPriya will send the revised budget by Friday. We agreed to move the launch to 4 November. Tom to book the venue once the date is confirmed. Nobody has looked at the accessibility audit yet; Sam said they would take it."
+    },
+    {
+      "id": "rename-variables",
+      "prompt": "Rename the variables in this function so the code is easier to read:\n\ndef f(a, b):\n    c = a * b\n    d = c * 0.2\n    return c + d"
+    },
+    {
+      "id": "list-to-markdown-table",
+      "prompt": "Turn this list into a Markdown table with columns for name, role, and start date:\n\n- Ana Ruiz, designer, 3 June\n- Ben Cole, backend engineer, 17 June\n- Chloe Park, product manager, 1 July"
+    },
+    {
+      "id": "rewrite-function-readable",
+      "prompt": "Rewrite this function so it is more readable. Keep the behaviour the same:\n\ndef g(xs):\n    return [x for x in xs if x % 2 == 0 and x > 0 and x < 100]"
+    },
+    {
+      "id": "proofread-sql",
+      "prompt": "Proofread this SQL query for mistakes before I run it:\n\nSELECT name, COUNT(*) FROM orders WHERE status = 'paid' GROUP BY customer_id ORDER BY 2 DESC"
+    },
+    {
+      "id": "humanize-file-sizes",
+      "prompt": "Write a Python function that humanizes file sizes, so 1536 becomes \"1.5 KB\" and 1048576 becomes \"1 MB\"."
     }
   ]
 }

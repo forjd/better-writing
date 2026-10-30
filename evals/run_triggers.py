@@ -16,11 +16,11 @@ goes on to do the work.
 
 Two sets, reported separately:
 
-- should_trigger: prose tasks (rewrite, draft, review, copy edit). The
-  trigger rate here is recall.
+- should_trigger: prose tasks (rewrite, draft, review, copy edit), including
+  borderline ones such as a padded docstring. The trigger rate here is recall.
 - should_not_trigger: near misses that mention text, emails, or typos but are
-  code, data, or translation tasks. The trigger rate here is the false
-  trigger rate.
+  code, data, translation, summary, or explanation tasks. The trigger rate
+  here is the false trigger rate.
 
 Every run writes <out>/summary.json (default evals/outputs/triggers/) with
 per-prompt counts and per-set rates with Wilson 95% intervals. Exits non-zero
