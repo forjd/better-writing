@@ -24,6 +24,12 @@ class SkillPathsTest(unittest.TestCase):
             self.assertIn(f"<!-- references/{ref.name} -->", prompt)
             self.assertIn(f"- references/{ref.name}", footer)
 
+    def test_every_prompt_carries_the_output_rules(self):
+        prompts = [run_skill.build_system_prompt(arm=arm) for arm in run_skill.ARMS]
+        prompts.append(run_skill.build_system_prompt(with_skill=False))
+        for prompt in prompts:
+            self.assertIn(run_skill.OUTPUT_RULES, prompt)
+
     def test_run_metadata_reads_version(self):
         version = run_skill.run_metadata()["skill_version"] or ""
         self.assertRegex(version, r"^\d+\.\d+\.\d+$")
