@@ -74,7 +74,7 @@ These need no corroboration. A single instance is hard evidence that text was ma
 - Raw markdown dropped into a destination that does not render it: literal `**bold**`, `##` headings, escaped `\*` asterisks, or a markdown pipe table (`| a | b |` rows over a `|---|` separator) in an email, a plain-text field, a wiki, or a CMS that expected HTML.
 - Tracking parameters left on pasted links: `?utm_source=chatgpt.com`, `utm_source=openai`, `utm_source=copilot.com`, `referrer=grok.com`.
 - Unedited assistant scaffolding: "Let me know if you need any modifications", "Here is the revised version", "I hope this helps", "Would you like me to", and pasted chat labels such as "Claude responded:".
-- Unfilled template placeholders the writer forgot to replace: `[Your Name]`, `[Insert X here]`, `[Company]`, `[Date]`. A deliberate editorial gap marker such as `[churn figure needed]` is not one of these; keep it until the fact arrives.
+- Unfilled template placeholders the writer forgot to replace: `[Your Name]`, `[Insert X here]`, `[Company]`, `[Date]`. A deliberate editorial gap marker such as `[churn figure needed]` is not one of these; keep it until the fact arrives. Neither is a slot in a template the user means to fill later, such as a mail-merge field.
 - Standalone model disclaimers: "As an AI language model", "As a large language model", "I don't have access to real-time information". These are 2022–2024-era and largely retired by current models, so their absence proves nothing, but their presence is conclusive.
 
 ## Content patterns
