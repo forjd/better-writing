@@ -89,10 +89,16 @@ ARMS = ("always-on", "progressive")
 
 # One output rule for every arm and the baseline, so the arms differ only in
 # how the skill is loaded. Review fixtures ask for findings, not a rewrite.
+# The skill asks for a change note in some cases, and the checker and judge
+# score the whole reply as the text, so the rule has to say it wins: without
+# that, the model followed the skill and appended the note (issue #57). The
+# wording stays generic so it hints at no fixture.
 OUTPUT_RULES = """Output rules for this run: return only what the brief asks for. For a rewrite
 or a draft, that is the final text alone: no preamble, no change note, no
-diagnostic audit, no closing remark. For a review, it is the findings alone,
-with no rewritten version.
+diagnostic audit, no closing remark. If other instructions ask for a change
+note or a note to the user beside a rewrite or a draft, leave the note out,
+and do not move what it would say into the text. For a review, it is the
+findings alone, with no rewritten version.
 """
 
 SYSTEM_HEADER = """You are running the better-writing skill. Its instructions and reference

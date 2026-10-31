@@ -23,7 +23,8 @@
   ],
   "banned_regex": [
     "[\\u00ad\\u180e\\u200b-\\u200f\\u202a-\\u202e\\u2060-\\u2064\\u2066-\\u206f\\ufeff]",
-    "[\\u0370-\\u03ff\\u0400-\\u052f\\u1c80-\\u1c8f\\u1f00-\\u1fff\\u2de0-\\u2dff\\ua640-\\ua69f]"
+    "[\\u0370-\\u03ff\\u0400-\\u052f\\u1c80-\\u1c8f\\u1f00-\\u1fff\\u2de0-\\u2dff\\ua640-\\ua69f]",
+    "(?m)^\\W*(change )?note\\W*:"
   ],
   "max_words_ratio": 0.9,
   "min_words_ratio": 0.3
