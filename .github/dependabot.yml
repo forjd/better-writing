@@ -1,4 +1,5 @@
-# Keeps the commit-pinned actions in .github/workflows current.
+# Keeps the commit-pinned actions in .github/workflows and the CLI version
+# that CI validates the plugin manifests with (.github/tools) current.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -8,5 +9,11 @@ updates:
     groups:
       actions:
         patterns: ["*"]
+    commit-message:
+      prefix: ci
+  - package-ecosystem: npm
+    directory: /.github/tools
+    schedule:
+      interval: monthly
     commit-message:
       prefix: ci
