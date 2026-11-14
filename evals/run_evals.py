@@ -163,8 +163,8 @@ WELL_FORMED = [
 # own spacing ("Use `std::vec::Vec` here." reads "Use code here."). A
 # backtick inside a word ("can`t") does not open a span.
 FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
-TABLE_SEPARATOR = re.compile(r"^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)*\|?\s*$")
-INLINE_CODE = re.compile(r"(?<!\w)`[^`\n]+`(?!\w)")
+TABLE_SEPARATOR = re.compile(r"^\s*\|?\s*:?-+:?\s*(?:\|\s*:?-+:?\s*)*\|?\s*$")
+INLINE_CODE = re.compile(r"(?<!\w)`[^`\n]+`")
 
 
 def _fenced_lines(lines):
@@ -216,7 +216,10 @@ def prose_only(text):
             continue
         if i in tables:
             cells = [c.strip() for c in line.strip().strip("|").split("|")]
-            line = " | ".join(c for c in cells if c)
+            # A cell that opens with punctuation ("?", "; separator") is
+            # not a space before punctuation, so give it a word to follow.
+            line = " | ".join("x" + c if c[0] in ",;:?!." else c
+                              for c in cells if c)
         kept.append(INLINE_CODE.sub("code", line))
     return "\n".join(kept)
 
@@ -236,7 +239,11 @@ _SPAN = r"(?:[^.!?;]|[.!?](?=\w))"
 _SEP = r"(?:[,;:!?(—–…]|\.{1,3}|\s-{1,2}(?=\s))\s*"
 _PRONOUN = r"(?:it|this|that|they|these|those|we|you|he|she|i)"
 _NEG_BE = (r"(?:isn['’]?t|is not|wasn['’]?t|was not|weren['’]?t|were not|"
-           r"aren['’]?t|are not|it['’]s not|it is not)")
+           r"aren['’]?t|are not|it['’]s not|it is not|i['’]m not|i am not)")
+# A word that can stand before "don't" without being its subject, so the
+# sentence is still an instruction ("Please don't just copy it.").
+_NOT_SUBJECT = (r"(?!(?:please|and|or|but|so|then|now|also|just|why|to|must|"
+                r"should|never|always|simply|first|next|remember)\b)")
 _LIMITER = r"(?:just|only|merely|simply)"
 CONTRAST = [
     # "but" may also open the next sentence ("not just fast. But cheap").
@@ -246,30 +253,34 @@ CONTRAST = [
     # matches ordinary instructions ("Do not simply delete the lock file.").
     # - After a be-verb: "but", or a pronoun plus a be-verb ("It isn't just
     #   fast. It's cheap.").
-    # - After do/does with a word before it (a subject, so not an imperative
-    #   such as "Don't just stare at it."): "but", or a pronoun plus any word
-    #   ("We don't just build software. We craft experiences.").
-    # - After did, the same, but the second verb must share the first three
-    #   letters ("We didn't just build a tool, we built a platform."), so a
-    #   report of two actions ("We did not just restart it: we rolled back the
-    #   release.") does not match.
+    # - After do/does with a subject before it, so not an imperative such as
+    #   "Don't just stare at it." or "Please don't just copy it.": "but", or a
+    #   pronoun plus any word ("We don't just build software. We craft
+    #   experiences.").
+    # - After did, the same, but the second verb must repeat the first one's
+    #   stem, up to a short ending ("We didn't just build a tool, we built a
+    #   platform."), so a report of two actions ("We did not just restart it:
+    #   we rolled back the release.", "we did not just configure it, we
+    #   confirmed it") does not match.
     (r"\b" + _NEG_BE + r"\s+" + _LIMITER + r"\b" + _SPAN + r"{0,120}?"
      r"(?:\bbut\b|" + _SEP + _PRONOUN
      + r"(?:'s|'re|'m|\s+is|\s+are|\s+was|\s+were|\s+am)\b)"
-     r"|\b[a-z]\w*\s+(?:doesn['’]?t|does not|don['’]?t|do not)\s+" + _LIMITER
+     r"|\b" + _NOT_SUBJECT + r"[a-z]\w*\s+(?:doesn['’]?t|does not|don['’]?t|do not)\s+" + _LIMITER
      + r"\s+\w+" + _SPAN + r"{0,120}?"
      r"(?:\bbut\b|" + _SEP + _PRONOUN + r"\s+(?!not\b)\w+)"
-     r"|\b[a-z]\w*\s+(?:didn['’]?t|did not)\s+" + _LIMITER
-     + r"\s+(\w{3})\w*" + _SPAN + r"{0,120}?"
-     r"(?:\bbut\b|" + _SEP + _PRONOUN + r"\s+\1)",
+     r"|\b" + _NOT_SUBJECT + r"[a-z]\w*\s+(?:didn['’]?t|did not)\s+" + _LIMITER
+     + r"\s+(\w{3,}?)(?:e|ed|es|s|d|ing)?\b" + _SPAN + r"{0,120}?"
+     r"(?:\bbut\b|" + _SEP + _PRONOUN + r"\s+\1\w{0,3}\b)",
      "no 'isn't just X' scaffold"),
     # The second "it's" must open the next clause or sentence ("It's not a
     # bug, it's a feature."), so "It's not ready yet. We think it's two weeks
-    # away." does not match, and neither does a conditional ("If it's not
-    # there, it's in the trash."). The "but" form needs a noun phrase after
+    # away." does not match, and neither does a clause opened by if, when,
+    # unless, whether, since, because or once ("If it's not there, it's in
+    # the trash."). The "but" form needs a noun phrase after
     # "but" ("It's not a tool, but a partner"), so "It's not ready yet, but it
     # will ship" does not match. "its" without an apostrophe is a possessive.
     (r"(?<!\bif )(?<!\bwhen )(?<!\bunless )(?<!\bwhether )"
+     r"(?<!\bsince )(?<!\bbecause )(?<!\bonce )"
      r"\bit(?:['’]s| is)\s+not\b(?:" + _SPAN + r"{0,120}?" + _SEP
      + r"(?:but\s+)?it(?:['’]s| is)\b|"
      + _SPAN + r"{0,120}?\bbut\s+(?:a|an|about|rather|instead)\b)",

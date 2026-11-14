@@ -80,22 +80,27 @@ EMBEDDED_CONTRAST = [
      r"(?:\bbut\b|[.;]\s*but\b)",
      "no 'not just X but Y' scaffold"),
     (r"\b(?:isn['’]?t|is not|wasn['’]?t|was not|weren['’]?t|were not|aren['"
-     r"’]?t|are not|it['’]s not|it is not)\s+(?:just|only|merely|simply)\b("
-     r"?:[^.!?;]|[.!?](?=\w)){0,120}?(?:\bbut\b|(?:[,;:!?(—–…]|\.{1,3}|\s-{"
-     r"1,2}(?=\s))\s*(?:it|this|that|they|these|those|we|you|he|she|i)(?:'s"
-     r"|'re|'m|\s+is|\s+are|\s+was|\s+were|\s+am)\b)|\b[a-z]\w*\s+(?:doesn["
-     r"'’]?t|does not|don['’]?t|do not)\s+(?:just|only|merely|simply)\s+\w+"
-     r"(?:[^.!?;]|[.!?](?=\w)){0,120}?(?:\bbut\b|(?:[,;:!?(—–…]|\.{1,3}|\s-"
-     r"{1,2}(?=\s))\s*(?:it|this|that|they|these|those|we|you|he|she|i)\s+("
-     r"?!not\b)\w+)|\b[a-z]\w*\s+(?:didn['’]?t|did not)\s+(?:just|only|mere"
-     r"ly|simply)\s+(\w{3})\w*(?:[^.!?;]|[.!?](?=\w)){0,120}?(?:\bbut\b|(?:"
-     r"[,;:!?(—–…]|\.{1,3}|\s-{1,2}(?=\s))\s*(?:it|this|that|they|these|tho"
-     r"se|we|you|he|she|i)\s+\1)",
+     r"’]?t|are not|it['’]s not|it is not|i['’]m not|i am not)\s+(?:just|on"
+     r"ly|merely|simply)\b(?:[^.!?;]|[.!?](?=\w)){0,120}?(?:\bbut\b|(?:[,;:"
+     r"!?(—–…]|\.{1,3}|\s-{1,2}(?=\s))\s*(?:it|this|that|they|these|those|w"
+     r"e|you|he|she|i)(?:'s|'re|'m|\s+is|\s+are|\s+was|\s+were|\s+am)\b)|\b"
+     r"(?!(?:please|and|or|but|so|then|now|also|just|why|to|must|should|nev"
+     r"er|always|simply|first|next|remember)\b)[a-z]\w*\s+(?:doesn['’]?t|do"
+     r"es not|don['’]?t|do not)\s+(?:just|only|merely|simply)\s+\w+(?:[^.!?"
+     r";]|[.!?](?=\w)){0,120}?(?:\bbut\b|(?:[,;:!?(—–…]|\.{1,3}|\s-{1,2}(?="
+     r"\s))\s*(?:it|this|that|they|these|those|we|you|he|she|i)\s+(?!not\b)"
+     r"\w+)|\b(?!(?:please|and|or|but|so|then|now|also|just|why|to|must|sho"
+     r"uld|never|always|simply|first|next|remember)\b)[a-z]\w*\s+(?:didn['’"
+     r"]?t|did not)\s+(?:just|only|merely|simply)\s+(\w{3,}?)(?:e|ed|es|s|d"
+     r"|ing)?\b(?:[^.!?;]|[.!?](?=\w)){0,120}?(?:\bbut\b|(?:[,;:!?(—–…]|\.{"
+     r"1,3}|\s-{1,2}(?=\s))\s*(?:it|this|that|they|these|those|we|you|he|sh"
+     r"e|i)\s+\1\w{0,3}\b)",
      "no 'isn't just X' scaffold"),
-    (r"(?<!\bif )(?<!\bwhen )(?<!\bunless )(?<!\bwhether )\bit(?:['’]s| is)"
-     r"\s+not\b(?:(?:[^.!?;]|[.!?](?=\w)){0,120}?(?:[,;:!?(—–…]|\.{1,3}|\s-"
-     r"{1,2}(?=\s))\s*(?:but\s+)?it(?:['’]s| is)\b|(?:[^.!?;]|[.!?](?=\w)){"
-     r"0,120}?\bbut\s+(?:a|an|about|rather|instead)\b)",
+    (r"(?<!\bif )(?<!\bwhen )(?<!\bunless )(?<!\bwhether )(?<!\bsince )(?<!"
+     r"\bbecause )(?<!\bonce )\bit(?:['’]s| is)\s+not\b(?:(?:[^.!?;]|[.!?]("
+     r"?=\w)){0,120}?(?:[,;:!?(—–…]|\.{1,3}|\s-{1,2}(?=\s))\s*(?:but\s+)?it"
+     r"(?:['’]s| is)\b|(?:[^.!?;]|[.!?](?=\w)){0,120}?\bbut\s+(?:a|an|about"
+     r"|rather|instead)\b)",
      "no 'it's not X, it's Y' scaffold"),
     (r"\bnot\s+because\b(?:[^.!?;]|[.!?](?=\w)){0,120}?(?:\bbut\b|(?:[,;:!?"
      r"(—–…]|\.{1,3}|\s-{1,2}(?=\s))\s*(?:(?:it|this|that)(?:'s|\s+is|\s+wa"

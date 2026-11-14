@@ -87,6 +87,8 @@ class CheckRewriteTest(unittest.TestCase):
             "We don't just build software. We craft experiences.": self.ISNT_JUST,
             "We didn't just build a tool, we built a platform.": self.ISNT_JUST,
             "We didn't just ship it but celebrated it.": self.ISNT_JUST,
+            "We didn't just fix it, we fixed the cause.": self.ISNT_JUST,
+            "I'm not just a developer, I'm a writer.": self.ISNT_JUST,
             "It's not a bug, it's a feature.": self.ITS_NOT,
             "It's not a bug... it's a feature.": self.ITS_NOT,
             "It's not a config.yml problem, it's a design problem.": self.ITS_NOT,
@@ -114,8 +116,8 @@ class CheckRewriteTest(unittest.TestCase):
             "the backup lock.",
             "The outage was not because of the deploy; we found the cause "
             "because of the logs.",
-            # Found in review of the fix.
             "It's not ready yet, but it will ship.",
+            # Found in review of the fix.
             "Do not just copy the file. Use the script. But check the path first.",
             "Do not simply delete the lock file. Stop the worker first, but "
             "keep the queue.",
@@ -125,6 +127,14 @@ class CheckRewriteTest(unittest.TestCase):
             "If it's not there, it's in the trash.",
             "When it's not raining, it's sunny.",
             "It is not slow, its cache is warm.",
+            "Please don't just copy the file. You will miss the config.",
+            "So don't just restart it. It will fail again.",
+            "Then do not just retry, it hides the error.",
+            "We did not just configure it, we confirmed it worked.",
+            "They did not just complete the move, they compared the results.",
+            "We did not just record the failure, we recovered the data.",
+            "Since it's not cached, it's slow.",
+            "Because it's not signed, it's rejected.",
         ]
         for text in sentences:
             with self.subTest(text=text):
@@ -138,6 +148,9 @@ class CheckRewriteTest(unittest.TestCase):
             "Name  | Value\n----- | -----\na     | 1",
             "Run this:\n\n```bash\nls ; pwd\nfoo  bar\n```\n\nDone.",
             "Run this:\n\n~~~\nfoo  bar\n~~~\n\nDone.",
+            "| Key | Meaning |\n| --- | --- |\n| ? | optional |\n| ; | separator |",
+            "Name  | Value\n-|-\na | 1",
+            "Two `Vec`s and `std::fs`s here.",
         ]
         for text in texts:
             with self.subTest(text=text):
