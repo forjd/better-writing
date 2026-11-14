@@ -1,11 +1,25 @@
 # Agent instructions
 
-These instructions apply to the entire `better-writing` repository.
+These rules are for automated agent runs that can share one checkout of this repo with other runs.
+The maintainer's orchestrator (Paperclip) starts such runs and sets `PAPERCLIP_WORKSPACE_CWD` and
+`PAPERCLIP_AGENT_ID`. Before your first git command, decide which rules apply to you:
+
+- Run `printenv PAPERCLIP_WORKSPACE_CWD`. If it prints a path, this whole file applies.
+- If it prints nothing, run `git worktree list`. If it lists worktrees that you did not make, or
+  you know that other agents use this checkout, treat the checkout as shared. Rules 1, 3 and 4
+  and the last section apply. Instead of the script in Rule 2, make your worktree outside the
+  checkout with `git worktree add -b <type>/<task>-<slug> ../<name>`, and remove it with
+  `git worktree remove` when you finish. Do the same if the script in Rule 2 exits because a
+  variable is missing.
+- If you cannot tell, act as in the bullet above.
+- None of this file applies only when you know that nobody else uses this checkout at the same
+  time: for example, a human in their own clone, or an agent whose user says the clone is theirs
+  alone. [CONTRIBUTING.md](./CONTRIBUTING.md) says how to work on the repo.
 
 ## Git workspace hygiene for automated agents
 
-This section is for automated agent runs that share a provisioned checkout of this repo. If
-you are a human working in your own clone, none of it applies.
+This section is for automated agent runs that share a checkout of this repo. The start of this
+file says when it applies.
 
 **The shared checkout is the repo itself.** The orchestrator provisions one clone per project,
 not one per task, and this project is a single repo — so the clone you are standing in is the

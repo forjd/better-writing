@@ -18,21 +18,24 @@ Two loading arms measure the real config instead of only an upper bound:
 - always-on (default): the system prompt concatenates SKILL.md plus every
   file in references/. This is the historical behaviour; real harnesses never
   see this much context at once, so its pass rate is an upper bound.
-- progressive: the system prompt carries only the installed skill metadata
-  (the plugin description, ~100 tokens) plus SKILL.md, and the model may Read
+- progressive: the system prompt carries only the skill's listing (its name
+  and the SKILL.md frontmatter description, ~100 tokens, which is what a
+  harness shows the model) plus SKILL.md, and the model may Read
   references/*.md on demand from a staging dir holding only the skill
   (<out>/_skill_root, rebuilt every run), the way a real harness loads
   SKILL.md on trigger and individual references on demand. Staging keeps the
   grading rubric (checks.json, examples/) out of the Read tool's reach.
 
 Pass --arm progressive for the real-config arm only, or --arm both to run
-the two side by side and report the paired per-fixture difference. The
-description change is visible to the progressive arm (it ships the plugin
-description); the always-on arm never sees it.
+the two side by side and report the paired per-fixture difference. Both
+arms read the whole of SKILL.md, frontmatter included, so both see a change
+to the frontmatter description; the progressive arm also gets it as the
+listing line in its header. Neither arm decides whether to load the skill:
+run_triggers.py measures that.
 
 Pass --repeats K to generate K independent rewrites per fixture per arm
-(default 1; use 5 or more when sizing a skill change, sized against the
-variance probe in FOR-113). Rewrites are saved as <fixture>.r<k>.md under
+(default 1; use 5 or more when sizing a skill change, and more if a
+fixture's pass rate swings between runs). Rewrites are saved as <fixture>.r<k>.md under
 <out>/<arm>/ with a top-level summary.json holding per-fixture pass rates,
 Wilson 95% intervals, and the paired progressive-minus-always-on difference
 with its interval. With the default --repeats 1 and --arm always-on the
@@ -75,6 +78,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from run_evals import FIXTURES_DIR, load_fixture, run_one  # noqa: E402
+# One frontmatter parser for the repo checks and the eval runners.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+from validate import parse_simple_frontmatter  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILL_DIR = ROOT / "skills" / "better-writing"
@@ -107,12 +113,46 @@ material follow. Apply them to the user's request.
 """ + OUTPUT_RULES
 
 
-def run_metadata():
-    """Record what a summary measured: skill version, commit, and date.
+def git(*args):
+    """Run a read-only git command in the repo; return the CompletedProcess.
 
-    A saved summary is only comparable to another run of the same skill
-    text, so the version from SKILL.md and the git commit travel with it.
-    Either is None when it cannot be read.
+    --no-optional-locks keeps `git status` from taking the index lock, so a
+    concurrent git command in the same checkout does not fail.
+    """
+    return subprocess.run(["git", "--no-optional-locks", "-C", str(ROOT), *args],
+                          capture_output=True, text=True)
+
+
+# What a run reads: the skill, the eval runner and fixtures, and the plugin
+# manifest (the progressive arm's fallback description). The committed
+# reference summaries are outputs, not inputs.
+MEASURED_PATHS = ("skills", "evals", ".claude-plugin", ":(exclude)evals/baselines")
+
+
+def is_run_output(status_line):
+    """True for an untracked directory that an earlier run wrote.
+
+    `git status --porcelain` lists an untracked directory as "?? path/".
+    A run's --out holds summary.json, _system_prompt.md, or _skill_root, so
+    an old --out under evals/ does not count as a change to the inputs.
+    """
+    if not status_line.startswith("?? ") or not status_line.endswith("/"):
+        return False
+    folder = ROOT / status_line[3:].strip('"')
+    return any((folder / name).exists()
+               for name in ("summary.json", "_system_prompt.md", "_skill_root"))
+
+
+def run_metadata(out_dir=None):
+    """Record what a summary measured: skill version, commit, tree state, date.
+
+    Call it before the run writes anything, so the record describes the
+    text the run reads. A saved summary is only comparable to another run
+    of the same skill text, so the version from SKILL.md and the git commit
+    travel with it. `dirty` is True when MEASURED_PATHS had uncommitted
+    changes, so the commit does not hold the text the run measured (issue
+    #78); `out_dir`, when it sits inside the repo, does not count. Each is
+    None when it cannot be read.
     """
     try:
         front = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8-sig")
@@ -120,25 +160,111 @@ def run_metadata():
         version = match.group(1) if match else None
     except OSError:
         version = None
+    commit = dirty = None
     try:
-        commit = subprocess.run(
-            ["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"],
-            capture_output=True, text=True, check=True).stdout.strip() or None
-    except (OSError, subprocess.CalledProcessError):
-        commit = None
-    return {"skill_version": version, "commit": commit,
+        head = git("rev-parse", "--short", "HEAD")
+        if head.returncode == 0:
+            commit = head.stdout.strip() or None
+        if commit is not None:
+            paths = list(MEASURED_PATHS)
+            rel = None
+            if out_dir is not None:
+                try:
+                    rel = Path(out_dir).resolve().relative_to(ROOT).as_posix()
+                except ValueError:
+                    rel = None
+            # Skip the exclude when --out holds a measured path ("--out evals"),
+            # or it would hide real edits.
+            measured = ("skills", "evals", ".claude-plugin")
+            if rel and rel != "." and not any(
+                    m == rel or m.startswith(rel + "/") for m in measured):
+                paths.append(f":(exclude,literal){rel}")
+            status = git("status", "--porcelain", "--", *paths)
+            if status.returncode == 0:
+                dirty = any(not is_run_output(line)
+                            for line in status.stdout.splitlines() if line.strip())
+    except OSError:
+        pass
+    return {"skill_version": version, "commit": commit, "dirty": dirty,
             "date": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
 
 
-def plugin_description():
-    """Return the installed skill metadata the progressive arm ships (~100 tokens).
-
-    Real harnesses announce the skill by its plugin description at startup
-    and load SKILL.md only on trigger, so the progressive arm starts from
-    this line: a description change is visible to it and invisible to the
-    always-on arm. Falls back to the SKILL.md frontmatter description when
-    the plugin manifest cannot be read.
+def commit_on_default_branch(commit="HEAD"):
+    """Return (branch, True/False) for whether HEAD is on origin's default
+    branch, or (branch, None) when git cannot tell: no remote, no history,
+    or a shallow clone, where a cut history makes the ancestry test fail.
+    The answer is only as fresh as the last fetch.
     """
+    try:
+        shallow = git("rev-parse", "--is-shallow-repository")
+        if shallow.returncode == 0 and shallow.stdout.strip() == "true":
+            return ("origin/main", None)
+        head = git("symbolic-ref", "--short", "refs/remotes/origin/HEAD")
+        branch = head.stdout.strip() if head.returncode == 0 else "origin/main"
+        result = git("merge-base", "--is-ancestor", commit or "HEAD", branch)
+    except OSError:
+        return ("origin/main", None)
+    if result.returncode in (0, 1):
+        return (branch, result.returncode == 0)
+    return (branch, None)
+
+
+def reference_warnings(meta, branch, on_branch, end=None):
+    """Say why a summary should not be committed as a reference as it is.
+
+    The reference's `commit` must hold the skill text and runner it measured
+    and stay reachable. A dirty tree breaks the first. A commit off the
+    default branch breaks the second once the branch is squash-merged and
+    deleted: the reference then names a commit nobody can check out.
+    `end` is the same record read again when the run finished: the run
+    reads fixtures as it goes, so a checkout that moved or became dirty
+    during the run also breaks the first.
+    """
+    warnings = []
+    commit = meta.get("commit")
+    if end is not None and (end.get("commit") != commit
+                            or (end.get("dirty") and not meta.get("dirty"))):
+        warnings.append(
+            f"the checkout changed during the run (commit {commit} at the "
+            f"start, {end.get('commit')} at the end, or new uncommitted "
+            "changes): the summary may not describe the text every fixture "
+            "read. Do not commit it as a reference.")
+    if meta.get("dirty"):
+        warnings.append(
+            f"uncommitted changes under skills/, evals/ or .claude-plugin/ "
+            f"when the run started: commit {commit} "
+            "does not hold the text this run measured. Do not commit this "
+            "summary as a reference.")
+    if on_branch is False:
+        warnings.append(
+            f"commit {commit} is not on {branch}. If this summary becomes a "
+            "reference and the branch is squash-merged, set its commit to "
+            "the merge commit on the default branch, or re-record.")
+    return warnings
+
+
+def skill_description():
+    """Return the skill listing line the progressive arm ships (~100 tokens).
+
+    Harnesses list a skill by the `description` in its SKILL.md frontmatter
+    and load the rest of SKILL.md only on trigger, so the progressive arm
+    starts from that line (issue #75). The plugin manifest's description is
+    a different, shorter text that no harness shows the model; it is only
+    the fallback when SKILL.md has no frontmatter description.
+    """
+    try:
+        text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8-sig")
+    except OSError:
+        text = ""
+    # Parse the frontmatter the way scripts/validate.py does, so a folded,
+    # wrapped or quoted description gives the same text here. read_text
+    # already turns CRLF into LF; the replace matches validate.py, which
+    # reads bytes.
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    front = re.match(r"---\n(.*?)\n---(?:\n|$)", text, re.S)
+    desc = parse_simple_frontmatter(front.group(1)).get("description") if front else None
+    if isinstance(desc, str) and desc.strip():
+        return desc.strip()
     manifest = ROOT / ".claude-plugin" / "plugin.json"
     try:
         desc = json.loads(manifest.read_text(encoding="utf-8")).get("description")
@@ -146,12 +272,7 @@ def plugin_description():
         desc = None
     if isinstance(desc, str) and desc.strip():
         return desc.strip()
-    try:
-        front = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8-sig")
-    except OSError:
-        return "better-writing"
-    match = re.search(r"^description:\s*(.+?)\s*$", front, re.M)
-    return match.group(1).strip() if match else "better-writing"
+    return "better-writing"
 
 
 def progressive_footer():
@@ -242,14 +363,16 @@ def build_system_prompt(with_skill=True, arm="always-on"):
     if not with_skill:
         return BASELINE_HEADER
     if arm == "progressive":
-        # Real-config arm: installed metadata plus SKILL.md only. References
-        # stay on disk for the model to fetch with the Read tool; nothing
-        # here concatenates them, so progressive-disclosure changes (a table
-        # of contents, a slimmer reference, a reworded description) are
-        # visible to this arm and invisible to always-on.
+        # Real-config arm: the skill listing plus SKILL.md only. References
+        # stay on disk for the model to fetch with the Read tool, while
+        # always-on concatenates all of them. Both arms read SKILL.md whole,
+        # so a change to it (the description included) reaches both. The
+        # arms also differ in the header (this one lists the description
+        # first), the footer, the Read tool, and which references the model
+        # reads.
         header = ("You are running the better-writing skill.\n"
                   f"Installed skill: better-writing — "
-                  f"\"{plugin_description()}\"\n"
+                  f"\"{skill_description()}\"\n"
                   "Its instructions follow. Apply them to the user's request.\n")
         return "\n".join([header,
                           (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8"),
@@ -340,13 +463,43 @@ def paired_mean_diff_interval(diffs):
     return (avg, avg - half, avg + half)
 
 
+# A fence line that can open a wrapper around the whole reply.
+WRAPPER_FENCE = re.compile(r"^```(json|markdown|md|text)?\s*$", re.I)
+
+
+def unwrap_fence(lines):
+    """Return the lines inside a fence that wraps the whole reply, or None.
+
+    The first line must open a fence (no label, or json, markdown, md, text)
+    and the last line must be a bare closing fence. With fence lines between
+    them the pair is ambiguous: the first line may open a real code block
+    and the last close another (issue #74). Inside a real wrapper the first
+    inner fence opens a block, so it carries a label ("```bash"); a bare
+    first inner fence closes a block that the first line opened. So the
+    reply is unwrapped only when the inner fences pair up and the first one
+    has a label. A wrapper whose first inner block has no label is left
+    alone, fences and all.
+    """
+    if len(lines) < 2 or lines[-1].strip() != "```":
+        return None
+    if not WRAPPER_FENCE.match(lines[0].strip()):
+        return None
+    inner = lines[1:-1]
+    fences = [line.strip() for line in inner if line.strip().startswith("```")]
+    if not fences:
+        return inner
+    if len(fences) % 2 == 0 and fences[0] != "```":
+        return inner
+    return None
+
+
 def strip_preamble(text):
-    """Remove fences and leading preamble so only the rewrite remains."""
-    t = text.strip()
-    # Strip markdown fences if the model wrapped the rewrite.
-    t = re.sub(r"^```(?:json|markdown|md|text)?\s*\n", "", t)
-    t = re.sub(r"\n```\s*$", "", t).strip()
-    lines = t.splitlines()
+    """Remove a wrapping fence and leading preamble so only the rewrite remains."""
+    lines = text.strip().splitlines()
+    inner = unwrap_fence(lines)
+    unwrapped = inner is not None
+    if unwrapped:
+        lines = inner
     # Drop leading preamble lines ("Here is the rewrite:", "Sure, ...:", etc.).
     # Only colon-terminated lines match, so a legitimate opener such as
     # "Here is what changed in the second quarter." is preserved.
@@ -358,13 +511,16 @@ def strip_preamble(text):
     # Drop a leading "Rewrite:" label line.
     if lines and re.match(r"^rewrite\s*:\s*$", lines[0].strip(), re.I):
         lines.pop(0)
-    # A preamble often introduces a fenced block ("Here's the rewrite:\n```"),
-    # so the fence only surfaces once the preamble is gone.
-    if lines and re.match(r"^```(?:markdown|md|text)?\s*$", lines[0].strip()):
+    while lines and not lines[0].strip():
         lines.pop(0)
-        if lines and lines[-1].strip() == "```":
-            lines.pop()
-    return "\n".join(lines).strip() + ("\n" if lines else "")
+    # A preamble often introduces a fenced block ("Here's the rewrite:\n```"),
+    # so the wrapper only surfaces once the preamble is gone.
+    if not unwrapped:
+        inner = unwrap_fence(lines)
+        if inner is not None:
+            lines = inner
+    result = "\n".join(lines).strip()
+    return result + ("\n" if result else "")
 
 
 def rewrite(model, system_path, brief, input_text, tools="", cwd=None):
@@ -628,7 +784,7 @@ def generate_and_score(model, judge_model, system_path, tools, cwd,
 
 
 def build_summary(model, judge_model, no_judge, arms, repeats, split,
-                  results):
+                  results, metadata=None):
     """Assemble the summary.json payload from per-fixture per-arm passes.
 
     `results` maps fixture name to {arm: [bool, ...]}. Rates carry Wilson
@@ -667,7 +823,7 @@ def build_summary(model, judge_model, no_judge, arms, repeats, split,
         overall["paired_ci95"] = [lo, hi]
     return {"model": model, "judge_model": None if no_judge else judge_model,
             "no_judge": no_judge, "arms": list(arms), "repeats": repeats,
-            "split": split, **run_metadata(), "fixtures": fixtures,
+            "split": split, **(metadata or run_metadata()), "fixtures": fixtures,
             "overall": overall}
 
 
@@ -711,7 +867,9 @@ def print_baseline_diff(summary, baseline):
 
     Each change carries a Newcombe 95% interval, so a one-repeat wobble
     does not read as a regression. Settings that make two runs
-    incomparable (model, judge, repeats) are printed as warnings first.
+    incomparable (model, judge, repeats, split) are printed as warnings
+    first, and so is a different skill version, since the reference may
+    then not be the version the run was meant to compare against.
     """
     print(f"against baseline: {baseline.get('model')}, skill "
           f"{baseline.get('skill_version')} at {baseline.get('commit')}, "
@@ -720,6 +878,14 @@ def print_baseline_diff(summary, baseline):
         if summary.get(key) != baseline.get(key):
             print(f"  WARN {key} differs: baseline {baseline.get(key)!r}, "
                   f"this run {summary.get(key)!r}")
+    # A release bumps the version without a skill change, and a skill change
+    # lands before the release, so a version gap is a note, not a warning.
+    if summary.get("skill_version") != baseline.get("skill_version"):
+        print(f"  note: baseline is skill {baseline.get('skill_version')}, "
+              f"this run is skill {summary.get('skill_version')}")
+    if baseline.get("dirty"):
+        print(f"  WARN the baseline was recorded with uncommitted changes, "
+              f"so commit {baseline.get('commit')} may not hold its text")
     arms = [a for a in summary["arms"] if a in baseline["arms"]]
     if not arms:
         print(f"  no arm in common (baseline: {', '.join(baseline['arms'])})")
@@ -857,6 +1023,8 @@ def main():
     # Absolute, because the progressive arm runs `claude` with its cwd in the
     # staging dir: a relative --out would point --system-prompt-file there.
     out_dir = Path(args.out).resolve()
+    # Before anything is written, so the record describes what the run reads.
+    metadata = run_metadata(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     if args.no_skill:
@@ -944,7 +1112,7 @@ def main():
                     print(f"  WARN could not write compat copy: {exc}")
 
     summary = build_summary(args.model, judge_model, args.no_judge, arms,
-                            args.repeats, args.split, results)
+                            args.repeats, args.split, results, metadata)
     summary_path = out_dir / "summary.json"
     try:
         summary_path.write_text(json.dumps(summary, indent=2) + "\n",
@@ -956,6 +1124,12 @@ def main():
     print_summary(summary)
     if baseline is not None:
         print_baseline_diff(summary, baseline)
+    # Last, so the warnings do not scroll away above the report. The run
+    # reads fixtures as it goes, so check the checkout again at the end.
+    branch, on_branch = commit_on_default_branch(metadata.get("commit"))
+    end = run_metadata(out_dir)
+    for warning in reference_warnings(summary, branch, on_branch, end):
+        print(f"WARN {warning}")
 
     print(f"rewrites saved in {out_dir}")
     return 0 if all_ok else 1
