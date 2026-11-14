@@ -39,6 +39,10 @@ Say in the pull request what changed between the two reports, and read the rewri
 - Do not edit version numbers by hand. release-please bumps them.
 - Write new prose in British English with sentence-case headings. The repo's own docs follow the catalogue.
 
+## Files for the maintainer's agent runs
+
+`CLAUDE.md` and `scripts/issue-worktree.sh` are for the maintainer's automated agent runs, which share one checkout of the repo. Each run gets its own git worktree, so concurrent runs do not overwrite each other. Neither file applies to a clone that only one person or agent uses at a time. If several agents work in your clone at once, give each one its own `git worktree`. The script exits unless `PAPERCLIP_WORKSPACE_CWD` and `PAPERCLIP_AGENT_ID` are set.
+
 ## Reporting problems
 
 Use the [issue templates](https://github.com/forjd/better-writing/issues/new/choose). If the skill over-edited clean prose, include the input, the brief, and the output. Questions about AI-detector scores are answered in [why detector scores are not a check](./evals/README.md#why-detector-scores-are-not-a-check). For security issues, follow [SECURITY.md](./SECURITY.md) instead of opening a public issue.

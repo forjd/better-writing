@@ -33,7 +33,7 @@ class ProbeTest(unittest.TestCase):
         self.assertEqual(lint("Churn rose [churn figure needed].\n"), [])
 
     def test_contrast_scaffold_fails(self):
-        failures = lint("This isn't just an update.\n")
+        failures = lint("This isn't just an update. It's a rewrite.\n")
         self.assertTrue(any("isn't just" in f for f in failures))
 
     def test_word_boundaries_hold(self):

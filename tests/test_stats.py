@@ -1,5 +1,7 @@
 """Interval code in evals/run_skill.py against published reference values."""
 
+import contextlib
+import io
 import unittest
 
 import _paths  # noqa: F401
@@ -102,6 +104,97 @@ class PairedMeanDiffIntervalTest(unittest.TestCase):
         self.assertEqual(run_skill.paired_mean_diff_interval([0.4]), (0.4, 0.4, 0.4))
         self.assertEqual(run_skill.paired_mean_diff_interval([0.2, 0.2]),
                          (0.2, 0.2, 0.2))
+
+
+class ClusteredOverallTest(unittest.TestCase):
+    # Issue #72: two fixtures, five repeats each, one always passes and one
+    # always fails. Pooled as 10 independent runs the Wilson interval is
+    # [0.24, 0.76]; with the fixture as the unit, two values (1.0 and 0.0)
+    # give a t interval as wide as [0, 1].
+    RESULTS = {"a": {"always-on": [True] * 5}, "b": {"always-on": [False] * 5}}
+
+    def test_overall_interval_is_over_fixture_rates(self):
+        summary = run_skill.build_summary("m", "j", False, ["always-on"], 5,
+                                          "all", self.RESULTS)
+        overall = summary["overall"]["always-on"]
+        self.assertEqual((overall["pass"], overall["n"]), (5, 10))
+        self.assertEqual(overall["fixture_mean"], 0.5)
+        mean, lo, hi = run_skill.paired_mean_diff_interval([1.0, 0.0])
+        self.assertEqual(overall["ci95"], [max(0.0, lo), min(1.0, hi)])
+        self.assertEqual(overall["ci95"], [0.0, 1.0])
+
+    def test_equal_fixture_rates_print_no_interval(self):
+        results = {"a": {"always-on": [True] * 5}, "b": {"always-on": [True] * 5}}
+        summary = run_skill.build_summary("m", "j", False, ["always-on"], 5,
+                                          "all", results)
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            run_skill.print_summary(summary)
+        self.assertIn("no interval", out.getvalue())
+
+    def test_baseline_overall_is_mean_of_fixture_changes(self):
+        def summary(counts):
+            fixtures = {name: {"always-on": {"pass": c, "n": 5, "rate": c / 5}}
+                        for name, c in counts.items()}
+            return {"arms": ["always-on"], "fixtures": fixtures}
+        old = summary({"a": 0, "b": 2, "c": 5})
+        new = summary({"a": 5, "b": 5, "c": 5})
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            run_skill.print_baseline_diff(new, old)
+        diffs = [1.0, 0.6, 0.0]
+        mean, lo, hi = run_skill.paired_mean_diff_interval(diffs)
+        line = next(l for l in out.getvalue().splitlines() if "overall" in l)
+        self.assertIn("7/15 -> 15/15", line)
+        lo, hi, _ = run_skill.clamp_interval(lo, hi, -1.0, 1.0)
+        self.assertIn(f"mean change {mean:+.2f} [{lo:+.2f}, {hi:+.2f}]", line)
+        self.assertIn("95% t over 3 fixtures", line)
+
+    def test_interval_text_flags_zero_width(self):
+        self.assertEqual(run_skill.interval_text(0.0, 0.0, 22),
+                         "(no interval: all 22 fixtures have the same value)")
+        self.assertEqual(run_skill.interval_text(0.2, 0.4, 1),
+                         "(no interval: one fixture)")
+        self.assertEqual(run_skill.interval_text(0.0, 0.0, 0),
+                         "(no interval: no fixtures)")
+        self.assertEqual(run_skill.interval_text(-0.1, 0.2, 5),
+                         "[-0.10, +0.20] (95% t over 5 fixtures)")
+        self.assertEqual(run_skill.interval_text(0.8, 1.0, 5, sign=False,
+                                                 clamped=True),
+                         "[0.80, 1.00] (95% t over 5 fixtures, clamped to the "
+                         "possible range)")
+
+    def test_float_noise_counts_as_equal_changes(self):
+        # 5/5 - 4/5 and 1/5 - 0/5 are both 0.2 on paper, not in floats.
+        mean, lo, hi = run_skill.paired_mean_diff_interval([5 / 5 - 4 / 5, 1 / 5 - 0 / 5])
+        self.assertEqual(lo, hi)
+        self.assertIn("no interval", run_skill.interval_text(lo, hi, 2))
+
+    def test_overall_line_and_clamp(self):
+        summary = run_skill.build_summary("m", "j", False, ["always-on"], 5,
+                                          "all", self.RESULTS)
+        overall = summary["overall"]["always-on"]
+        self.assertTrue(overall["ci95_clamped"])
+        self.assertEqual(overall["ci95_method"], "t over per-fixture rates")
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            run_skill.print_summary(summary)
+        self.assertIn("overall always-on: 5/10 = 0.50 (5 rep(s) x 2 fixtures), "
+                      "mean fixture rate 0.50 [0.00, 1.00] (95% t over 2 "
+                      "fixtures, clamped to the possible range)", out.getvalue())
+
+    def test_change_intervals_stay_inside_minus_one_to_one(self):
+        def summary(counts):
+            fixtures = {name: {"always-on": {"pass": c, "n": 5, "rate": c / 5}}
+                        for name, c in counts.items()}
+            return {"arms": ["always-on"], "fixtures": fixtures}
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            run_skill.print_baseline_diff(summary({"a": 5, "b": 0}),
+                                          summary({"a": 0, "b": 0}))
+        line = next(l for l in out.getvalue().splitlines() if "overall" in l)
+        self.assertIn("[-1.00, +1.00]", line)
+        self.assertIn("clamped", line)
 
 
 class ReplyParsingTest(unittest.TestCase):

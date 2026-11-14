@@ -34,10 +34,12 @@ listing line in its header. Neither arm decides whether to load the skill:
 run_triggers.py measures that.
 
 Pass --repeats K to generate K independent rewrites per fixture per arm
-(default 1; use 5 or more when sizing a skill change, sized against the
-variance probe in FOR-113). Rewrites are saved as <fixture>.r<k>.md under
-<out>/<arm>/ with a top-level summary.json holding per-fixture pass rates,
-Wilson 95% intervals, and the paired progressive-minus-always-on difference
+(default 1; use 5 or more when sizing a skill change, and more if a
+fixture's pass rate swings between runs). Rewrites are saved as
+<fixture>.r<k>.md under <out>/<arm>/ with a top-level summary.json holding
+per-fixture pass rates with Wilson 95% intervals, each arm's overall rate
+with a t interval over per-fixture rates, and the paired
+progressive-minus-always-on difference
 with its interval. With the default --repeats 1 and --arm always-on the
 layout is unchanged (<fixture-name>.md next to _system_prompt.md) plus a
 summary.json.
@@ -443,11 +445,14 @@ _T95 = {1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447,
 
 
 def paired_mean_diff_interval(diffs):
-    """Mean of paired per-fixture differences with a 95% t interval.
+    """Mean of per-fixture values with a 95% t interval.
 
-    `diffs` is one value per fixture (progressive rate minus always-on
-    rate). Returns (mean, lo, hi). A single fixture gives a degenerate
-    interval at the observed difference.
+    `diffs` is one value per fixture: a progressive-minus-always-on
+    difference, a change against a baseline, or a pass rate. Repeats of one
+    fixture are correlated, so the fixture, not the run, is the unit of
+    sampling (issue #72). Returns (mean, lo, hi). One fixture, or values
+    that are all equal, give a zero-width interval at the mean; the report
+    prints that case as "no interval" rather than as certainty.
     """
     diffs = list(diffs)
     if not diffs:
@@ -456,11 +461,23 @@ def paired_mean_diff_interval(diffs):
     if len(diffs) < 2:
         return (avg, avg, avg)
     spread = statistics.stdev(diffs)
-    if spread == 0:
+    # Changes that are equal on paper can differ in the last bit (0.6 - 0.4
+    # against 0.8 - 0.6), so a spread this small counts as none.
+    if spread < 1e-9:
         return (avg, avg, avg)
     t = _T95.get(len(diffs) - 1, 1.96)
     half = t * spread / math.sqrt(len(diffs))
     return (avg, avg - half, avg + half)
+
+
+# Recorded beside each arm's overall ci95, since summaries written before
+# issue #72 hold a pooled Wilson interval under the same key.
+CI95_METHOD = "t over per-fixture rates"
+
+
+def clamp_interval(lo, hi, low, high):
+    """Cut an interval to [low, high]; return (lo, hi, whether it was cut)."""
+    return (max(low, lo), min(high, hi), lo < low or hi > high)
 
 
 # A fence line that can open a wrapper around the whole reply.
@@ -787,9 +804,11 @@ def build_summary(model, judge_model, no_judge, arms, repeats, split,
                   results, metadata=None):
     """Assemble the summary.json payload from per-fixture per-arm passes.
 
-    `results` maps fixture name to {arm: [bool, ...]}. Rates carry Wilson
-    95% intervals; the two-arm difference carries a per-fixture Newcombe
-    interval plus a paired mean difference over fixtures with a t interval.
+    `results` maps fixture name to {arm: [bool, ...]}. Per-fixture rates
+    carry Wilson 95% intervals. Each arm's overall rate carries a t interval
+    over per-fixture rates, since repeats of one fixture are correlated.
+    The two-arm difference carries a per-fixture Newcombe interval plus a
+    paired mean difference over fixtures with a t interval.
     """
     fixtures = {}
     for name in sorted(results):
@@ -811,20 +830,52 @@ def build_summary(model, judge_model, no_judge, arms, repeats, split,
     for arm in arms:
         total_pass = sum(v[arm]["pass"] for v in fixtures.values())
         total_n = sum(v[arm]["n"] for v in fixtures.values())
+        # The interval is over per-fixture rates, not pooled runs: repeats
+        # of one fixture mostly pass or fail together, so a pooled Wilson
+        # interval over every run comes out too narrow.
+        rates = [v[arm]["rate"] for v in fixtures.values() if v[arm]["n"]]
+        mean, lo, hi = paired_mean_diff_interval(rates)
+        lo, hi, clamped = clamp_interval(lo, hi, 0.0, 1.0)
         overall[arm] = {"pass": total_pass, "n": total_n,
                         "rate": total_pass / total_n if total_n else 0.0,
-                        "ci95": list(wilson_interval(total_pass, total_n))}
+                        "fixture_mean": mean,
+                        "ci95": [lo, hi], "ci95_method": CI95_METHOD,
+                        "ci95_clamped": clamped}
     overall["n_fixtures"] = len(fixtures)
     if "always-on" in overall and "progressive" in overall:
         diffs = [fixtures[n]["diff_progressive_minus_always_on"]
                  for n in fixtures]
         avg, lo, hi = paired_mean_diff_interval(diffs)
+        lo, hi, clamped = clamp_interval(lo, hi, -1.0, 1.0)
         overall["paired_mean_diff"] = avg
         overall["paired_ci95"] = [lo, hi]
+        overall["paired_ci95_clamped"] = clamped
     return {"model": model, "judge_model": None if no_judge else judge_model,
             "no_judge": no_judge, "arms": list(arms), "repeats": repeats,
             "split": split, **(metadata or run_metadata()), "fixtures": fixtures,
             "overall": overall}
+
+
+def interval_text(lo, hi, count, sign=True, clamped=False):
+    """Format a 95% t interval over `count` fixtures.
+
+    A zero-width interval means one fixture or identical values, which says
+    nothing about the spread, so it prints as "no interval" instead. A
+    clamped interval says so: near 0 or 1 the symmetric t interval runs
+    past the possible range, and the cut bound is approximate.
+    """
+    if count == 0:
+        return "(no interval: no fixtures)"
+    if count < 2:
+        return "(no interval: one fixture)"
+    # paired_mean_diff_interval already returns lo == hi for a spread under
+    # 1e-9; this catches the same case for a caller that built lo and hi
+    # another way. Rate data cannot produce a spread near that threshold.
+    if math.isclose(lo, hi, abs_tol=1e-9):
+        return f"(no interval: all {count} fixtures have the same value)"
+    fmt = "+.2f" if sign else ".2f"
+    note = ", clamped to the possible range" if clamped else ""
+    return f"[{lo:{fmt}}, {hi:{fmt}}] (95% t over {count} fixtures{note})"
 
 
 def print_summary(summary):
@@ -834,14 +885,16 @@ def print_summary(summary):
     for arm in summary["arms"]:
         o = overall[arm]
         lo, hi = o["ci95"]
+        count = sum(1 for v in summary["fixtures"].values() if v[arm]["n"])
         print(f"overall {arm}: {o['pass']}/{o['n']} = {o['rate']:.2f} "
-              f"[{lo:.2f}, {hi:.2f}] (95% Wilson, {reps} rep(s) x "
-              f"{overall['n_fixtures']} fixtures)")
+              f"({reps} rep(s) x {overall['n_fixtures']} fixtures), "
+              f"mean fixture rate {o.get('fixture_mean', o['rate']):.2f} "
+              f"{interval_text(lo, hi, count, sign=False, clamped=o.get('ci95_clamped', False))}")
     if "paired_mean_diff" in overall:
         lo, hi = overall["paired_ci95"]
         print(f"paired mean diff (progressive minus always-on): "
-              f"{overall['paired_mean_diff']:+.2f} [{lo:+.2f}, {hi:+.2f}] "
-              f"(95% t, {overall['n_fixtures']} fixtures)")
+              f"{overall['paired_mean_diff']:+.2f} "
+              f"{interval_text(lo, hi, overall['n_fixtures'], clamped=overall.get('paired_ci95_clamped', False))}")
         print("per-fixture progressive minus always-on:")
         for name in sorted(summary["fixtures"]):
             entry = summary["fixtures"][name]
@@ -865,11 +918,11 @@ def load_summary(path):
 def print_baseline_diff(summary, baseline):
     """Print per-fixture pass-rate changes against a saved summary.
 
-    Each change carries a Newcombe 95% interval, so a one-repeat wobble
-    does not read as a regression. Settings that make two runs
-    incomparable (model, judge, repeats, split) are printed as warnings
-    first, and so is a different skill version, since the reference may
-    then not be the version the run was meant to compare against.
+    Each fixture's change carries a Newcombe 95% interval, so a one-repeat
+    wobble does not read as a regression. The overall line is the mean of
+    the per-fixture changes with a t interval over fixtures. Settings that
+    make two runs incomparable (model, judge, repeats, split) are printed as
+    warnings first; a different skill version prints as a note.
     """
     print(f"against baseline: {baseline.get('model')}, skill "
           f"{baseline.get('skill_version')} at {baseline.get('commit')}, "
@@ -894,6 +947,7 @@ def print_baseline_diff(summary, baseline):
         print(f"{arm}, this run minus baseline:")
         names = sorted(set(summary["fixtures"]) | set(baseline["fixtures"]))
         totals = [0, 0, 0, 0]  # new pass, new n, old pass, old n
+        diffs = []  # one rate change per shared fixture
         for name in names:
             new = summary["fixtures"].get(name, {}).get(arm)
             old = baseline["fixtures"].get(name, {}).get(arm)
@@ -904,6 +958,8 @@ def print_baseline_diff(summary, baseline):
             for i, v in enumerate((new["pass"], new["n"],
                                    old["pass"], old["n"])):
                 totals[i] += v
+            if new["n"] and old["n"]:
+                diffs.append(new["pass"] / new["n"] - old["pass"] / old["n"])
             lo, hi = newcombe_diff_interval(new["pass"], new["n"],
                                             old["pass"], old["n"])
             print(f"  {name}: {old['pass']}/{old['n']} -> "
@@ -911,14 +967,17 @@ def print_baseline_diff(summary, baseline):
                   f"diff {new['rate'] - old['rate']:+.2f} "
                   f"[{lo:+.2f}, {hi:+.2f}]")
         # Overall covers shared fixtures only: a fixture added since the
-        # baseline would otherwise move the total without any change.
+        # baseline would otherwise move the total without any change. The
+        # change is the mean of per-fixture rate changes with a t interval,
+        # not a Newcombe interval over pooled runs: repeats of one fixture
+        # are correlated, so pooling them overstates the sample (issue #72).
         new_pass, new_n, old_pass, old_n = totals
-        if new_n and old_n:
-            lo, hi = newcombe_diff_interval(new_pass, new_n, old_pass, old_n)
+        if diffs:
+            avg, lo, hi = paired_mean_diff_interval(diffs)
+            lo, hi, clamped = clamp_interval(lo, hi, -1.0, 1.0)
             print(f"  overall, shared fixtures: {old_pass}/{old_n} -> "
-                  f"{new_pass}/{new_n}, diff "
-                  f"{new_pass / new_n - old_pass / old_n:+.2f} "
-                  f"[{lo:+.2f}, {hi:+.2f}]")
+                  f"{new_pass}/{new_n}, mean change {avg:+.2f} "
+                  f"{interval_text(lo, hi, len(diffs), clamped=clamped)}")
 
 
 def main():
