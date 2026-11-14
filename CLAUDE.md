@@ -1,6 +1,9 @@
 # Agent instructions
 
-These instructions apply to the entire `better-writing` repository.
+This file applies only when `PAPERCLIP_WORKSPACE_CWD` is set: an automated agent run that the
+maintainer's orchestrator started in a shared checkout of this repo. If that variable is not
+set, ignore this file. That covers a human in their own clone and an agent working for a
+contributor in their clone. [CONTRIBUTING.md](./CONTRIBUTING.md) says how to work on the repo.
 
 ## Git workspace hygiene for automated agents
 

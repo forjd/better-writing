@@ -31,8 +31,8 @@ description change is visible to the progressive arm (it ships the plugin
 description); the always-on arm never sees it.
 
 Pass --repeats K to generate K independent rewrites per fixture per arm
-(default 1; use 5 or more when sizing a skill change, sized against the
-variance probe in FOR-113). Rewrites are saved as <fixture>.r<k>.md under
+(default 1; use 5 or more when sizing a skill change, and more if a
+fixture's pass rate swings between runs). Rewrites are saved as <fixture>.r<k>.md under
 <out>/<arm>/ with a top-level summary.json holding per-fixture pass rates,
 Wilson 95% intervals, and the paired progressive-minus-always-on difference
 with its interval. With the default --repeats 1 and --arm always-on the
