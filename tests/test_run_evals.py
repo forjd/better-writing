@@ -64,6 +64,61 @@ class CheckRewriteTest(unittest.TestCase):
         messages = failed({}, "x", "It is not just fast,\nbut cheap.")
         self.assertTrue(any("structure" in m for m in messages))
 
+    def test_contrast_scaffolds_fail(self):
+        scaffolds = [
+            "It isn't just fast. It's cheap.",
+            "The tool is not only a linter, but a formatter.",
+            "It doesn't just save time, it saves money.",
+            "We didn't just ship it but celebrated it.",
+            "It's not a bug, it's a feature.",
+            "It's not about speed. It's about trust.",
+            "It's not a tool, but a partner.",
+            "We left not because of the pay but because of the hours.",
+            "The outage was not because of the deploy; it was because of the logs.",
+            "Not because it is easy. Because it is right.",
+        ]
+        for text in scaffolds:
+            with self.subTest(text=text):
+                self.assertTrue(any("structure" in m for m in failed({}, "x", text)))
+
+    def test_ordinary_negations_pass_structure_checks(self):
+        # Issue #71: each of these matched a scaffold before.
+        sentences = [
+            "Do not simply delete the lock file. Stop the worker first.",
+            "The fix does not only apply to Postgres.",
+            "We did not just restart it: we rolled back the release.",
+            "It's not ready yet. We think it's two weeks away.",
+            "It is not clear why the export failed. Our guess is that it is "
+            "the backup lock.",
+            "The outage was not because of the deploy; we found the cause "
+            "because of the logs.",
+            "It's not ready yet, but it will ship.",
+        ]
+        for text in sentences:
+            with self.subTest(text=text):
+                self.assertEqual(failed({}, "x", text), [])
+
+    def test_well_formed_checks_skip_code_and_tables(self):
+        texts = [
+            "Use `std::vec::Vec` here.",
+            "Run `ls ; pwd` first.",
+            "| Name  | Value |\n| ----- | ----- |\n| a     | 1     |",
+            "Run this:\n\n```bash\nls ; pwd\nfoo  bar\n```\n\nDone.",
+        ]
+        for text in texts:
+            with self.subTest(text=text):
+                self.assertEqual(failed({}, "x", text), [])
+
+    def test_well_formed_checks_still_fail_prose_damage(self):
+        texts = [
+            "Our  new release.",
+            "Run `ls` , then stop.",
+            "Done, ; next.",
+        ]
+        for text in texts:
+            with self.subTest(text=text):
+                self.assertTrue(any("well formed" in m for m in failed({}, "x", text)))
+
     def test_malformed_checks_fail_loudly(self):
         messages = failed({"required": "15 June", "banned_regex": ["("]},
                           "x", "y")

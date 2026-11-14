@@ -154,27 +154,71 @@ WELL_FORMED = [
      "no empty clause between punctuation marks"),
 ]
 
+# The well-formedness checks guard prose, so they skip text where spacing and
+# punctuation are code or layout: fenced blocks, Markdown table rows, and
+# inline code. Inline code becomes one placeholder word, so the prose around
+# it keeps its own spacing ("Use `std::vec::Vec` here." reads "Use code
+# here."), and damage outside the span still fails.
+TABLE_ROW = re.compile(r"^\s*\|")
+INLINE_CODE = re.compile(r"`[^`\n]+`")
+
+
+def prose_only(text):
+    """Return text without fenced code, table rows, or inline code."""
+    kept = []
+    in_fence = False
+    for line in text.splitlines():
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence or TABLE_ROW.match(line):
+            continue
+        kept.append(INLINE_CODE.sub("code", line))
+    return "\n".join(kept)
+
 
 # Binary-contrast scaffolds, the structure sam-paech's slop-score weights at a
 # quarter of its total and 2026 reporting puts at three times the human rate.
 # Checked on every rewrite; no fixture's ideal output needs one.
 # Patterns run case-insensitively on apostrophe- and whitespace-normalized
-# text, allow newlines and cross-sentence spans, and cover was/were and
-# it's/it-is variants.
+# text, allow newlines, and cover was/were and it's/it-is variants. The
+# second half of a scaffold must sit in the same sentence or open the next
+# one, so two unrelated sentences do not join into a match (issue #71).
 CONTRAST = [
     (r"\bnot\s+(?:just|only|merely|simply)\b[\s\S]{0,120}?\bbut\b",
      "no 'not just X but Y' scaffold"),
+    # The second clause is required, as in the other patterns: a bare "isn't
+    # just" or "do not simply" matches ordinary instructions ("Do not simply
+    # delete the lock file."). After a be-verb the second clause is "but" or a
+    # pronoun plus a be-verb ("It isn't just fast. It's cheap."); after a
+    # do-verb it is "but" or a pronoun plus the same verb ("It doesn't just
+    # save time, it saves money."), so "We did not just restart it: we rolled
+    # back the release." does not match.
     (r"\b(?:isn['’]?t|is not|wasn['’]?t|was not|weren['’]?t|were not|"
-     r"aren['’]?t|are not|it['’]?s not|it is not|doesn['’]?t|does not|"
-     r"don['’]?t|do not|didn['’]?t|did not)\s+"
-     r"(?:just|only|merely|simply)\b",
+     r"aren['’]?t|are not|it['’]?s not|it is not)\s+"
+     r"(?:just|only|merely|simply)\b[^.!?;]{0,120}?"
+     r"(?:\bbut\b|[,;:.!?\u2014\u2013]\s*"
+     r"(?:it|this|that|they|these|those|we|you|he|she)"
+     r"(?:'s|'re|\s+is|\s+are|\s+was|\s+were)\b)"
+     r"|\b(?:doesn['’]?t|does not|don['’]?t|do not|didn['’]?t|did not)\s+"
+     r"(?:just|only|merely|simply)\s+(\w+?)e?\b[^.!?;]{0,120}?"
+     r"(?:\bbut\b|[,;:.!?\u2014\u2013]\s*"
+     r"(?:it|this|that|they|these|those|we|you|he|she)\s+\1)",
      "no 'isn't just X' scaffold"),
-    # The "but" form needs a noun phrase after "but" ("It's not a tool, but
-    # a partner"), so "It's not ready yet, but it will ship" does not match.
-    (r"\bit(?:['’]?s| is)\s+not\b(?:[\s\S]{0,120}?\bit(?:['’]?s| is)\b|"
+    # The "it's" form needs the second "it's" to open the next clause or
+    # sentence ("It's not a bug, it's a feature."), so "It's not ready yet.
+    # We think it's two weeks away." does not match. The "but" form needs a
+    # noun phrase after "but" ("It's not a tool, but a partner"), so "It's
+    # not ready yet, but it will ship" does not match.
+    (r"\bit(?:['’]?s| is)\s+not\b(?:[^.!?;]{0,120}?[,;:.!?\u2014\u2013]\s*"
+     r"(?:but\s+)?it(?:['’]?s| is)\b|"
      r"[^.!?]{0,120}?\bbut\s+(?:a|an|about|rather|instead)\b)",
      "no 'it's not X, it's Y' scaffold"),
-    (r"\bnot\s+because\b[\s\S]{0,120}?\b(?:but\b(?:\s+because)?|because\b)",
+    # The second "because" must open the next clause ("not because of the
+    # deploy; it was because of the logs"), not sit anywhere in the next
+    # 120 characters.
+    (r"\bnot\s+because\b[^.!?;]{0,120}?(?:\bbut\b|[,;:.!?\u2014\u2013]\s*"
+     r"(?:(?:it|this|that)(?:'s|\s+is|\s+was)\s+)?because\b)",
      "no 'not because X but Y' scaffold"),
     # The split form: "This does not mean X. It means Y." and "This isn't
     # about X. It's about Y." The second clause must repeat the verb ("means"
@@ -349,8 +393,9 @@ def check_rewrite(checks, input_text, rewrite_text):
             continue
         results.append((ok, f"banned pattern absent: /{pattern}/"))
 
+    prose = prose_only(norm_rewrite)
     for pattern, desc in WELL_FORMED:
-        ok = re.search(pattern, norm_rewrite) is None
+        ok = re.search(pattern, prose) is None
         results.append((ok, f"well formed: {desc}"))
 
     mode = checks.get("mode", "rewrite")

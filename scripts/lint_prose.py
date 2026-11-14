@@ -79,14 +79,22 @@ EMBEDDED_CONTRAST = [
     (r"\bnot\s+(?:just|only|merely|simply)\b[\s\S]{0,120}?\bbut\b",
      "no 'not just X but Y' scaffold"),
     (r"\b(?:isn['’]?t|is not|wasn['’]?t|was not|weren['’]?t|were not|"
-     r"aren['’]?t|are not|it['’]?s not|it is not|doesn['’]?t|does not|"
-     r"don['’]?t|do not|didn['’]?t|did not)\s+"
-     r"(?:just|only|merely|simply)\b",
+     r"aren['’]?t|are not|it['’]?s not|it is not)\s+"
+     r"(?:just|only|merely|simply)\b[^.!?;]{0,120}?"
+     r"(?:\bbut\b|[,;:.!?\u2014\u2013]\s*"
+     r"(?:it|this|that|they|these|those|we|you|he|she)"
+     r"(?:'s|'re|\s+is|\s+are|\s+was|\s+were)\b)"
+     r"|\b(?:doesn['’]?t|does not|don['’]?t|do not|didn['’]?t|did not)\s+"
+     r"(?:just|only|merely|simply)\s+(\w+?)e?\b[^.!?;]{0,120}?"
+     r"(?:\bbut\b|[,;:.!?\u2014\u2013]\s*"
+     r"(?:it|this|that|they|these|those|we|you|he|she)\s+\1)",
      "no 'isn't just X' scaffold"),
-    (r"\bit(?:['’]?s| is)\s+not\b(?:[\s\S]{0,120}?\bit(?:['’]?s| is)\b|"
+    (r"\bit(?:['’]?s| is)\s+not\b(?:[^.!?;]{0,120}?[,;:.!?\u2014\u2013]\s*"
+     r"(?:but\s+)?it(?:['’]?s| is)\b|"
      r"[^.!?]{0,120}?\bbut\s+(?:a|an|about|rather|instead)\b)",
      "no 'it's not X, it's Y' scaffold"),
-    (r"\bnot\s+because\b[\s\S]{0,120}?\b(?:but\b(?:\s+because)?|because\b)",
+    (r"\bnot\s+because\b[^.!?;]{0,120}?(?:\bbut\b|[,;:.!?\u2014\u2013]\s*"
+     r"(?:(?:it|this|that)(?:'s|\s+is|\s+was)\s+)?because\b)",
      "no 'not because X but Y' scaffold"),
     (r"\b(?:this|that|it)\s+(?:does not|doesn't|did not|didn't)\s+mean\b"
      r"[^.!?;]{0,120}[.!?;,\u2014\u2013]\s*(?:it|this|that)\s+(?:means|meant)\b",
