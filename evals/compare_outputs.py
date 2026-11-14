@@ -59,6 +59,25 @@ Rewrite 2:
 Reply with exactly one character: 1 or 2."""
 
 
+def parse_verdict(reply):
+    """Return "1" or "2" from a judge reply, or None when it is unclear.
+
+    The prompt asks for one character, so only a final line that holds the
+    verdict and nothing else counts: "2", "**1**", "Rewrite 2.", "Answer:
+    **2**". Anything else gives None, and ask() asks again. Reading prose
+    misread verdicts both ways (issue #80): "Rewrite 2 is better because
+    Rewrite 1 pads." was read as 1, and so is "Rewrite 1 pads." alone,
+    since a mention does not say whether the judge praises or faults it.
+    """
+    reply = reply.strip()
+    if not reply:
+        return None
+    last_line = reply.splitlines()[-1].strip()
+    match = re.fullmatch(r"[\W_]*(?:(?:answer|verdict|winner|choice)[\W_]*)?"
+                         r"(?:rewrite\s*)?([12])[\W_]*", last_line, re.I)
+    return match.group(1) if match else None
+
+
 def ask(model, prompt, timeout=CLAUDE_TIMEOUT, retries=MAX_RETRIES):
     cmd = ["claude", "-p", prompt, "--model", model, "--tools", "",
            "--output-format", "text", *ISOLATION_FLAGS,
@@ -96,24 +115,13 @@ def ask(model, prompt, timeout=CLAUDE_TIMEOUT, retries=MAX_RETRIES):
             continue
         reply = result.stdout.strip()
         print(f"  judge raw: {reply[:200]}")
-        # Prefer an explicit "Rewrite N" verdict, taking the last one so a
-        # judge that reasons first ("Rewrite 1 invents a claim, so Rewrite 2")
-        # is read by its conclusion; otherwise take the last standalone 1 or 2
-        # so an incidental digit earlier in the reply cannot win.
-        # A bare 1 or 2 on the final line is the requested format; trust it
-        # before scanning prose such as "Rewrite 2 is better; Rewrite 1 pads".
-        last_line = reply.splitlines()[-1].strip() if reply else ""
-        if re.fullmatch(r"\**([12])\**\.?", last_line):
-            return re.search(r"[12]", last_line).group(0)
-        verdicts = re.findall(r"rewrite\s*([12])", reply, re.I)
-        if verdicts:
-            return verdicts[-1]
-        matches = re.findall(r"(?<![\w.])([12])(?![\w.])", reply)
-        if matches:
-            return matches[-1]
-        print(f"  WARN judge reply had no 1/2: {reply[:200]}")
-        return None
-    return None  # pragma: no cover
+        verdict = parse_verdict(reply)
+        if verdict is not None:
+            return verdict
+        print(f"  WARN judge reply had no single 1/2 verdict "
+              f"(attempt {attempt + 1}/{retries + 1}): {reply[:200]}")
+    print(f"  FAIL judge: no single 1/2 verdict after {retries + 1} attempts.")
+    return None
 
 
 def main():
