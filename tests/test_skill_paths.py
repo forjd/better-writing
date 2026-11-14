@@ -34,30 +34,43 @@ class SkillPathsTest(unittest.TestCase):
 
     def test_progressive_header_lists_the_skill_md_description(self):
         text = (run_skill.SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
-        line = next(l for l in text.splitlines() if l.startswith("description:"))
-        desc = line.split(":", 1)[1].strip()
+        block = text.split("---\n", 2)[1]
+        desc = validate.parse_simple_frontmatter(block)["description"]
         self.assertEqual(run_skill.skill_description(), desc)
         header = run_skill.build_system_prompt(arm="progressive").split("\n\n", 1)[0]
         self.assertIn(f'Installed skill: better-writing — "{desc}"', header)
         manifest = json.loads((validate.ROOT / ".claude-plugin" / "plugin.json")
                               .read_text(encoding="utf-8"))["description"]
         if manifest != desc:
-            self.assertNotIn(manifest, header)
+            self.assertNotIn(f'"{manifest}"', header)
 
     def test_skill_description_reads_frontmatter_only(self):
+        manifest = json.loads((validate.ROOT / ".claude-plugin" / "plugin.json")
+                              .read_text(encoding="utf-8"))["description"]
         cases = {
             "quoted": ('---\nname: x\ndescription: "Fix prose."\n---\n\nBody.\n',
                        "Fix prose."),
-            "body line ignored": ("# Title\n\ndescription: not this\n", None),
+            "crlf": ('---\r\nname: x\r\ndescription: "Fix prose."\r\n'
+                     'license: MIT\r\n---\r\n\r\nBody.\r\n', "Fix prose."),
+            "folded": ("---\nname: x\ndescription: >\n  Fix prose\n  and keep voice.\n"
+                       "license: MIT\n---\n\nBody.\n", "Fix prose and keep voice."),
+            "wrapped": ("---\nname: x\ndescription: Fix prose\n  and keep voice.\n"
+                        "---\n\nBody.\n", "Fix prose and keep voice."),
+            "no frontmatter": ("# Title\n\ndescription: not this\n", manifest),
+            "body line ignored": ("---\nname: x\n---\n\ndescription: not this\n",
+                                  manifest),
         }
-        manifest = json.loads((validate.ROOT / ".claude-plugin" / "plugin.json")
-                              .read_text(encoding="utf-8"))["description"]
         for name, (text, want) in cases.items():
             with self.subTest(name), tempfile.TemporaryDirectory() as tmp:
-                Path(tmp, "SKILL.md").write_text(text, encoding="utf-8")
+                Path(tmp, "SKILL.md").write_bytes(text.encode("utf-8"))
                 with mock.patch.object(run_skill, "SKILL_DIR", Path(tmp)):
-                    self.assertEqual(run_skill.skill_description(),
-                                     want if want else manifest)
+                    self.assertEqual(run_skill.skill_description(), want)
+
+    def test_skill_description_last_fallback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with mock.patch.object(run_skill, "SKILL_DIR", Path(tmp)), \
+                    mock.patch.object(run_skill, "ROOT", Path(tmp)):
+                self.assertEqual(run_skill.skill_description(), "better-writing")
 
     def test_run_metadata_reads_version(self):
         version = run_skill.run_metadata()["skill_version"] or ""

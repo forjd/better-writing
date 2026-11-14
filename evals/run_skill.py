@@ -78,6 +78,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from run_evals import FIXTURES_DIR, load_fixture, run_one  # noqa: E402
+# One frontmatter parser for the repo checks and the eval runners.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+from validate import parse_simple_frontmatter  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILL_DIR = ROOT / "skills" / "better-writing"
@@ -146,15 +149,13 @@ def skill_description():
         text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8-sig")
     except OSError:
         text = ""
-    front = re.match(r"---\r?\n(.*?)\r?\n---\r?\n", text, re.S)
-    match = front and re.search(r"^description:[ \t]*(.+?)[ \t]*$",
-                                front.group(1), re.M)
-    if match:
-        desc = match.group(1)
-        if len(desc) >= 2 and desc[0] == desc[-1] and desc[0] in "\"'":
-            desc = desc[1:-1]
-        if desc.strip():
-            return desc.strip()
+    # Parse the frontmatter the way scripts/validate.py does, so a folded or
+    # wrapped description and CRLF line ends give the same text here.
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    front = re.match(r"---\n(.*?)\n---(?:\n|$)", text, re.S)
+    desc = parse_simple_frontmatter(front.group(1)).get("description") if front else None
+    if isinstance(desc, str) and desc.strip():
+        return desc.strip()
     manifest = ROOT / ".claude-plugin" / "plugin.json"
     try:
         desc = json.loads(manifest.read_text(encoding="utf-8")).get("description")
@@ -254,11 +255,10 @@ def build_system_prompt(with_skill=True, arm="always-on"):
         return BASELINE_HEADER
     if arm == "progressive":
         # Real-config arm: the skill listing plus SKILL.md only. References
-        # stay on disk for the model to fetch with the Read tool; nothing
-        # here concatenates them, so progressive-disclosure changes (a table
-        # of contents, a slimmer reference, a new pointer in SKILL.md) are
-        # visible to this arm and invisible to always-on. A reworded
-        # description reaches both arms, since both read SKILL.md whole.
+        # stay on disk for the model to fetch with the Read tool, while
+        # always-on concatenates all of them. Both arms read SKILL.md whole,
+        # so a change to it (the description included) reaches both; the
+        # arms differ only in which references the model chooses to read.
         header = ("You are running the better-writing skill.\n"
                   f"Installed skill: better-writing — "
                   f"\"{skill_description()}\"\n"
