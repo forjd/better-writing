@@ -3,6 +3,8 @@
 import json
 import tempfile
 import unittest
+from pathlib import Path
+from unittest import mock
 
 import _paths  # noqa: F401
 import run_skill
@@ -29,6 +31,33 @@ class SkillPathsTest(unittest.TestCase):
         prompts.append(run_skill.build_system_prompt(with_skill=False))
         for prompt in prompts:
             self.assertIn(run_skill.OUTPUT_RULES, prompt)
+
+    def test_progressive_header_lists_the_skill_md_description(self):
+        text = (run_skill.SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+        line = next(l for l in text.splitlines() if l.startswith("description:"))
+        desc = line.split(":", 1)[1].strip()
+        self.assertEqual(run_skill.skill_description(), desc)
+        header = run_skill.build_system_prompt(arm="progressive").split("\n\n", 1)[0]
+        self.assertIn(f'Installed skill: better-writing — "{desc}"', header)
+        manifest = json.loads((validate.ROOT / ".claude-plugin" / "plugin.json")
+                              .read_text(encoding="utf-8"))["description"]
+        if manifest != desc:
+            self.assertNotIn(manifest, header)
+
+    def test_skill_description_reads_frontmatter_only(self):
+        cases = {
+            "quoted": ('---\nname: x\ndescription: "Fix prose."\n---\n\nBody.\n',
+                       "Fix prose."),
+            "body line ignored": ("# Title\n\ndescription: not this\n", None),
+        }
+        manifest = json.loads((validate.ROOT / ".claude-plugin" / "plugin.json")
+                              .read_text(encoding="utf-8"))["description"]
+        for name, (text, want) in cases.items():
+            with self.subTest(name), tempfile.TemporaryDirectory() as tmp:
+                Path(tmp, "SKILL.md").write_text(text, encoding="utf-8")
+                with mock.patch.object(run_skill, "SKILL_DIR", Path(tmp)):
+                    self.assertEqual(run_skill.skill_description(),
+                                     want if want else manifest)
 
     def test_run_metadata_reads_version(self):
         version = run_skill.run_metadata()["skill_version"] or ""
