@@ -123,6 +123,20 @@ def git(*args):
 MEASURED_PATHS = ("skills", "evals", ".claude-plugin", ":(exclude)evals/baselines")
 
 
+def is_run_output(status_line):
+    """True for an untracked directory that an earlier run wrote.
+
+    `git status --porcelain` lists an untracked directory as "?? path/".
+    A run's --out holds summary.json, _system_prompt.md, or _skill_root, so
+    an old --out under evals/ does not count as a change to the inputs.
+    """
+    if not status_line.startswith("?? ") or not status_line.endswith("/"):
+        return False
+    folder = ROOT / status_line[3:].strip('"')
+    return any((folder / name).exists()
+               for name in ("summary.json", "_system_prompt.md", "_skill_root"))
+
+
 def run_metadata(out_dir=None):
     """Record what a summary measured: skill version, commit, tree state, date.
 
@@ -147,23 +161,29 @@ def run_metadata(out_dir=None):
             commit = head.stdout.strip() or None
         if commit is not None:
             paths = list(MEASURED_PATHS)
+            rel = None
             if out_dir is not None:
                 try:
-                    rel = Path(out_dir).resolve().relative_to(ROOT)
+                    rel = Path(out_dir).resolve().relative_to(ROOT).as_posix()
                 except ValueError:
                     rel = None
-                if rel is not None and rel.parts:
-                    paths.append(f":(exclude){rel.as_posix()}")
+            # Skip the exclude when --out holds a measured path ("--out evals"),
+            # or it would hide real edits.
+            measured = ("skills", "evals", ".claude-plugin")
+            if rel and rel != "." and not any(
+                    m == rel or m.startswith(rel + "/") for m in measured):
+                paths.append(f":(exclude,literal){rel}")
             status = git("status", "--porcelain", "--", *paths)
             if status.returncode == 0:
-                dirty = bool(status.stdout.strip())
+                dirty = any(not is_run_output(line)
+                            for line in status.stdout.splitlines() if line.strip())
     except OSError:
         pass
     return {"skill_version": version, "commit": commit, "dirty": dirty,
             "date": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
 
 
-def commit_on_default_branch():
+def commit_on_default_branch(commit="HEAD"):
     """Return (branch, True/False) for whether HEAD is on origin's default
     branch, or (branch, None) when git cannot tell: no remote, no history,
     or a shallow clone, where a cut history makes the ancestry test fail.
@@ -175,7 +195,7 @@ def commit_on_default_branch():
             return ("origin/main", None)
         head = git("symbolic-ref", "--short", "refs/remotes/origin/HEAD")
         branch = head.stdout.strip() if head.returncode == 0 else "origin/main"
-        result = git("merge-base", "--is-ancestor", "HEAD", branch)
+        result = git("merge-base", "--is-ancestor", commit or "HEAD", branch)
     except OSError:
         return ("origin/main", None)
     if result.returncode in (0, 1):
@@ -183,16 +203,26 @@ def commit_on_default_branch():
     return (branch, None)
 
 
-def reference_warnings(meta, branch, on_branch):
+def reference_warnings(meta, branch, on_branch, end=None):
     """Say why a summary should not be committed as a reference as it is.
 
     The reference's `commit` must hold the skill text and runner it measured
     and stay reachable. A dirty tree breaks the first. A commit off the
     default branch breaks the second once the branch is squash-merged and
     deleted: the reference then names a commit nobody can check out.
+    `end` is the same record read again when the run finished: the run
+    reads fixtures as it goes, so a checkout that moved or became dirty
+    during the run also breaks the first.
     """
     warnings = []
     commit = meta.get("commit")
+    if end is not None and (end.get("commit") != commit
+                            or (end.get("dirty") and not meta.get("dirty"))):
+        warnings.append(
+            f"the checkout changed during the run (commit {commit} at the "
+            f"start, {end.get('commit')} at the end, or new uncommitted "
+            "changes): the summary may not describe the text every fixture "
+            "read. Do not commit it as a reference.")
     if meta.get("dirty"):
         warnings.append(
             f"uncommitted changes under skills/, evals/ or .claude-plugin/ "
@@ -1045,9 +1075,11 @@ def main():
     print_summary(summary)
     if baseline is not None:
         print_baseline_diff(summary, baseline)
-    # Last, so the warnings do not scroll away above the report.
-    branch, on_branch = commit_on_default_branch()
-    for warning in reference_warnings(summary, branch, on_branch):
+    # Last, so the warnings do not scroll away above the report. The run
+    # reads fixtures as it goes, so check the checkout again at the end.
+    branch, on_branch = commit_on_default_branch(metadata.get("commit"))
+    end = run_metadata(out_dir)
+    for warning in reference_warnings(summary, branch, on_branch, end):
         print(f"WARN {warning}")
 
     print(f"rewrites saved in {out_dir}")

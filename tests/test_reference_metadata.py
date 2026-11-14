@@ -3,7 +3,9 @@
 import contextlib
 import io
 import subprocess
+import tempfile
 import unittest
+from pathlib import Path
 from unittest import mock
 
 import _paths  # noqa: F401
@@ -57,8 +59,47 @@ class RunMetadataTest(unittest.TestCase):
         args = git.call_args.args
         self.assertEqual(args[:2], ("status", "--porcelain"))
         for path in ("skills", "evals", ".claude-plugin",
-                     ":(exclude)evals/baselines", ":(exclude)evals/run-a"):
+                     ":(exclude)evals/baselines", ":(exclude,literal)evals/run-a"):
             self.assertIn(path, args)
+
+    def test_out_dir_that_holds_inputs_is_not_excluded(self):
+        for out in ("evals", "skills", ""):
+            with self.subTest(out=out):
+                _, git = self.metadata(done(0, "abc1234\n"), done(),
+                                       out_dir=run_skill.ROOT / out)
+                self.assertEqual(
+                    sum(1 for a in git.call_args.args if "exclude" in a), 1)
+
+    def test_out_dir_exclude_is_literal(self):
+        _, git = self.metadata(done(0, "abc1234\n"), done(),
+                               out_dir=run_skill.ROOT / "evals" / "run[1]")
+        self.assertIn(":(exclude,literal)evals/run[1]", git.call_args.args)
+
+    def test_earlier_run_outputs_do_not_count(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "evals" / "run-b").mkdir(parents=True)
+            (root / "evals" / "run-b" / "summary.json").write_text("{}")
+            (root / "evals" / "notes").mkdir()
+            with mock.patch.object(run_skill, "ROOT", root):
+                self.assertTrue(run_skill.is_run_output("?? evals/run-b/"))
+                self.assertFalse(run_skill.is_run_output("?? evals/notes/"))
+                self.assertFalse(run_skill.is_run_output("?? evals/new.py"))
+                self.assertFalse(run_skill.is_run_output(" M evals/run_skill.py"))
+                meta, _ = self.metadata(done(0, "abc1234\n"),
+                                        done(0, "?? evals/run-b/\n"))
+                self.assertIs(meta["dirty"], False)
+
+    def test_main_records_metadata_before_it_writes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "out"
+            argv = ["run_skill.py", "--out", str(out), "plain-human"]
+            with mock.patch.object(run_skill, "run_metadata",
+                                   side_effect=RuntimeError("stop")), \
+                    mock.patch("sys.argv", argv):
+                with self.assertRaisesRegex(RuntimeError, "stop"):
+                    run_skill.main()
+            self.assertFalse(out.exists())
 
     def test_out_dir_outside_the_repo_is_not_excluded(self):
         _, git = self.metadata(done(0, "abc1234\n"), done(),
@@ -99,6 +140,26 @@ class ReferenceWarningsTest(unittest.TestCase):
     def test_unknown_state_gives_none(self):
         meta = {"commit": None, "dirty": None}
         self.assertEqual(run_skill.reference_warnings(meta, "origin/main", None), [])
+
+    def test_checkout_that_changed_during_the_run_warns(self):
+        meta = {"commit": "abc1234", "dirty": False}
+        for end in ({"commit": "def5678", "dirty": False},
+                    {"commit": "abc1234", "dirty": True}):
+            with self.subTest(end=end):
+                warnings = run_skill.reference_warnings(meta, "origin/main",
+                                                        True, end)
+                self.assertEqual(len(warnings), 1)
+                self.assertIn("changed during the run", warnings[0])
+        same = run_skill.reference_warnings(meta, "origin/main", True, dict(meta))
+        self.assertEqual(same, [])
+
+    def test_ancestry_uses_the_recorded_commit(self):
+        with mock.patch.object(run_skill, "git",
+                               side_effect=[done(0, "false\n"),
+                                            done(0, "origin/main\n"),
+                                            done(0)]) as git:
+            run_skill.commit_on_default_branch("abc1234")
+        self.assertEqual(git.call_args.args[-2], "abc1234")
 
     def test_dirty_and_off_branch_both_warn(self):
         meta = {"commit": "abc1234", "dirty": True}
