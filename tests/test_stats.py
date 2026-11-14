@@ -139,6 +139,8 @@ class ReplyParsingTest(unittest.TestCase):
             "Here's the rewrite:\n\n```markdown\nBody text.\n```": "Body text.\n",
             "```markdown\n# Install\n\n```bash\nnpm i\n```\n```":
                 "# Install\n\n```bash\nnpm i\n```\n",
+            "Here's the rewrite:\n```\n# Install\n```bash\nnpm i\n```\n```":
+                "# Install\n```bash\nnpm i\n```\n",
         }
         for text, want in cases.items():
             with self.subTest(text=text):
@@ -151,6 +153,8 @@ class ReplyParsingTest(unittest.TestCase):
             # A wrapper that never closed: the last fence belongs to the
             # inner block, so nothing is unwrapped.
             "```markdown\nText\n```bash\nx\n```\n",
+            # A real markdown example block first, a bash block last.
+            "```markdown\n# Example\n```\n\nText.\n\n```bash\nx\n```\n",
         ]:
             with self.subTest(text=text):
                 self.assertEqual(run_skill.strip_preamble(text), text)

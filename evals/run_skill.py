@@ -348,21 +348,24 @@ def unwrap_fence(lines):
     """Return the lines inside a fence that wraps the whole reply, or None.
 
     The first line must open a fence (no label, or json, markdown, md, text)
-    and the last line must be a bare closing fence. With a fence line between
-    them the pair is ambiguous: "```" may open a real code block at the top
-    and "```" close another at the bottom (issue #74). So the reply is left
-    alone, unless a markdown or md label says the model wrapped a document,
-    and the inner fences pair up.
+    and the last line must be a bare closing fence. With fence lines between
+    them the pair is ambiguous: the first line may open a real code block
+    and the last close another (issue #74). Inside a real wrapper the first
+    inner fence opens a block, so it carries a label ("```bash"); a bare
+    first inner fence closes a block that the first line opened. So the
+    reply is unwrapped only when the inner fences pair up and the first one
+    has a label. A wrapper whose first inner block has no label is left
+    alone, fences and all.
     """
     if len(lines) < 2 or lines[-1].strip() != "```":
         return None
-    match = WRAPPER_FENCE.match(lines[0].strip())
-    if not match:
+    if not WRAPPER_FENCE.match(lines[0].strip()):
         return None
     inner = lines[1:-1]
-    fences = sum(1 for line in inner if line.strip().startswith("```"))
-    label = (match.group(1) or "").lower()
-    if fences == 0 or (label in ("markdown", "md") and fences % 2 == 0):
+    fences = [line.strip() for line in inner if line.strip().startswith("```")]
+    if not fences:
+        return inner
+    if len(fences) % 2 == 0 and fences[0] != "```":
         return inner
     return None
 
