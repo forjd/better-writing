@@ -4,7 +4,8 @@
 Scope: README.md, CHANGELOG.md, CONTRIBUTING.md and SECURITY.md at the repo
 root, plus skills/better-writing/SKILL.md and evals/README.md. The skill's
 references/ folder is deliberately out of scope: it IS the tell catalogue,
-so scanning it for tells is meaningless. Run from anywhere; exits non-zero on any violation.
+so scanning it for tells is meaningless. Run from anywhere; exits non-zero
+on any violation.
 
 Exclusions (each measured and reported below, so a dead exclusion shows up
 as a zero in the report rather than rotting silently):

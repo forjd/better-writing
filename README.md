@@ -316,7 +316,7 @@ The skill lives in `skills/better-writing/`, the `skills/<name>/` layout that sk
 
 ## Releases
 
-Releases follow [semantic versioning](https://semver.org/) and are cut by [release-please](https://github.com/googleapis/release-please) from the conventional commit history. It keeps a release pull request open on `main` that collects merged commits, bumps the version in `skills/better-writing/SKILL.md`, `skills/better-writing/agents/openai.yaml`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` and the pinned clone command in this README, and drafts the notes. Merging that pull request tags `vX.Y.Z` and publishes a [GitHub Release](https://github.com/forjd/better-writing/releases). Watch the repo for releases to hear when the catalogue changes.
+Releases follow [semantic versioning](https://semver.org/) and are cut by [release-please](https://github.com/googleapis/release-please) from the conventional commit history. It keeps a release pull request open on `main` that collects merged commits, bumps the version in `.release-please-manifest.json`, `skills/better-writing/SKILL.md`, `skills/better-writing/agents/openai.yaml`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` and the pinned clone command in this README, and drafts the notes. Merging that pull request tags `vX.Y.Z` and publishes a [GitHub Release](https://github.com/forjd/better-writing/releases). Watch the repo for releases to hear when the catalogue changes.
 
 The skill has no API, so a major version means one of these:
 
