@@ -89,11 +89,14 @@ def skill_calls(event):
     if event.get("type") != "assistant":
         return []
     content = (event.get("message") or {}).get("content") or []
-    names = [str((block.get("input") or {}).get("skill", ""))
-             for block in content
-             if block.get("type") == "tool_use" and block.get("name") == "Skill"]
-    # A Skill call with no name says nothing about which skill loaded.
-    return [name for name in names if name]
+    names = []
+    for block in content:
+        if block.get("type") == "tool_use" and block.get("name") == "Skill":
+            name = (block.get("input") or {}).get("skill")
+            # A Skill call with no name says nothing about which skill loaded.
+            if name:
+                names.append(str(name))
+    return names
 
 
 def is_this_skill(name):

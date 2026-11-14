@@ -43,21 +43,16 @@ class ParseVerdictTest(unittest.TestCase):
             "Rewrite 1 pads and adds a date.\nVerdict: **2**": "2",
         })
 
-    def test_one_rewrite_in_the_whole_reply(self):
-        self.check({
-            "Rewrite 2 is better.": "2",
-            "I pick rewrite 1; it keeps every fact.": "1",
-            "The second one (2) reads better": "2",
-        })
-
-    def test_two_rewrites_is_no_verdict(self):
+    def test_prose_is_no_verdict(self):
         self.check({
             # Issue #80: the loser named second used to be read as the winner.
             "Rewrite 2 is better because Rewrite 1 pads.": None,
-            # A loser named, a winner as a digit: used to be read as 1.
             "Rewrite 1 invents a claim, so 2.": None,
-            # A long last line may be reasoning, so it gets no extra weight.
+            # A lone mention may be the loser.
+            "Rewrite 1 pads.": None,
+            "Loser: Rewrite 1": None,
             "Rewrite 2 is better.\nRewrite 1 pads.": None,
+            "The second one (2) reads better": None,
             "1 pads, 2 does not, overall": None,
         })
 
@@ -119,9 +114,10 @@ class SkillCallsTest(unittest.TestCase):
         self.assertEqual(run_triggers.skill_calls({"type": "user"}), [])
         self.assertEqual(run_triggers.skill_calls({"type": "assistant"}), [])
         # A Skill call with no name says nothing, so it is dropped.
-        self.assertEqual(run_triggers.skill_calls(
-            {"type": "assistant", "message": {"content": [
-                {"type": "tool_use", "name": "Skill"}]}}), [])
+        for block in ({"type": "tool_use", "name": "Skill"},
+                      {"type": "tool_use", "name": "Skill", "input": {"skill": None}}):
+            self.assertEqual(run_triggers.skill_calls(
+                {"type": "assistant", "message": {"content": [block]}}), [])
 
     def test_is_this_skill(self):
         self.assertTrue(run_triggers.is_this_skill("better-writing"))

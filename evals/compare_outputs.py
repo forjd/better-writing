@@ -59,33 +59,15 @@ Rewrite 2:
 Reply with exactly one character: 1 or 2."""
 
 
-def _one_verdict(text):
-    """Return the only rewrite that text points at, or None.
-
-    Counts both "Rewrite N" and a standalone 1 or 2 (not part of "1.2" or
-    "v2"), so "Rewrite 1 pads, so 2." points at two rewrites, not one.
-    """
-    named = set(re.findall(r"rewrite\s*([12])", text, re.I))
-    rest = re.sub(r"rewrite\s*[12]", " ", text, flags=re.I)
-    # A full stop after the digit ends a sentence ("so 2."); one between
-    # digits makes a version or a decimal ("1.2"), which is not a verdict.
-    found = named | set(re.findall(r"(?<!\w)(?<!\d\.)([12])(?!\w|\.\d)", rest))
-    return found.pop() if len(found) == 1 else None
-
-
 def parse_verdict(reply):
     """Return "1" or "2" from a judge reply, or None when it is unclear.
 
-    The prompt asks for one character, so a final line that holds only the
-    verdict wins: "2", "**1**", "Rewrite 2.", "Answer: **2**". A longer
-    final line ("Rewrite 1 pads.") may be reasoning, not the verdict, so it
-    gets no such weight. Otherwise the whole reply must
-    point at exactly one rewrite. A reply that points at both, such as
-    "Rewrite 2 is better because Rewrite 1 pads.", gives None: taking
-    either mention can read the verdict the wrong way round (issue #80),
-    and the caller asks again or counts a skip. A single incidental digit
-    ("keeps both 2 dates") can still be misread; the prompt makes such
-    replies rare.
+    The prompt asks for one character, so only a final line that holds the
+    verdict and nothing else counts: "2", "**1**", "Rewrite 2.", "Answer:
+    **2**". Anything else gives None, and ask() asks again. Reading prose
+    misread verdicts both ways (issue #80): "Rewrite 2 is better because
+    Rewrite 1 pads." was read as 1, and so is "Rewrite 1 pads." alone,
+    since a mention does not say whether the judge praises or faults it.
     """
     reply = reply.strip()
     if not reply:
@@ -93,9 +75,7 @@ def parse_verdict(reply):
     last_line = reply.splitlines()[-1].strip()
     match = re.fullmatch(r"[\W_]*(?:(?:answer|verdict|winner|choice)[\W_]*)?"
                          r"(?:rewrite\s*)?([12])[\W_]*", last_line, re.I)
-    if match:
-        return match.group(1)
-    return _one_verdict(reply)
+    return match.group(1) if match else None
 
 
 def ask(model, prompt, timeout=CLAUDE_TIMEOUT, retries=MAX_RETRIES):
@@ -140,6 +120,7 @@ def ask(model, prompt, timeout=CLAUDE_TIMEOUT, retries=MAX_RETRIES):
             return verdict
         print(f"  WARN judge reply had no single 1/2 verdict "
               f"(attempt {attempt + 1}/{retries + 1}): {reply[:200]}")
+    print(f"  FAIL judge: no single 1/2 verdict after {retries + 1} attempts.")
     return None
 
 
