@@ -154,27 +154,142 @@ WELL_FORMED = [
      "no empty clause between punctuation marks"),
 ]
 
+# The well-formedness checks guard prose, so they skip text where spacing and
+# punctuation are code or layout. Fenced blocks (``` or ~~~) go once they are
+# paired; an unclosed fence stays as prose, so a stray fence cannot hide the
+# rest of a rewrite. Table alignment rows go, and other table rows keep their
+# cell text with the padding removed, so damage inside a cell still fails.
+# Inline code becomes one placeholder word, so the prose around it keeps its
+# own spacing ("Use `std::vec::Vec` here." reads "Use code here."). A
+# backtick inside a word ("can`t") does not open a span.
+FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
+TABLE_SEPARATOR = re.compile(r"^\s*\|?\s*:?-+:?\s*(?:\|\s*:?-+:?\s*)*\|?\s*$")
+INLINE_CODE = re.compile(r"(?<!\w)`[^`\n]+`")
+
+
+def _fenced_lines(lines):
+    """Return the indexes of lines inside a closed fenced block, fences included."""
+    fenced = set()
+    start = marker = None
+    for i, line in enumerate(lines):
+        match = FENCE.match(line)
+        if not match:
+            continue
+        fence = match.group(1)
+        rest = line.strip()[len(fence):]
+        if start is None:
+            # A line such as ```code``` opens and closes on one line.
+            if fence[0] == "`" and "`" in rest:
+                continue
+            start, marker = i, fence
+        elif fence[0] == marker[0] and len(fence) >= len(marker) and not rest.strip():
+            fenced.update(range(start, i + 1))
+            start = None
+    return fenced
+
+
+def _table_lines(lines):
+    """Return the indexes of Markdown table rows, with or without outer pipes."""
+    rows = set()
+    for i, line in enumerate(lines):
+        if not ("|" in line and TABLE_SEPARATOR.match(line)):
+            continue
+        if i > 0 and "|" in lines[i - 1]:
+            rows.add(i - 1)
+        rows.add(i)
+        j = i + 1
+        while j < len(lines) and "|" in lines[j] and lines[j].strip():
+            rows.add(j)
+            j += 1
+    rows.update(i for i, line in enumerate(lines) if line.lstrip().startswith("|"))
+    return rows
+
+
+def prose_only(text):
+    """Return text without fenced code, table layout, or inline code."""
+    lines = text.splitlines()
+    fenced = _fenced_lines(lines)
+    tables = _table_lines(lines)
+    kept = []
+    for i, line in enumerate(lines):
+        if i in fenced or TABLE_SEPARATOR.match(line) and i in tables:
+            continue
+        if i in tables:
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            # A cell that opens with punctuation ("?", "; separator") is
+            # not a space before punctuation, so give it a word to follow.
+            line = " | ".join("x" + c if c[0] in ",;:?!." else c
+                              for c in cells if c)
+        kept.append(INLINE_CODE.sub("code", line))
+    return "\n".join(kept)
+
 
 # Binary-contrast scaffolds, the structure sam-paech's slop-score weights at a
 # quarter of its total and 2026 reporting puts at three times the human rate.
 # Checked on every rewrite; no fixture's ideal output needs one.
 # Patterns run case-insensitively on apostrophe- and whitespace-normalized
-# text, allow newlines and cross-sentence spans, and cover was/were and
-# it's/it-is variants.
+# text, allow newlines, and cover was/were and it's/it-is variants.
+#
+# Issue #71: the second half of a scaffold must sit in the same sentence or
+# open the next one, so two unrelated sentences do not join into a match.
+# _SPAN is text inside one sentence; a full stop before a word character
+# (2.5, v2.0, config.yml) does not end it. _SEP opens the second half: a
+# clause mark, an ellipsis, or a spaced dash.
+_SPAN = r"(?:[^.!?;]|[.!?](?=\w))"
+_SEP = r"(?:[,;:!?(—–…]|\.{1,3}|\s-{1,2}(?=\s))\s*"
+_PRONOUN = r"(?:it|this|that|they|these|those|we|you|he|she|i)"
+_NEG_BE = (r"(?:isn['’]?t|is not|wasn['’]?t|was not|weren['’]?t|were not|"
+           r"aren['’]?t|are not|it['’]s not|it is not|i['’]m not|i am not)")
+# A word that can stand before "don't" without being its subject, so the
+# sentence is still an instruction ("Please don't just copy it.").
+_NOT_SUBJECT = (r"(?!(?:please|and|or|but|so|then|now|also|just|why|to|must|"
+                r"should|never|always|simply|first|next|remember)\b)")
+_LIMITER = r"(?:just|only|merely|simply)"
 CONTRAST = [
-    (r"\bnot\s+(?:just|only|merely|simply)\b[\s\S]{0,120}?\bbut\b",
+    # "but" may also open the next sentence ("not just fast. But cheap").
+    (r"\bnot\s+" + _LIMITER + r"\b" + _SPAN + r"{0,120}?(?:\bbut\b|[.;]\s*but\b)",
      "no 'not just X but Y' scaffold"),
-    (r"\b(?:isn['’]?t|is not|wasn['’]?t|was not|weren['’]?t|were not|"
-     r"aren['’]?t|are not|it['’]?s not|it is not|doesn['’]?t|does not|"
-     r"don['’]?t|do not|didn['’]?t|did not)\s+"
-     r"(?:just|only|merely|simply)\b",
+    # The second half is required: a bare "isn't just" or "do not simply"
+    # matches ordinary instructions ("Do not simply delete the lock file.").
+    # - After a be-verb: "but", or a pronoun plus a be-verb ("It isn't just
+    #   fast. It's cheap.").
+    # - After do/does with a subject before it, so not an imperative such as
+    #   "Don't just stare at it." or "Please don't just copy it.": "but", or a
+    #   pronoun plus any word ("We don't just build software. We craft
+    #   experiences.").
+    # - After did, the same, but the second verb must repeat the first one's
+    #   stem, up to a short ending ("We didn't just build a tool, we built a
+    #   platform."), so a report of two actions ("We did not just restart it:
+    #   we rolled back the release.", "we did not just configure it, we
+    #   confirmed it") does not match.
+    (r"\b" + _NEG_BE + r"\s+" + _LIMITER + r"\b" + _SPAN + r"{0,120}?"
+     r"(?:\bbut\b|" + _SEP + _PRONOUN
+     + r"(?:'s|'re|'m|\s+is|\s+are|\s+was|\s+were|\s+am)\b)"
+     r"|\b" + _NOT_SUBJECT + r"[a-z]\w*\s+(?:doesn['’]?t|does not|don['’]?t|do not)\s+" + _LIMITER
+     + r"\s+\w+" + _SPAN + r"{0,120}?"
+     r"(?:\bbut\b|" + _SEP + _PRONOUN + r"\s+(?!not\b)\w+)"
+     r"|\b" + _NOT_SUBJECT + r"[a-z]\w*\s+(?:didn['’]?t|did not)\s+" + _LIMITER
+     + r"\s+(\w{3,}?)(?:e|ed|es|s|d|ing)?\b" + _SPAN + r"{0,120}?"
+     r"(?:\bbut\b|" + _SEP + _PRONOUN + r"\s+\1\w{0,3}\b)",
      "no 'isn't just X' scaffold"),
-    # The "but" form needs a noun phrase after "but" ("It's not a tool, but
-    # a partner"), so "It's not ready yet, but it will ship" does not match.
-    (r"\bit(?:['’]?s| is)\s+not\b(?:[\s\S]{0,120}?\bit(?:['’]?s| is)\b|"
-     r"[^.!?]{0,120}?\bbut\s+(?:a|an|about|rather|instead)\b)",
+    # The second "it's" must open the next clause or sentence ("It's not a
+    # bug, it's a feature."), so "It's not ready yet. We think it's two weeks
+    # away." does not match, and neither does a clause opened by if, when,
+    # unless, whether, since, because or once ("If it's not there, it's in
+    # the trash."). The "but" form needs a noun phrase after
+    # "but" ("It's not a tool, but a partner"), so "It's not ready yet, but it
+    # will ship" does not match. "its" without an apostrophe is a possessive.
+    (r"(?<!\bif )(?<!\bwhen )(?<!\bunless )(?<!\bwhether )"
+     r"(?<!\bsince )(?<!\bbecause )(?<!\bonce )"
+     r"\bit(?:['’]s| is)\s+not\b(?:" + _SPAN + r"{0,120}?" + _SEP
+     + r"(?:but\s+)?it(?:['’]s| is)\b|"
+     + _SPAN + r"{0,120}?\bbut\s+(?:a|an|about|rather|instead)\b)",
      "no 'it's not X, it's Y' scaffold"),
-    (r"\bnot\s+because\b[\s\S]{0,120}?\b(?:but\b(?:\s+because)?|because\b)",
+    # The second "because" must open the next clause ("not because of the
+    # deploy; it was because of the logs"), not sit anywhere in the next
+    # 120 characters.
+    (r"\bnot\s+because\b" + _SPAN + r"{0,120}?(?:\bbut\b|" + _SEP
+     + r"(?:(?:it|this|that)(?:'s|\s+is|\s+was)\s+)?because\b)",
      "no 'not because X but Y' scaffold"),
     # The split form: "This does not mean X. It means Y." and "This isn't
     # about X. It's about Y." The second clause must repeat the verb ("means"
@@ -349,8 +464,9 @@ def check_rewrite(checks, input_text, rewrite_text):
             continue
         results.append((ok, f"banned pattern absent: /{pattern}/"))
 
+    prose = prose_only(norm_rewrite)
     for pattern, desc in WELL_FORMED:
-        ok = re.search(pattern, norm_rewrite) is None
+        ok = re.search(pattern, prose) is None
         results.append((ok, f"well formed: {desc}"))
 
     mode = checks.get("mode", "rewrite")
@@ -474,6 +590,7 @@ def run_corpus(corpus_dir):
         return 2
 
     probes = [(desc, re.compile(p)) for p, desc in WELL_FORMED]
+    well_formed = {desc for _, desc in WELL_FORMED}
     probes += [(f"structure: {desc}", re.compile(p, re.I)) for p, desc in CONTRAST]
     for fixture_dir in sorted(p for p in FIXTURES_DIR.iterdir() if p.is_dir()):
         try:
@@ -501,8 +618,15 @@ def run_corpus(corpus_dir):
             return 2
         total_words += word_count(text)
         flat = re.sub(r"\s+", " ", text)
+        prose = prose_only(text)
         for desc, rx in probes:
-            source = flat if desc.startswith("structure:") else text
+            # Each probe sees the text the gate gives it in check_rewrite.
+            if desc.startswith("structure:"):
+                source = flat
+            elif desc in well_formed:
+                source = prose
+            else:
+                source = text
             for m in rx.finditer(source):
                 hits.setdefault(desc, []).append(
                     (path.relative_to(corpus_dir), _snippet(source, m)))

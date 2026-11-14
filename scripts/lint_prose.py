@@ -78,24 +78,42 @@ except ImportError as exc:  # evals/ missing (e.g. partial checkout)
 # the import above fails; when the import works the two must agree (checked
 # in main) so the lint and the checker can never drift apart silently.
 EMBEDDED_CONTRAST = [
-    (r"\bnot\s+(?:just|only|merely|simply)\b[\s\S]{0,120}?\bbut\b",
+    (r"\bnot\s+(?:just|only|merely|simply)\b(?:[^.!?;]|[.!?](?=\w)){0,120}?"
+     r"(?:\bbut\b|[.;]\s*but\b)",
      "no 'not just X but Y' scaffold"),
-    (r"\b(?:isn['’]?t|is not|wasn['’]?t|was not|weren['’]?t|were not|"
-     r"aren['’]?t|are not|it['’]?s not|it is not|doesn['’]?t|does not|"
-     r"don['’]?t|do not|didn['’]?t|did not)\s+"
-     r"(?:just|only|merely|simply)\b",
+    (r"\b(?:isn['’]?t|is not|wasn['’]?t|was not|weren['’]?t|were not|aren['"
+     r"’]?t|are not|it['’]s not|it is not|i['’]m not|i am not)\s+(?:just|on"
+     r"ly|merely|simply)\b(?:[^.!?;]|[.!?](?=\w)){0,120}?(?:\bbut\b|(?:[,;:"
+     r"!?(—–…]|\.{1,3}|\s-{1,2}(?=\s))\s*(?:it|this|that|they|these|those|w"
+     r"e|you|he|she|i)(?:'s|'re|'m|\s+is|\s+are|\s+was|\s+were|\s+am)\b)|\b"
+     r"(?!(?:please|and|or|but|so|then|now|also|just|why|to|must|should|nev"
+     r"er|always|simply|first|next|remember)\b)[a-z]\w*\s+(?:doesn['’]?t|do"
+     r"es not|don['’]?t|do not)\s+(?:just|only|merely|simply)\s+\w+(?:[^.!?"
+     r";]|[.!?](?=\w)){0,120}?(?:\bbut\b|(?:[,;:!?(—–…]|\.{1,3}|\s-{1,2}(?="
+     r"\s))\s*(?:it|this|that|they|these|those|we|you|he|she|i)\s+(?!not\b)"
+     r"\w+)|\b(?!(?:please|and|or|but|so|then|now|also|just|why|to|must|sho"
+     r"uld|never|always|simply|first|next|remember)\b)[a-z]\w*\s+(?:didn['’"
+     r"]?t|did not)\s+(?:just|only|merely|simply)\s+(\w{3,}?)(?:e|ed|es|s|d"
+     r"|ing)?\b(?:[^.!?;]|[.!?](?=\w)){0,120}?(?:\bbut\b|(?:[,;:!?(—–…]|\.{"
+     r"1,3}|\s-{1,2}(?=\s))\s*(?:it|this|that|they|these|those|we|you|he|sh"
+     r"e|i)\s+\1\w{0,3}\b)",
      "no 'isn't just X' scaffold"),
-    (r"\bit(?:['’]?s| is)\s+not\b(?:[\s\S]{0,120}?\bit(?:['’]?s| is)\b|"
-     r"[^.!?]{0,120}?\bbut\s+(?:a|an|about|rather|instead)\b)",
+    (r"(?<!\bif )(?<!\bwhen )(?<!\bunless )(?<!\bwhether )(?<!\bsince )(?<!"
+     r"\bbecause )(?<!\bonce )\bit(?:['’]s| is)\s+not\b(?:(?:[^.!?;]|[.!?]("
+     r"?=\w)){0,120}?(?:[,;:!?(—–…]|\.{1,3}|\s-{1,2}(?=\s))\s*(?:but\s+)?it"
+     r"(?:['’]s| is)\b|(?:[^.!?;]|[.!?](?=\w)){0,120}?\bbut\s+(?:a|an|about"
+     r"|rather|instead)\b)",
      "no 'it's not X, it's Y' scaffold"),
-    (r"\bnot\s+because\b[\s\S]{0,120}?\b(?:but\b(?:\s+because)?|because\b)",
+    (r"\bnot\s+because\b(?:[^.!?;]|[.!?](?=\w)){0,120}?(?:\bbut\b|(?:[,;:!?"
+     r"(—–…]|\.{1,3}|\s-{1,2}(?=\s))\s*(?:(?:it|this|that)(?:'s|\s+is|\s+wa"
+     r"s)\s+)?because\b)",
      "no 'not because X but Y' scaffold"),
-    (r"\b(?:this|that|it)\s+(?:does not|doesn't|did not|didn't)\s+mean\b"
-     r"[^.!?;]{0,120}[.!?;,\u2014\u2013]\s*(?:it|this|that)\s+(?:means|meant)\b",
+    (r"\b(?:this|that|it)\s+(?:does not|doesn't|did not|didn't)\s+mean\b[^."
+     r"!?;]{0,120}[.!?;,\u2014\u2013]\s*(?:it|this|that)\s+(?:means|meant)\b",
      "no 'this doesn't mean X. It means Y' scaffold"),
-    (r"\b(?:this|that|it)\s+(?:is not|isn't|was not|wasn't)\s+"
-     r"(?:really\s+|just\s+)?about\b[^.!?;]{0,120}[.!?;,\u2014\u2013]\s*"
-     r"(?:it|this|that)(?:'s|\s+is|\s+was)\s+(?:really\s+|just\s+)?about\b",
+    (r"\b(?:this|that|it)\s+(?:is not|isn't|was not|wasn't)\s+(?:really\s+|"
+     r"just\s+)?about\b[^.!?;]{0,120}[.!?;,\u2014\u2013]\s*(?:it|this|that)"
+     r"(?:'s|\s+is|\s+was)\s+(?:really\s+|just\s+)?about\b",
      "no 'this isn't about X. It's about Y' scaffold"),
 ]
 
