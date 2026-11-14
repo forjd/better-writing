@@ -18,17 +18,20 @@ Two loading arms measure the real config instead of only an upper bound:
 - always-on (default): the system prompt concatenates SKILL.md plus every
   file in references/. This is the historical behaviour; real harnesses never
   see this much context at once, so its pass rate is an upper bound.
-- progressive: the system prompt carries only the installed skill metadata
-  (the plugin description, ~100 tokens) plus SKILL.md, and the model may Read
+- progressive: the system prompt carries only the skill's listing (its name
+  and the SKILL.md frontmatter description, ~100 tokens, which is what a
+  harness shows the model) plus SKILL.md, and the model may Read
   references/*.md on demand from a staging dir holding only the skill
   (<out>/_skill_root, rebuilt every run), the way a real harness loads
   SKILL.md on trigger and individual references on demand. Staging keeps the
   grading rubric (checks.json, examples/) out of the Read tool's reach.
 
 Pass --arm progressive for the real-config arm only, or --arm both to run
-the two side by side and report the paired per-fixture difference. The
-description change is visible to the progressive arm (it ships the plugin
-description); the always-on arm never sees it.
+the two side by side and report the paired per-fixture difference. Both
+arms read the whole of SKILL.md, frontmatter included, so both see a change
+to the frontmatter description; the progressive arm also gets it as the
+listing line in its header. Neither arm decides whether to load the skill:
+run_triggers.py measures that.
 
 Pass --repeats K to generate K independent rewrites per fixture per arm
 (default 1; use 5 or more when sizing a skill change, sized against the
@@ -75,6 +78,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from run_evals import FIXTURES_DIR, load_fixture, run_one  # noqa: E402
+# One frontmatter parser for the repo checks and the eval runners.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+from validate import parse_simple_frontmatter  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILL_DIR = ROOT / "skills" / "better-writing"
@@ -130,15 +136,28 @@ def run_metadata():
             "date": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
 
 
-def plugin_description():
-    """Return the installed skill metadata the progressive arm ships (~100 tokens).
+def skill_description():
+    """Return the skill listing line the progressive arm ships (~100 tokens).
 
-    Real harnesses announce the skill by its plugin description at startup
-    and load SKILL.md only on trigger, so the progressive arm starts from
-    this line: a description change is visible to it and invisible to the
-    always-on arm. Falls back to the SKILL.md frontmatter description when
-    the plugin manifest cannot be read.
+    Harnesses list a skill by the `description` in its SKILL.md frontmatter
+    and load the rest of SKILL.md only on trigger, so the progressive arm
+    starts from that line (issue #75). The plugin manifest's description is
+    a different, shorter text that no harness shows the model; it is only
+    the fallback when SKILL.md has no frontmatter description.
     """
+    try:
+        text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8-sig")
+    except OSError:
+        text = ""
+    # Parse the frontmatter the way scripts/validate.py does, so a folded,
+    # wrapped or quoted description gives the same text here. read_text
+    # already turns CRLF into LF; the replace matches validate.py, which
+    # reads bytes.
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    front = re.match(r"---\n(.*?)\n---(?:\n|$)", text, re.S)
+    desc = parse_simple_frontmatter(front.group(1)).get("description") if front else None
+    if isinstance(desc, str) and desc.strip():
+        return desc.strip()
     manifest = ROOT / ".claude-plugin" / "plugin.json"
     try:
         desc = json.loads(manifest.read_text(encoding="utf-8")).get("description")
@@ -146,12 +165,7 @@ def plugin_description():
         desc = None
     if isinstance(desc, str) and desc.strip():
         return desc.strip()
-    try:
-        front = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8-sig")
-    except OSError:
-        return "better-writing"
-    match = re.search(r"^description:\s*(.+?)\s*$", front, re.M)
-    return match.group(1).strip() if match else "better-writing"
+    return "better-writing"
 
 
 def progressive_footer():
@@ -242,14 +256,16 @@ def build_system_prompt(with_skill=True, arm="always-on"):
     if not with_skill:
         return BASELINE_HEADER
     if arm == "progressive":
-        # Real-config arm: installed metadata plus SKILL.md only. References
-        # stay on disk for the model to fetch with the Read tool; nothing
-        # here concatenates them, so progressive-disclosure changes (a table
-        # of contents, a slimmer reference, a reworded description) are
-        # visible to this arm and invisible to always-on.
+        # Real-config arm: the skill listing plus SKILL.md only. References
+        # stay on disk for the model to fetch with the Read tool, while
+        # always-on concatenates all of them. Both arms read SKILL.md whole,
+        # so a change to it (the description included) reaches both. The
+        # arms also differ in the header (this one lists the description
+        # first), the footer, the Read tool, and which references the model
+        # reads.
         header = ("You are running the better-writing skill.\n"
                   f"Installed skill: better-writing — "
-                  f"\"{plugin_description()}\"\n"
+                  f"\"{skill_description()}\"\n"
                   "Its instructions follow. Apply them to the user's request.\n")
         return "\n".join([header,
                           (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8"),
