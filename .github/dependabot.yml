@@ -15,5 +15,9 @@ updates:
     directory: /.github/tools
     schedule:
       interval: monthly
+    # CI runs the proposed CLI version, so give a bad release a week to be
+    # pulled from npm before Dependabot proposes it.
+    cooldown:
+      default-days: 7
     commit-message:
       prefix: ci

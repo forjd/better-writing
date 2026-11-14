@@ -60,7 +60,8 @@ jobs:
       - name: Read the pinned Claude Code version
         run: |
           version=$(node -p 'require("./.github/tools/package.json").devDependencies["@anthropic-ai/claude-code"]')
-          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+          # Match the whole value, not each line, so nothing else reaches $GITHUB_ENV.
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::error::.github/tools/package.json must pin an exact @anthropic-ai/claude-code version, got '$version'"
             exit 1
           fi

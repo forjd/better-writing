@@ -23,7 +23,7 @@ python3 evals/run_evals.py --all evals/examples  # checker self-test against the
 python3 -m unittest discover -s tests            # unit tests for the scripts and the eval statistics
 ```
 
-CI also checks the plugin and marketplace manifests with `claude plugin validate`. The Claude Code version it uses is pinned in [.github/tools/package.json](./.github/tools/package.json), which Dependabot bumps once a month. Do not install that package; it exists only to hold the pin.
+CI also checks the plugin and marketplace manifests with `claude plugin validate`. The Claude Code version it uses is pinned in [.github/tools/package.json](./.github/tools/package.json), and Dependabot opens a pull request to bump it once a month, at least a week after each release. Do not install that package; it exists only to hold the pin.
 
 If you touched `SKILL.md` or anything in `references/`, run the evals with a real model before and after the change:
 
