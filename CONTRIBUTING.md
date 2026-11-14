@@ -36,6 +36,7 @@ Say in the pull request what changed between the two reports, and read the rewri
 ## Opening the pull request
 
 - Use a [conventional commit](https://www.conventionalcommits.org/) title, since release-please sets the version from it: `feat:` for new patterns, checks, or fixtures, `fix:` for corrections, and `feat!:` or a `BREAKING CHANGE:` footer for anything listed under [Releases](./README.md#releases).
+- Add a dated entry to [CHANGELOG.md](./CHANGELOG.md) for a change to the skill, the fixtures, the eval tooling or CI. release-please runs with `skip-changelog: true`, so that file is the only written record of why the skill changed. The pull request template has a reminder.
 - Do not edit version numbers by hand. release-please bumps them.
 - Write new prose in British English with sentence-case headings. The repo's own docs follow the catalogue.
 
