@@ -340,13 +340,43 @@ def paired_mean_diff_interval(diffs):
     return (avg, avg - half, avg + half)
 
 
+# A fence line that can open a wrapper around the whole reply.
+WRAPPER_FENCE = re.compile(r"^```(json|markdown|md|text)?\s*$", re.I)
+
+
+def unwrap_fence(lines):
+    """Return the lines inside a fence that wraps the whole reply, or None.
+
+    The first line must open a fence (no label, or json, markdown, md, text)
+    and the last line must be a bare closing fence. With fence lines between
+    them the pair is ambiguous: the first line may open a real code block
+    and the last close another (issue #74). Inside a real wrapper the first
+    inner fence opens a block, so it carries a label ("```bash"); a bare
+    first inner fence closes a block that the first line opened. So the
+    reply is unwrapped only when the inner fences pair up and the first one
+    has a label. A wrapper whose first inner block has no label is left
+    alone, fences and all.
+    """
+    if len(lines) < 2 or lines[-1].strip() != "```":
+        return None
+    if not WRAPPER_FENCE.match(lines[0].strip()):
+        return None
+    inner = lines[1:-1]
+    fences = [line.strip() for line in inner if line.strip().startswith("```")]
+    if not fences:
+        return inner
+    if len(fences) % 2 == 0 and fences[0] != "```":
+        return inner
+    return None
+
+
 def strip_preamble(text):
-    """Remove fences and leading preamble so only the rewrite remains."""
-    t = text.strip()
-    # Strip markdown fences if the model wrapped the rewrite.
-    t = re.sub(r"^```(?:json|markdown|md|text)?\s*\n", "", t)
-    t = re.sub(r"\n```\s*$", "", t).strip()
-    lines = t.splitlines()
+    """Remove a wrapping fence and leading preamble so only the rewrite remains."""
+    lines = text.strip().splitlines()
+    inner = unwrap_fence(lines)
+    unwrapped = inner is not None
+    if unwrapped:
+        lines = inner
     # Drop leading preamble lines ("Here is the rewrite:", "Sure, ...:", etc.).
     # Only colon-terminated lines match, so a legitimate opener such as
     # "Here is what changed in the second quarter." is preserved.
@@ -358,13 +388,16 @@ def strip_preamble(text):
     # Drop a leading "Rewrite:" label line.
     if lines and re.match(r"^rewrite\s*:\s*$", lines[0].strip(), re.I):
         lines.pop(0)
-    # A preamble often introduces a fenced block ("Here's the rewrite:\n```"),
-    # so the fence only surfaces once the preamble is gone.
-    if lines and re.match(r"^```(?:markdown|md|text)?\s*$", lines[0].strip()):
+    while lines and not lines[0].strip():
         lines.pop(0)
-        if lines and lines[-1].strip() == "```":
-            lines.pop()
-    return "\n".join(lines).strip() + ("\n" if lines else "")
+    # A preamble often introduces a fenced block ("Here's the rewrite:\n```"),
+    # so the wrapper only surfaces once the preamble is gone.
+    if not unwrapped:
+        inner = unwrap_fence(lines)
+        if inner is not None:
+            lines = inner
+    result = "\n".join(lines).strip()
+    return result + ("\n" if result else "")
 
 
 def rewrite(model, system_path, brief, input_text, tools="", cwd=None):
