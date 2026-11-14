@@ -4,6 +4,8 @@ split loader, judge-only mode and summary builders (issue #80)."""
 import contextlib
 import io
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -23,32 +25,84 @@ def capture(func, *args, **kwargs):
 
 
 class ParseVerdictTest(unittest.TestCase):
-    def test_bare_final_line_wins(self):
-        for reply, want in {
+    def check(self, cases):
+        for reply, want in cases.items():
+            with self.subTest(reply=reply):
+                self.assertEqual(compare_outputs.parse_verdict(reply), want)
+
+    def test_verdict_alone_on_the_final_line_wins(self):
+        self.check({
             "2": "2",
             "**1**": "1",
             "1.": "1",
             "Rewrite 1 pads and Rewrite 2 is plain.\n2": "2",
-        }.items():
-            with self.subTest(reply=reply):
-                self.assertEqual(compare_outputs.parse_verdict(reply), want)
+            "Rewrite 1 pads and Rewrite 2 is plain.\n2\n\n": "2",
+            "Rewrite 1 adds a date.\nRewrite 2 keeps every fact.\nRewrite 2.": "2",
+            "Rewrite 1 adds a date.\n\n**Rewrite 2**": "2",
+            "Rewrite 1 pads.\nAnswer: 2": "2",
+            "Rewrite 1 pads and adds a date.\nVerdict: **2**": "2",
+        })
 
-    def test_one_named_rewrite(self):
-        self.assertEqual(compare_outputs.parse_verdict("Rewrite 2 is better."), "2")
+    def test_one_rewrite_in_the_whole_reply(self):
+        self.check({
+            "Rewrite 2 is better.": "2",
+            "I pick rewrite 1; it keeps every fact.": "1",
+            "The second one (2) reads better": "2",
+        })
+
+    def test_two_rewrites_is_no_verdict(self):
+        self.check({
+            # Issue #80: the loser named second used to be read as the winner.
+            "Rewrite 2 is better because Rewrite 1 pads.": None,
+            # A loser named, a winner as a digit: used to be read as 1.
+            "Rewrite 1 invents a claim, so 2.": None,
+            # A long last line may be reasoning, so it gets no extra weight.
+            "Rewrite 2 is better.\nRewrite 1 pads.": None,
+            "1 pads, 2 does not, overall": None,
+        })
+
+    def test_nothing_to_read(self):
+        self.check({"Version 1.2 is fine": None, "": None, "  \n ": None})
+
+
+class AskTest(unittest.TestCase):
+    def run_ask(self, *replies):
+        results = [subprocess.CompletedProcess([], 0, stdout=r, stderr="")
+                   for r in replies]
+        with mock.patch.object(compare_outputs.subprocess, "run",
+                               side_effect=results) as run:
+            verdict, _ = capture(compare_outputs.ask, "m", "prompt", retries=2)
+        return verdict, run.call_count
+
+    def test_unclear_reply_is_asked_again(self):
         self.assertEqual(
-            compare_outputs.parse_verdict("I pick rewrite 1; it keeps every fact."),
-            "1")
+            self.run_ask("Rewrite 2 is better because Rewrite 1 pads.", "2"),
+            ("2", 2))
 
-    def test_both_rewrites_named_is_no_verdict(self):
-        # The loser named second used to be read as the winner.
-        self.assertIsNone(compare_outputs.parse_verdict(
-            "Rewrite 2 is better because Rewrite 1 pads."))
+    def test_unclear_every_time_is_none(self):
+        self.assertEqual(self.run_ask("Rewrite 1, Rewrite 2", "1 or 2", "both"),
+                         (None, 3))
 
-    def test_standalone_digits(self):
-        self.assertEqual(compare_outputs.parse_verdict("The second one (2) reads better"), "2")
-        self.assertIsNone(compare_outputs.parse_verdict("1 pads, 2 does not, overall"))
-        self.assertIsNone(compare_outputs.parse_verdict("Version 1.2 is fine"))
-        self.assertIsNone(compare_outputs.parse_verdict(""))
+
+class CompareMainTest(unittest.TestCase):
+    def test_unclear_verdict_counts_as_a_skip(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dir_a, dir_b = Path(tmp, "a"), Path(tmp, "b")
+            for folder in (dir_a, dir_b):
+                folder.mkdir()
+                for name in ("plain-human", "launch-email"):
+                    (folder / f"{name}.md").write_text("Text.\n", encoding="utf-8")
+            verdicts = iter(["1", "2", None, "2"])
+            argv = ["compare_outputs.py", str(dir_a), str(dir_b),
+                    "launch-email", "plain-human"]
+            with mock.patch.object(compare_outputs, "ask",
+                                   side_effect=lambda *a: next(verdicts)), \
+                    mock.patch.object(sys, "argv", argv):
+                code, text = capture(compare_outputs.main)
+        self.assertEqual(code, 0)
+        self.assertIn("launch-email: A (orders: 1, 2)", text)
+        self.assertIn("plain-human: skipped (orders: ?, 2)", text)
+        self.assertIn("A wins 1, B wins 0, ties 0, skips 1", text)
 
 
 class SkillCallsTest(unittest.TestCase):
@@ -64,15 +118,19 @@ class SkillCallsTest(unittest.TestCase):
     def test_ignores_other_events_and_missing_fields(self):
         self.assertEqual(run_triggers.skill_calls({"type": "user"}), [])
         self.assertEqual(run_triggers.skill_calls({"type": "assistant"}), [])
+        # A Skill call with no name says nothing, so it is dropped.
         self.assertEqual(run_triggers.skill_calls(
             {"type": "assistant", "message": {"content": [
-                {"type": "tool_use", "name": "Skill"}]}}), [""])
+                {"type": "tool_use", "name": "Skill"}]}}), [])
 
     def test_is_this_skill(self):
         self.assertTrue(run_triggers.is_this_skill("better-writing"))
         self.assertTrue(run_triggers.is_this_skill("better-writing:better-writing"))
         self.assertFalse(run_triggers.is_this_skill("better-writing-extra"))
         self.assertFalse(run_triggers.is_this_skill("other:skill"))
+        # Any plugin's copy of the skill counts: the name after the colon is
+        # the skill, and the eval stages only this repo's plugin.
+        self.assertTrue(run_triggers.is_this_skill("other-plugin:better-writing"))
 
 
 class TriggerSummaryTest(unittest.TestCase):
@@ -124,6 +182,79 @@ class RunCaseTest(unittest.TestCase):
         self.assertEqual(outcome, {"triggered": True, "skills": ["p"]})
 
 
+class TriggersMainTest(unittest.TestCase):
+    def test_one_failed_run_keeps_the_others(self):
+        cases = [("should_trigger", "good", "Rewrite this."),
+                 ("should_not_trigger", "bad", "Explain this.")]
+
+        def fake_run_one(model, prompt, plugin, cwd):
+            if prompt == "Explain this.":
+                raise ValueError("bad stream")
+            return {"triggered": True, "skills": ["better-writing"]}
+        with tempfile.TemporaryDirectory() as tmp:
+            argv = ["run_triggers.py", "--out", tmp, "--repeats", "2", "--jobs", "2"]
+            with mock.patch.object(run_triggers, "load_triggers", return_value=cases), \
+                    mock.patch.object(run_triggers, "run_one", fake_run_one), \
+                    mock.patch.object(sys, "argv", argv), \
+                    contextlib.redirect_stderr(io.StringIO()):
+                code, _ = capture(run_triggers.main)
+            summary = json.loads(Path(tmp, "summary.json").read_text())
+        self.assertEqual(code, 1)
+        prompts = {p["id"]: p for p in summary["prompts"]}
+        self.assertEqual((prompts["good"]["triggered"], prompts["good"]["n"]), (2, 2))
+        self.assertEqual(prompts["bad"]["errors"], ["ValueError: bad stream"] * 2)
+
+
+class FakeProcess:
+    """Enough of subprocess.Popen for run_one: stdout lines and an exit."""
+
+    def __init__(self, events, returncode=0):
+        self.stdout = iter([json.dumps(e) + "\n" if isinstance(e, dict) else e
+                            for e in events])
+        self.returncode = returncode
+
+    def poll(self):
+        return self.returncode
+
+    def kill(self):
+        pass
+
+    def communicate(self):
+        return "", "stderr text"
+
+
+class RunOneTest(unittest.TestCase):
+    INIT = {"type": "system", "subtype": "init", "skills": ["better-writing:better-writing"]}
+    CALL = {"type": "assistant", "message": {"content": [
+        {"type": "tool_use", "name": "Skill", "input": {"skill": "better-writing"}}]}}
+    RESULT = {"type": "result"}
+
+    def run_one(self, events):
+        with mock.patch.object(run_triggers.subprocess, "Popen",
+                               return_value=FakeProcess(events)):
+            return run_triggers.run_one("m", "prompt", "plugin", "cwd", timeout=30)
+
+    def test_triggered_stops_at_the_call(self):
+        outcome = self.run_one([self.INIT, "not json\n", self.CALL,
+                                {"type": "assistant", "message": {"content": [
+                                    {"type": "tool_use", "name": "Skill",
+                                     "input": {"skill": "other"}}]}}])
+        self.assertEqual(outcome, {"triggered": True, "skills": ["better-writing"]})
+
+    def test_not_triggered_ends_at_the_result(self):
+        self.assertEqual(self.run_one([self.INIT, self.RESULT]),
+                         {"triggered": False, "skills": []})
+
+    def test_no_result_raises(self):
+        with self.assertRaisesRegex(RuntimeError, "without a result"):
+            self.run_one([self.INIT])
+
+    def test_plugin_not_loaded_raises(self):
+        init = dict(self.INIT, skills=["other"])
+        with self.assertRaisesRegex(RuntimeError, "did not load"):
+            self.run_one([init, self.RESULT])
+
+
 class LoadSplitTest(unittest.TestCase):
     def test_known_splits(self):
         self.assertIsNone(run_skill.load_split("all"))
@@ -133,22 +264,24 @@ class LoadSplitTest(unittest.TestCase):
 
     def test_bad_splits_raise(self):
         cases = {
-            "unknown": ('{"dev": ["a"]}', "nope"),
-            "not json": ("{", "dev"),
-            "not a list": ('{"dev": "a"}', "dev"),
-            "empty name": ('{"dev": [""]}', "dev"),
+            "unknown": ('{"dev": ["a"]}', "nope", "unknown split"),
+            "not json": ("{", "dev", "cannot parse"),
+            "top level not an object": ('["dev"]', "dev", "unknown split"),
+            "not a list": ('{"dev": "a"}', "dev", "must be a list"),
+            "empty name": ('{"dev": [""]}', "dev", "must be a list"),
+            "not a string": ('{"dev": [1]}', "dev", "must be a list"),
         }
-        for name, (text, split) in cases.items():
+        for name, (text, split, message) in cases.items():
             with self.subTest(name), tempfile.TemporaryDirectory() as tmp:
                 path = Path(tmp, "splits.json")
                 path.write_text(text, encoding="utf-8")
                 with mock.patch.object(run_skill, "SPLITS_PATH", path):
-                    with self.assertRaises(ValueError):
+                    with self.assertRaisesRegex(ValueError, message):
                         run_skill.load_split(split)
 
     def test_missing_file_raises(self):
         with mock.patch.object(run_skill, "SPLITS_PATH", Path("/nonexistent/splits.json")):
-            with self.assertRaises(ValueError):
+            with self.assertRaisesRegex(ValueError, "cannot read"):
                 run_skill.load_split("dev")
 
 
@@ -159,19 +292,27 @@ class JudgeOnlyTest(unittest.TestCase):
     def test_writes_claims_and_reports_failures(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp)
-            (out / "plain-human.md").write_text("Text.\n", encoding="utf-8")
-            (out / "launch-email.md").write_text("Text.\n", encoding="utf-8")
+            (out / "plain-human.md").write_text("Plain text.\n", encoding="utf-8")
+            (out / "launch-email.md").write_text("Launch text.\n", encoding="utf-8")
+            expected = {}
+            for name in ("plain-human", "launch-email"):
+                checks, source = run_skill.load_fixture(run_skill.FIXTURES_DIR / name)
+                expected[source] = (checks["brief"], name)
             claims = {"plain-human": [], "launch-email": ["an invented date"]}
 
             def judge(model, brief, source, rewrite):
-                return claims[judge.order.pop(0)]
-            judge.order = ["launch-email", "plain-human"]
+                want_brief, name = expected[source]
+                self.assertEqual(brief, want_brief)
+                self.assertEqual(rewrite, (out / f"{name}.md").read_text())
+                return claims[name]
             with mock.patch.object(run_skill, "judge_added_claims", judge):
                 code, text = capture(run_skill.judge_only, "j", out,
                                      self.fixtures("launch-email", "plain-human"))
             self.assertEqual(code, 1)
             self.assertIn("added claim: an invented date", text)
             self.assertEqual(json.loads((out / "plain-human.claims.json").read_text()), [])
+            self.assertEqual(json.loads((out / "launch-email.claims.json").read_text()),
+                             ["an invented date"])
 
     def test_review_fixture_skips_the_judge(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -192,12 +333,18 @@ class JudgeOnlyTest(unittest.TestCase):
                               self.fixtures("plain-human"))
             self.assertEqual(code, 2)
             (out / "plain-human.md").write_text("Text.\n", encoding="utf-8")
+            (out / "plain-human.claims.json").write_text("[]\n")
             with mock.patch.object(run_skill, "judge_added_claims",
                                    side_effect=run_skill.JudgeError("bad reply")):
                 code, text = capture(run_skill.judge_only, "j", out,
                                      self.fixtures("plain-human"))
             self.assertEqual(code, 1)
             self.assertIn("FAIL judge error", text)
+            # A stale result must not read as "judged, no added claims".
+            self.assertFalse((out / "plain-human.claims.json").exists())
+
+
+META = {"skill_version": "0.0.0", "commit": None, "dirty": None, "date": "2026-11-14"}
 
 
 class SummaryBuilderTest(unittest.TestCase):
@@ -208,7 +355,7 @@ class SummaryBuilderTest(unittest.TestCase):
 
     def test_per_fixture_entries(self):
         summary = run_skill.build_summary("m", "j", False, run_skill.ARMS, 5,
-                                          "dev", self.RESULTS)
+                                          "dev", self.RESULTS, META)
         a = summary["fixtures"]["a"]
         self.assertEqual((a["always-on"]["pass"], a["always-on"]["n"]), (5, 5))
         self.assertEqual(a["progressive"]["rate"], 0.4)
@@ -224,8 +371,13 @@ class SummaryBuilderTest(unittest.TestCase):
 
     def test_no_judge_records_none(self):
         summary = run_skill.build_summary("m", "j", True, ["always-on"], 1,
-                                          "all", {"a": {"always-on": [True]}})
+                                          "all", {"a": {"always-on": [True]}}, META)
         self.assertIsNone(summary["judge_model"])
+        self.assertIs(summary["no_judge"], True)
+
+    def test_one_arm_has_no_paired_difference(self):
+        summary = run_skill.build_summary("m", "j", False, ["always-on"], 1,
+                                          "all", {"a": {"always-on": [True]}}, META)
         self.assertNotIn("paired_mean_diff", summary["overall"])
 
     def test_baseline_diff_per_fixture_lines(self):
