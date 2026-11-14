@@ -1,14 +1,21 @@
 # Agent instructions
 
-This file applies only when `PAPERCLIP_WORKSPACE_CWD` is set: an automated agent run that the
-maintainer's orchestrator started in a shared checkout of this repo. If that variable is not
-set, ignore this file. That covers a human in their own clone and an agent working for a
-contributor in their clone. [CONTRIBUTING.md](./CONTRIBUTING.md) says how to work on the repo.
+These rules are for automated agent runs that share one checkout of this repo with other runs.
+The maintainer's orchestrator (Paperclip) starts such runs and sets `PAPERCLIP_WORKSPACE_CWD`.
+Before your first git command, decide whether the rules apply to you:
+
+- Run `printenv PAPERCLIP_WORKSPACE_CWD`. If it prints a path, this whole file applies.
+- If it prints nothing, but other agents or runs can use this checkout at the same time, Rule 1
+  still applies. Make your own worktree with `git worktree add` instead of the script in Rule 2.
+- If you cannot tell, follow Rule 1.
+- Otherwise none of this file applies: for example, a human in their own clone, or an agent
+  that works alone in a contributor's clone. [CONTRIBUTING.md](./CONTRIBUTING.md) says how to
+  work on the repo.
 
 ## Git workspace hygiene for automated agents
 
-This section is for automated agent runs that share a provisioned checkout of this repo. If
-you are a human working in your own clone, none of it applies.
+This section is for automated agent runs that share a provisioned checkout of this repo. The
+start of this file says when it applies.
 
 **The shared checkout is the repo itself.** The orchestrator provisions one clone per project,
 not one per task, and this project is a single repo — so the clone you are standing in is the

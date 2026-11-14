@@ -41,7 +41,7 @@ Say in the pull request what changed between the two reports, and read the rewri
 
 ## Files for the maintainer's agent runs
 
-`CLAUDE.md` and `scripts/issue-worktree.sh` are for the maintainer's automated agent runs, which share one checkout of the repo. Each run gets its own git worktree, so concurrent runs do not overwrite each other. Neither file applies to your own clone, and the script exits unless that orchestrator's environment variables are set.
+`CLAUDE.md` and `scripts/issue-worktree.sh` are for the maintainer's automated agent runs, which share one checkout of the repo. Each run gets its own git worktree, so concurrent runs do not overwrite each other. Neither file applies to your own clone, and the script exits unless `PAPERCLIP_WORKSPACE_CWD` and `PAPERCLIP_AGENT_ID` are set.
 
 ## Reporting problems
 

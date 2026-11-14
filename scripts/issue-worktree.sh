@@ -6,8 +6,8 @@
 #
 # The project checkout is shared by every concurrent heartbeat. Running
 # `git checkout` there rewrites other agents' in-flight work: concurrent runs
-# have moved the shared checkout's HEAD several times in one twenty-minute
-# window, including hard resets that discarded uncommitted changes.
+# have moved a shared checkout's HEAD, and hard resets have discarded
+# uncommitted changes.
 # This script gives you an isolated working tree that shares the object
 # store, so it costs a couple of MB and no extra fetch.
 #
