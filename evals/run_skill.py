@@ -108,19 +108,31 @@ material follow. Apply them to the user's request.
 
 
 def git(*args):
-    """Run a read-only git command in the repo; return the CompletedProcess."""
-    return subprocess.run(["git", "-C", str(ROOT), *args],
+    """Run a read-only git command in the repo; return the CompletedProcess.
+
+    --no-optional-locks keeps `git status` from taking the index lock, so a
+    concurrent git command in the same checkout does not fail.
+    """
+    return subprocess.run(["git", "--no-optional-locks", "-C", str(ROOT), *args],
                           capture_output=True, text=True)
 
 
-def run_metadata():
+# What a run reads: the skill, the eval runner and fixtures, and the plugin
+# manifest (the progressive arm's fallback description). The committed
+# reference summaries are outputs, not inputs.
+MEASURED_PATHS = ("skills", "evals", ".claude-plugin", ":(exclude)evals/baselines")
+
+
+def run_metadata(out_dir=None):
     """Record what a summary measured: skill version, commit, tree state, date.
 
-    A saved summary is only comparable to another run of the same skill
-    text, so the version from SKILL.md and the git commit travel with it.
-    `dirty` is True when skills/ or evals/ (outside evals/baselines/) had
-    uncommitted changes, so the commit does not hold the text the run
-    measured (issue #78). Each is None when it cannot be read.
+    Call it before the run writes anything, so the record describes the
+    text the run reads. A saved summary is only comparable to another run
+    of the same skill text, so the version from SKILL.md and the git commit
+    travel with it. `dirty` is True when MEASURED_PATHS had uncommitted
+    changes, so the commit does not hold the text the run measured (issue
+    #78); `out_dir`, when it sits inside the repo, does not count. Each is
+    None when it cannot be read.
     """
     try:
         front = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8-sig")
@@ -128,30 +140,39 @@ def run_metadata():
         version = match.group(1) if match else None
     except OSError:
         version = None
+    commit = dirty = None
     try:
-        commit = subprocess.run(
-            ["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"],
-            capture_output=True, text=True, check=True).stdout.strip() or None
-    except (OSError, subprocess.CalledProcessError):
-        commit = None
-    dirty = None
-    if commit is not None:
-        try:
-            status = git("status", "--porcelain", "--", "skills", "evals",
-                         ":(exclude)evals/baselines")
-        except OSError:
-            status = None
-        if status is not None and status.returncode == 0:
-            dirty = bool(status.stdout.strip())
+        head = git("rev-parse", "--short", "HEAD")
+        if head.returncode == 0:
+            commit = head.stdout.strip() or None
+        if commit is not None:
+            paths = list(MEASURED_PATHS)
+            if out_dir is not None:
+                try:
+                    rel = Path(out_dir).resolve().relative_to(ROOT)
+                except ValueError:
+                    rel = None
+                if rel is not None and rel.parts:
+                    paths.append(f":(exclude){rel.as_posix()}")
+            status = git("status", "--porcelain", "--", *paths)
+            if status.returncode == 0:
+                dirty = bool(status.stdout.strip())
+    except OSError:
+        pass
     return {"skill_version": version, "commit": commit, "dirty": dirty,
             "date": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
 
 
 def commit_on_default_branch():
     """Return (branch, True/False) for whether HEAD is on origin's default
-    branch, or (branch, None) when git cannot tell (no remote, no history).
+    branch, or (branch, None) when git cannot tell: no remote, no history,
+    or a shallow clone, where a cut history makes the ancestry test fail.
+    The answer is only as fresh as the last fetch.
     """
     try:
+        shallow = git("rev-parse", "--is-shallow-repository")
+        if shallow.returncode == 0 and shallow.stdout.strip() == "true":
+            return ("origin/main", None)
         head = git("symbolic-ref", "--short", "refs/remotes/origin/HEAD")
         branch = head.stdout.strip() if head.returncode == 0 else "origin/main"
         result = git("merge-base", "--is-ancestor", "HEAD", branch)
@@ -174,7 +195,8 @@ def reference_warnings(meta, branch, on_branch):
     commit = meta.get("commit")
     if meta.get("dirty"):
         warnings.append(
-            f"uncommitted changes under skills/ or evals/: commit {commit} "
+            f"uncommitted changes under skills/, evals/ or .claude-plugin/ "
+            f"when the run started: commit {commit} "
             "does not hold the text this run measured. Do not commit this "
             "summary as a reference.")
     if on_branch is False:
@@ -683,7 +705,7 @@ def generate_and_score(model, judge_model, system_path, tools, cwd,
 
 
 def build_summary(model, judge_model, no_judge, arms, repeats, split,
-                  results):
+                  results, metadata=None):
     """Assemble the summary.json payload from per-fixture per-arm passes.
 
     `results` maps fixture name to {arm: [bool, ...]}. Rates carry Wilson
@@ -722,7 +744,7 @@ def build_summary(model, judge_model, no_judge, arms, repeats, split,
         overall["paired_ci95"] = [lo, hi]
     return {"model": model, "judge_model": None if no_judge else judge_model,
             "no_judge": no_judge, "arms": list(arms), "repeats": repeats,
-            "split": split, **run_metadata(), "fixtures": fixtures,
+            "split": split, **(metadata or run_metadata()), "fixtures": fixtures,
             "overall": overall}
 
 
@@ -773,10 +795,15 @@ def print_baseline_diff(summary, baseline):
     print(f"against baseline: {baseline.get('model')}, skill "
           f"{baseline.get('skill_version')} at {baseline.get('commit')}, "
           f"{baseline.get('date')}")
-    for key in ("model", "judge_model", "repeats", "split", "skill_version"):
+    for key in ("model", "judge_model", "repeats", "split"):
         if summary.get(key) != baseline.get(key):
             print(f"  WARN {key} differs: baseline {baseline.get(key)!r}, "
                   f"this run {summary.get(key)!r}")
+    # A release bumps the version without a skill change, and a skill change
+    # lands before the release, so a version gap is a note, not a warning.
+    if summary.get("skill_version") != baseline.get("skill_version"):
+        print(f"  note: baseline is skill {baseline.get('skill_version')}, "
+              f"this run is skill {summary.get('skill_version')}")
     if baseline.get("dirty"):
         print(f"  WARN the baseline was recorded with uncommitted changes, "
               f"so commit {baseline.get('commit')} may not hold its text")
@@ -917,6 +944,8 @@ def main():
     # Absolute, because the progressive arm runs `claude` with its cwd in the
     # staging dir: a relative --out would point --system-prompt-file there.
     out_dir = Path(args.out).resolve()
+    # Before anything is written, so the record describes what the run reads.
+    metadata = run_metadata(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     if args.no_skill:
@@ -1004,7 +1033,7 @@ def main():
                     print(f"  WARN could not write compat copy: {exc}")
 
     summary = build_summary(args.model, judge_model, args.no_judge, arms,
-                            args.repeats, args.split, results)
+                            args.repeats, args.split, results, metadata)
     summary_path = out_dir / "summary.json"
     try:
         summary_path.write_text(json.dumps(summary, indent=2) + "\n",
@@ -1013,12 +1042,13 @@ def main():
         print(f"WARN could not write {summary_path}: {exc}")
     else:
         print(f"summary saved in {summary_path}")
-    branch, on_branch = commit_on_default_branch()
-    for warning in reference_warnings(summary, branch, on_branch):
-        print(f"WARN {warning}")
     print_summary(summary)
     if baseline is not None:
         print_baseline_diff(summary, baseline)
+    # Last, so the warnings do not scroll away above the report.
+    branch, on_branch = commit_on_default_branch()
+    for warning in reference_warnings(summary, branch, on_branch):
+        print(f"WARN {warning}")
 
     print(f"rewrites saved in {out_dir}")
     return 0 if all_ok else 1

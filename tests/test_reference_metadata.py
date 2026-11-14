@@ -30,23 +30,40 @@ def diff_output(new, old):
 
 
 class RunMetadataTest(unittest.TestCase):
+    def metadata(self, *results, out_dir=None):
+        with mock.patch.object(run_skill, "git", side_effect=list(results)) as git:
+            meta = run_skill.run_metadata(out_dir)
+        return meta, git
+
     def test_records_a_dirty_flag(self):
         for stdout, want in ((" M skills/better-writing/SKILL.md\n", True),
                              ("", False)):
-            with self.subTest(want=want), \
-                    mock.patch.object(run_skill, "git", return_value=done(0, stdout)):
-                self.assertIs(run_skill.run_metadata()["dirty"], want)
+            with self.subTest(want=want):
+                meta, _ = self.metadata(done(0, "abc1234\n"), done(0, stdout))
+                self.assertEqual(meta["commit"], "abc1234")
+                self.assertIs(meta["dirty"], want)
 
     def test_dirty_is_none_when_git_fails(self):
-        with mock.patch.object(run_skill, "git", return_value=done(128)):
-            self.assertIsNone(run_skill.run_metadata()["dirty"])
+        meta, _ = self.metadata(done(0, "abc1234\n"), done(128))
+        self.assertIsNone(meta["dirty"])
+        meta, git = self.metadata(done(128))
+        self.assertIsNone(meta["commit"])
+        self.assertIsNone(meta["dirty"])
+        self.assertEqual(git.call_count, 1)
 
-    def test_status_skips_the_baselines(self):
-        with mock.patch.object(run_skill, "git", return_value=done()) as git:
-            run_skill.run_metadata()
+    def test_status_covers_the_inputs_and_skips_outputs(self):
+        out_dir = run_skill.ROOT / "evals" / "run-a"
+        _, git = self.metadata(done(0, "abc1234\n"), done(), out_dir=out_dir)
         args = git.call_args.args
         self.assertEqual(args[:2], ("status", "--porcelain"))
-        self.assertIn(":(exclude)evals/baselines", args)
+        for path in ("skills", "evals", ".claude-plugin",
+                     ":(exclude)evals/baselines", ":(exclude)evals/run-a"):
+            self.assertIn(path, args)
+
+    def test_out_dir_outside_the_repo_is_not_excluded(self):
+        _, git = self.metadata(done(0, "abc1234\n"), done(),
+                               out_dir=run_skill.ROOT.parent / "elsewhere")
+        self.assertEqual(sum(1 for a in git.call_args.args if "exclude" in a), 1)
 
 
 class DefaultBranchTest(unittest.TestCase):
@@ -54,16 +71,24 @@ class DefaultBranchTest(unittest.TestCase):
         for code, want in ((0, True), (1, False), (128, None)):
             with self.subTest(code=code), mock.patch.object(
                     run_skill, "git",
-                    side_effect=[done(0, "origin/main\n"), done(code)]):
+                    side_effect=[done(0, "false\n"), done(0, "origin/main\n"),
+                                 done(code)]):
                 self.assertEqual(run_skill.commit_on_default_branch(),
                                  ("origin/main", want))
 
     def test_falls_back_to_origin_main(self):
         with mock.patch.object(run_skill, "git",
-                               side_effect=[done(1), done(0)]) as git:
+                               side_effect=[done(0, "false\n"), done(1),
+                                            done(0)]) as git:
             self.assertEqual(run_skill.commit_on_default_branch(),
                              ("origin/main", True))
         self.assertEqual(git.call_args.args[-1], "origin/main")
+
+    def test_shallow_clone_cannot_tell(self):
+        with mock.patch.object(run_skill, "git",
+                               side_effect=[done(0, "true\n")]):
+            self.assertEqual(run_skill.commit_on_default_branch(),
+                             ("origin/main", None))
 
 
 class ReferenceWarningsTest(unittest.TestCase):
@@ -83,14 +108,28 @@ class ReferenceWarningsTest(unittest.TestCase):
         self.assertIn("not on origin/main", warnings[1])
 
 
+class SummaryMetadataTest(unittest.TestCase):
+    def test_build_summary_keeps_the_metadata_from_the_start(self):
+        meta = {"skill_version": "2.1.0", "commit": "abc1234", "dirty": False,
+                "date": "2026-11-14"}
+        with mock.patch.object(run_skill, "run_metadata") as later:
+            out = run_skill.build_summary("m", "j", False, ["always-on"], 1,
+                                          "all", {"f": {"always-on": [True]}},
+                                          meta)
+        later.assert_not_called()
+        for key, value in meta.items():
+            self.assertEqual(out[key], value)
+
+
 class BaselineWarningTest(unittest.TestCase):
     def test_same_settings_give_no_warning(self):
         self.assertNotIn("WARN", diff_output(summary(), summary()))
 
-    def test_skill_version_gap_warns(self):
+    def test_skill_version_gap_is_a_note(self):
         out = diff_output(summary(skill_version="2.1.0"),
                           summary(skill_version="2.0.0"))
-        self.assertIn("WARN skill_version differs", out)
+        self.assertIn("note: baseline is skill 2.0.0, this run is skill 2.1.0", out)
+        self.assertNotIn("WARN", out)
 
     def test_dirty_baseline_warns(self):
         out = diff_output(summary(), summary(dirty=True))
