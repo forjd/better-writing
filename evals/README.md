@@ -110,7 +110,7 @@ python3 evals/run_triggers.py tighten-email write-unit-test   # a subset, by id
 
 It stages the skill as a plugin (manifest, `SKILL.md`, `references/`) under `<out>/_plugin`, then sends each prompt in `triggers.json` through `claude -p --plugin-dir` with the same isolation flags as the rewrite runner, the read-only tools `Skill,Read,Glob,Grep`, and an empty working directory. The model sees better-writing in the skill listing next to the built-in skills. A run counts as a trigger when the model calls the Skill tool for better-writing, and the run is stopped at that call, so no prompt goes on to do the work.
 
-`triggers.json` holds two sets. `should_trigger` covers rewriting, drafting, reviewing, and copy editing across genres; its trigger rate is recall. `should_not_trigger` holds near misses that mention a typo, an email, a log, or documentation but are code, data, translation, summary, or explanation tasks; its trigger rate is the false-trigger rate. Both sets also hold prompts near the boundary, sorted by the `description` line as the contract. A padded docstring to rewrite, a misspelt UI label, a button label with a grammar error, and a wordy tooltip should trigger. An article to summarise into bullets, an error message to explain, a grammar question with no text to edit, placeholder text, and code tasks that use the words rewrite, proofread, or humanize should not. A prompt whose answer the contract leaves open (a docstring or a commit message written from scratch, a short story, alt text) stays out of both sets until the description settles it.
+`triggers.json` holds two sets. `should_trigger` covers rewriting, drafting, reviewing, and copy editing across genres; its trigger rate is recall. `should_not_trigger` holds near misses that mention a typo, an email, a log, or documentation but are code, data, translation, summary, or explanation tasks; its trigger rate is the false-trigger rate. Both sets also hold prompts near the boundary, sorted by the `description` line as the contract. A padded docstring to rewrite, a misspelt UI label, a button label with a grammar error, and a wordy tooltip should trigger. A bullet summary of an article, an error message to explain, a grammar question with no text to edit, placeholder text, and code tasks that use the words rewrite, proofread, or humanize should not. A prompt whose answer the contract leaves open (a docstring or a commit message written from scratch, a short story, alt text) stays out of both sets until the description settles it.
 
 The runner prints both sets with Wilson 95% intervals and writes them, with per-prompt counts and any other skills the model called, to `<out>/summary.json` (default `evals/outputs/triggers/`). The intervals treat each run as independent, but repeats of one prompt are correlated, so read the per-prompt counts as well.
 
@@ -146,7 +146,7 @@ The report lists each check that fires, with a snippet. It is not a gate and CI 
 python3 evals/run_evals.py --all evals/examples
 ```
 
-CI runs this self-test, together with `scripts/validate.py` and `scripts/lint_prose.py`, on every push to main and every pull request.
+CI runs this self-test, together with `scripts/validate.py`, `scripts/lint_prose.py` and the unit tests in `tests/`, on every push to main and every pull request.
 
 ## What each fixture tests
 
