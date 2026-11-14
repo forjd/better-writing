@@ -132,6 +132,31 @@ class ReplyParsingTest(unittest.TestCase):
         text = "# Install\n\nRun this:\n\n```bash\nnpm i\n```\n"
         self.assertEqual(run_skill.strip_preamble(text), text)
 
+    def test_strip_preamble_drops_bare_and_labelled_wrappers(self):
+        cases = {
+            "```\nBody text.\n```": "Body text.\n",
+            "```Markdown\nBody text.\n```": "Body text.\n",
+            "Here's the rewrite:\n\n```markdown\nBody text.\n```": "Body text.\n",
+            "```markdown\n# Install\n\n```bash\nnpm i\n```\n```":
+                "# Install\n\n```bash\nnpm i\n```\n",
+        }
+        for text, want in cases.items():
+            with self.subTest(text=text):
+                self.assertEqual(run_skill.strip_preamble(text), want)
+
+    def test_strip_preamble_keeps_code_blocks_at_both_ends(self):
+        for text in [
+            "```\n$ npm i\n```\n\nThen run it.\n",
+            "```\na\n```\n\ntext\n\n```\nb\n```\n",
+            # A wrapper that never closed: the last fence belongs to the
+            # inner block, so nothing is unwrapped.
+            "```markdown\nText\n```bash\nx\n```\n",
+        ]:
+            with self.subTest(text=text):
+                self.assertEqual(run_skill.strip_preamble(text), text)
+        self.assertEqual(run_skill.strip_preamble("Sure:\n```\ncode\n```\nThen text."),
+                         "```\ncode\n```\nThen text.\n")
+
     def test_strip_preamble_keeps_code_block_after_preamble(self):
         text = "Here's the rewrite:\nRun this:\n\n```bash\nnpm i\n```"
         self.assertEqual(run_skill.strip_preamble(text),
