@@ -107,12 +107,20 @@ material follow. Apply them to the user's request.
 """ + OUTPUT_RULES
 
 
+def git(*args):
+    """Run a read-only git command in the repo; return the CompletedProcess."""
+    return subprocess.run(["git", "-C", str(ROOT), *args],
+                          capture_output=True, text=True)
+
+
 def run_metadata():
-    """Record what a summary measured: skill version, commit, and date.
+    """Record what a summary measured: skill version, commit, tree state, date.
 
     A saved summary is only comparable to another run of the same skill
     text, so the version from SKILL.md and the git commit travel with it.
-    Either is None when it cannot be read.
+    `dirty` is True when skills/ or evals/ (outside evals/baselines/) had
+    uncommitted changes, so the commit does not hold the text the run
+    measured (issue #78). Each is None when it cannot be read.
     """
     try:
         front = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8-sig")
@@ -126,8 +134,55 @@ def run_metadata():
             capture_output=True, text=True, check=True).stdout.strip() or None
     except (OSError, subprocess.CalledProcessError):
         commit = None
-    return {"skill_version": version, "commit": commit,
+    dirty = None
+    if commit is not None:
+        try:
+            status = git("status", "--porcelain", "--", "skills", "evals",
+                         ":(exclude)evals/baselines")
+        except OSError:
+            status = None
+        if status is not None and status.returncode == 0:
+            dirty = bool(status.stdout.strip())
+    return {"skill_version": version, "commit": commit, "dirty": dirty,
             "date": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
+
+
+def commit_on_default_branch():
+    """Return (branch, True/False) for whether HEAD is on origin's default
+    branch, or (branch, None) when git cannot tell (no remote, no history).
+    """
+    try:
+        head = git("symbolic-ref", "--short", "refs/remotes/origin/HEAD")
+        branch = head.stdout.strip() if head.returncode == 0 else "origin/main"
+        result = git("merge-base", "--is-ancestor", "HEAD", branch)
+    except OSError:
+        return ("origin/main", None)
+    if result.returncode in (0, 1):
+        return (branch, result.returncode == 0)
+    return (branch, None)
+
+
+def reference_warnings(meta, branch, on_branch):
+    """Say why a summary should not be committed as a reference as it is.
+
+    The reference's `commit` must hold the skill text and runner it measured
+    and stay reachable. A dirty tree breaks the first. A commit off the
+    default branch breaks the second once the branch is squash-merged and
+    deleted: the reference then names a commit nobody can check out.
+    """
+    warnings = []
+    commit = meta.get("commit")
+    if meta.get("dirty"):
+        warnings.append(
+            f"uncommitted changes under skills/ or evals/: commit {commit} "
+            "does not hold the text this run measured. Do not commit this "
+            "summary as a reference.")
+    if on_branch is False:
+        warnings.append(
+            f"commit {commit} is not on {branch}. If this summary becomes a "
+            "reference and the branch is squash-merged, set its commit to "
+            "the merge commit on the default branch, or re-record.")
+    return warnings
 
 
 def plugin_description():
@@ -711,15 +766,20 @@ def print_baseline_diff(summary, baseline):
 
     Each change carries a Newcombe 95% interval, so a one-repeat wobble
     does not read as a regression. Settings that make two runs
-    incomparable (model, judge, repeats) are printed as warnings first.
+    incomparable (model, judge, repeats, split) are printed as warnings
+    first, and so is a different skill version, since the reference may
+    then not be the version the run was meant to compare against.
     """
     print(f"against baseline: {baseline.get('model')}, skill "
           f"{baseline.get('skill_version')} at {baseline.get('commit')}, "
           f"{baseline.get('date')}")
-    for key in ("model", "judge_model", "repeats", "split"):
+    for key in ("model", "judge_model", "repeats", "split", "skill_version"):
         if summary.get(key) != baseline.get(key):
             print(f"  WARN {key} differs: baseline {baseline.get(key)!r}, "
                   f"this run {summary.get(key)!r}")
+    if baseline.get("dirty"):
+        print(f"  WARN the baseline was recorded with uncommitted changes, "
+              f"so commit {baseline.get('commit')} may not hold its text")
     arms = [a for a in summary["arms"] if a in baseline["arms"]]
     if not arms:
         print(f"  no arm in common (baseline: {', '.join(baseline['arms'])})")
@@ -953,6 +1013,9 @@ def main():
         print(f"WARN could not write {summary_path}: {exc}")
     else:
         print(f"summary saved in {summary_path}")
+    branch, on_branch = commit_on_default_branch()
+    for warning in reference_warnings(summary, branch, on_branch):
+        print(f"WARN {warning}")
     print_summary(summary)
     if baseline is not None:
         print_baseline_diff(summary, baseline)
