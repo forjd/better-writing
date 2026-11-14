@@ -88,9 +88,12 @@ def parse_simple_frontmatter(block):
     Handles `key: value` with surrounding quotes stripped, and folded
     `>` / `|` blocks whose indented continuation lines are joined with a
     space (`>`) or newline (`|`). Other nested structures are out of scope;
-    plain indented continuations are joined with a space.
+    plain indented continuations are joined with a space. Quotes come off a
+    plain value after its continuation lines are joined, so a quoted value
+    that wraps loses both quotes.
     """
     data = {}
+    plain = set()
     current_key = None
     folded = None
     for raw_line in block.split("\n"):
@@ -115,10 +118,14 @@ def parse_simple_frontmatter(block):
         key, val = match.group(1), match.group(2).strip()
         current_key = key
         if val in (">", "|", ">-", "|-", ">+", "|+"):
+            plain.discard(key)
             data[key] = ""
             folded = val[0]
             continue
-        data[key] = _strip_quotes(val)
+        data[key] = val
+        plain.add(key)
+    for key in plain:
+        data[key] = _strip_quotes(data[key])
     return data
 
 

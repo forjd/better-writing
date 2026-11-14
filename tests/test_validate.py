@@ -82,6 +82,11 @@ class FrontmatterTest(RepoCase):
             "name: x\ndescription: >\n  one\n  two\nother: 'q'")
         self.assertEqual(data, {"name": "x", "description": "one two", "other": "q"})
 
+    def test_quoted_value_that_wraps(self):
+        data = validate.parse_simple_frontmatter(
+            'name: x\ndescription: "one\n  two"\nother: q')
+        self.assertEqual(data["description"], "one two")
+
 
 class InlineArtefactsTest(RepoCase):
     BULLET = ("- Near-conclusive artefacts go on sight: placeholders "

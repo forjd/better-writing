@@ -54,6 +54,9 @@ class SkillPathsTest(unittest.TestCase):
                      'license: MIT\r\n---\r\n\r\nBody.\r\n', "Fix prose."),
             "folded": ("---\nname: x\ndescription: >\n  Fix prose\n  and keep voice.\n"
                        "license: MIT\n---\n\nBody.\n", "Fix prose and keep voice."),
+            "quoted and wrapped": ('---\nname: x\ndescription: "Fix prose\n'
+                                   '  and keep voice."\n---\n\nBody.\n',
+                                   "Fix prose and keep voice."),
             "wrapped": ("---\nname: x\ndescription: Fix prose\n  and keep voice.\n"
                         "---\n\nBody.\n", "Fix prose and keep voice."),
             "no frontmatter": ("# Title\n\ndescription: not this\n", manifest),

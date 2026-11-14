@@ -149,8 +149,10 @@ def skill_description():
         text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8-sig")
     except OSError:
         text = ""
-    # Parse the frontmatter the way scripts/validate.py does, so a folded or
-    # wrapped description and CRLF line ends give the same text here.
+    # Parse the frontmatter the way scripts/validate.py does, so a folded,
+    # wrapped or quoted description gives the same text here. read_text
+    # already turns CRLF into LF; the replace matches validate.py, which
+    # reads bytes.
     text = text.replace("\r\n", "\n").replace("\r", "\n")
     front = re.match(r"---\n(.*?)\n---(?:\n|$)", text, re.S)
     desc = parse_simple_frontmatter(front.group(1)).get("description") if front else None
@@ -257,8 +259,10 @@ def build_system_prompt(with_skill=True, arm="always-on"):
         # Real-config arm: the skill listing plus SKILL.md only. References
         # stay on disk for the model to fetch with the Read tool, while
         # always-on concatenates all of them. Both arms read SKILL.md whole,
-        # so a change to it (the description included) reaches both; the
-        # arms differ only in which references the model chooses to read.
+        # so a change to it (the description included) reaches both. The
+        # arms also differ in the header (this one lists the description
+        # first), the footer, the Read tool, and which references the model
+        # reads.
         header = ("You are running the better-writing skill.\n"
                   f"Installed skill: better-writing — "
                   f"\"{skill_description()}\"\n"
