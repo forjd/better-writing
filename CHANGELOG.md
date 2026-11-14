@@ -2,6 +2,40 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-11-14, eval and repo fixes
+
+- `evals/run_skill.py`: a fence comes off a reply only when it wraps the whole reply. A rewrite that starts or ends with a real code block keeps its fences (#83, issue #74).
+- `evals/run_skill.py`: the progressive arm lists the skill by the `description` in the `SKILL.md` frontmatter, the line a harness shows, not the shorter one in `.claude-plugin/plugin.json`. The current reference was recorded before this change, so its progressive numbers carry the old header (#84, issue #75).
+- `scripts/validate.py`: a quoted frontmatter value that wraps onto a second line loses both quotes (#84).
+- `evals/run_evals.py` and the copy in `scripts/lint_prose.py`: the binary-contrast checks need both halves of the scaffold, in one sentence or two adjacent ones. Plain negations such as "Do not simply delete the lock file." no longer fail a fixture. The well-formedness checks skip closed code fences, table layout and inline code (#85, issue #71).
+- `evals/run_skill.py`: the overall intervals treat the fixture, not the run, as the unit, since repeats of one fixture are correlated. Each arm's overall rate gets a t interval over per-fixture rates, and `--baseline` reports the mean of per-fixture changes. Against the second reference, the progressive change is +0.09 [-0.03, +0.21], not +0.09 [+0.00, +0.18] (#90, issue #72).
+- `evals/compare_outputs.py`: a judge reply counts only when its last line holds just the verdict; any other reply is asked again, then skipped. "Rewrite 2 is better because Rewrite 1 pads." used to read as 1. `evals/run_triggers.py`: one run's unexpected error no longer ends the whole trigger eval. New unit tests cover both scripts and the `run_skill.py` summary builders (#92, issue #80).
+- `evals/baselines/claude-opus-5.summary.json` names `30451af`, the merge commit on `main`, instead of `eebfb47`, which only a squash-merged branch held. Summaries record whether the measured paths had uncommitted changes, and the runner warns when a summary should not become a reference (#89, issue #78).
+- CI: the Claude Code version that validates the plugin manifests is pinned in `.github/tools/package.json`, and Dependabot proposes updates to it with a 7-day cooldown (#86, issue #82).
+- `CLAUDE.md` says when its rules for shared checkouts apply. The private issue keys `FOR-45` and `FOR-113` are gone from the files; the `FOR-123` placeholder in usage examples stays (#87, issue #81).
+- `README.md` describes the four CI checks, the manifest job, the files release-please bumps, the plugin install, and the genre and voice references correctly. `evals/README.md` names the unit tests in CI, and `scripts/lint_prose.py` covers it (#88, issue #79). The README lines that say references load only when needed stay until issue #73 is settled.
+
+## 2026-10-31, output rule beats change notes
+
+- `evals/run_skill.py`: the output rule says that a change note or other note beside a rewrite or a draft is left out, and its content does not move into the text. The skill told the model to add a caveat note for detector requests, and the old rule forbade notes without saying which instruction wins, so `detector-request` failed on the note (#68, issue #57).
+- `evals/fixtures/detector-request`: a line that starts with a "Note:" label fails the checker.
+- `evals/baselines/claude-opus-5.summary.json`: re-recorded. Always-on passes 103/110 and progressive 101/110.
+
+## 2026-10-30, read the audit references
+
+- `SKILL.md`: step 3 tells the model to read `ai-writing-patterns.md` and `structures-and-phrases.md` before every rewrite, draft or review, and its genre's section of `genre-tells.md`. It lists the near-conclusive artefacts inline. In traced progressive runs the model had read no reference in 33 of 39 runs, so it audited from memory. After the change, 35 of 39 runs read at least one reference (#66, issue #56).
+- `scripts/validate.py`: every artefact in the inline list must appear in `references/ai-writing-patterns.md`.
+- `references/ai-writing-patterns.md`: a slot in a template the user means to fill later, such as a mail-merge field, is not an unfilled placeholder. The inline list in `SKILL.md` says the same.
+- `evals/baselines/claude-opus-5.summary.json`: re-recorded. Progressive rose from 77/110 to 91/110. The file names the branch commit `17452ef`; `ad36fb2` on `main` holds the same skill text, fixtures and runner.
+
+## 2026-10-30, ui-microcopy brief
+
+- `evals/fixtures/ui-microcopy`: the brief lets the error tell the user to upload a smaller file. The source's "Please try again" only works with a smaller file, and a usable error says how to recover, so the judge's "invented next step" flag was wrong (#65, issue #58).
+
+## 2026-10-30, borderline trigger prompts
+
+- `evals/triggers.json`: 5 should-trigger and 12 should-not-trigger prompts near the boundary of the `description` line, including keyword traps such as a request to rewrite a function. One run on `claude-opus-5` with three repeats gave 38/45 should-trigger and 0/66 should-not-trigger runs (#64, issue #59).
+
 ## 2026-10-07, one skill folder
 
 - Layout: the skill lives only in `skills/better-writing/`, as real files. The root `SKILL.md`, `references/` and `agents/` are gone. A root `SKILL.md` made skills.sh install the whole repo, `.claude-plugin/` included, and Claude Code then loaded that copy twice: as `better-writing` and as the skills-directory plugin `better-writing:better-writing`. A skills.sh install now copies 140 KB instead of 1.1 MB, with no tests, evals or CI files.
