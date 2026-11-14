@@ -150,6 +150,22 @@ def run_one(model, prompt, plugin, cwd, timeout=RUN_TIMEOUT):
             "skills": skills}
 
 
+def run_case(model, case, plugin, cwd, runner=None):
+    """Run one (set, id, prompt) case; return ((set, id), outcome).
+
+    Any exception from one run becomes an error outcome for that run, so
+    one unexpected failure cannot end pool.map and lose the results already
+    collected (issue #80).
+    """
+    set_name, case_id, prompt = case
+    try:
+        outcome = (runner or run_one)(model, prompt, plugin, cwd)
+    except Exception as exc:  # noqa: BLE001 - one run must not end the pool
+        outcome = {"error": f"{type(exc).__name__}: {exc}"}
+        print(f"  ERROR {case_id}: {type(exc).__name__}: {exc}", file=sys.stderr)
+    return (set_name, case_id), outcome
+
+
 def build_summary(model, repeats, results):
     """results: {(set, id): [outcome dict or {'error': str}]}."""
     prompts, sets = [], {}
@@ -217,18 +233,10 @@ def main():
     plugin, cwd = stage_plugin(out)
     results = {(s, i): [] for s, i, _ in cases}
 
-    def task(case):
-        set_name, case_id, prompt = case
-        try:
-            outcome = run_one(args.model, prompt, plugin, cwd)
-        except (OSError, RuntimeError, TimeoutError) as exc:
-            outcome = {"error": str(exc)}
-            print(f"  ERROR {case_id}: {exc}", file=sys.stderr)
-        return (set_name, case_id), outcome
-
     jobs = [c for c in cases for _ in range(args.repeats)]
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        for key, outcome in pool.map(task, jobs):
+        for key, outcome in pool.map(
+                lambda case: run_case(args.model, case, plugin, cwd), jobs):
             results[key].append(outcome)
 
     summary = build_summary(args.model, args.repeats, results)
