@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 # issue-worktree.sh — create or reuse a private per-issue git worktree.
 #
+# For the maintainer's automated agent runs (Paperclip heartbeats) only; see
+# CLAUDE.md. A contributor working in their own clone does not need it.
+#
 # The project checkout is shared by every concurrent heartbeat. Running
-# `git checkout` there rewrites other agents' in-flight work (see FOR-45).
+# `git checkout` there rewrites other agents' in-flight work: concurrent runs
+# have moved a shared checkout's HEAD, and hard resets have discarded
+# uncommitted changes.
 # This script gives you an isolated working tree that shares the object
 # store, so it costs a couple of MB and no extra fetch.
 #

@@ -218,11 +218,11 @@ Use my writing sample below as the voice reference, then rewrite the article int
 | [skills/better-writing/SKILL.md](./skills/better-writing/SKILL.md) | Core skill instructions and metadata. |
 | [skills/better-writing/agents/openai.yaml](./skills/better-writing/agents/openai.yaml) | UI metadata for compatible agent clients. |
 | [skills/better-writing/references/ai-writing-patterns.md](./skills/better-writing/references/ai-writing-patterns.md) | AI-writing tells, confidence tiers, near-conclusive artefacts, and false-positive checks. |
-| [skills/better-writing/references/genre-tells.md](./skills/better-writing/references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, fiction, and code. |
+| [skills/better-writing/references/genre-tells.md](./skills/better-writing/references/genre-tells.md) | Genre-specific phrase banks for email, social, marketing, academic, fiction, conversational replies, commit messages, and code. |
 | [skills/better-writing/references/preflight.md](./skills/better-writing/references/preflight.md) | Final quality checks before delivery. |
 | [skills/better-writing/references/sources.md](./skills/better-writing/references/sources.md) | Source projects and attribution notes. |
 | [skills/better-writing/references/structures-and-phrases.md](./skills/better-writing/references/structures-and-phrases.md) | Slop phrase and structure audit. |
-| [skills/better-writing/references/voice-and-context.md](./skills/better-writing/references/voice-and-context.md) | Audience, genre, dials, voice calibration, and genre exemptions. |
+| [skills/better-writing/references/voice-and-context.md](./skills/better-writing/references/voice-and-context.md) | Audience, genre defaults, dials, voice calibration, and fact safety. |
 | [.claude-plugin/](./.claude-plugin/) | Claude Code plugin and marketplace manifests. |
 | [evals/](./evals/) | Fixture texts, a checker with voice-drift metrics, a pre-ChatGPT human corpus for false-positive reports, a model runner with an added-claims judge, and a pairwise comparison against a no-skill baseline. |
 | [scripts/validate.py](./scripts/validate.py) | Repo checks run by CI: frontmatter, fixtures, layout, symlinks, and agent config. |
@@ -245,15 +245,16 @@ Use my writing sample below as the voice reference, then rewrite the article int
 
 ## Validation
 
-CI runs three checks on every push to main and every pull request:
+CI runs four checks on every push to main and every pull request:
 
 ```bash
 python3 scripts/validate.py                      # frontmatter, version, fixture, layout, symlink, and agent config checks
 python3 scripts/lint_prose.py                    # repo docs pass the skill's own audit, with measured exclusions
 python3 evals/run_evals.py --all evals/examples  # checker self-test
+python3 -m unittest discover -s tests            # unit tests for the scripts and the eval statistics
 ```
 
-Neither exercises a model. The self-test proves the checker agrees with the hand-written known-good outputs, nothing more. The prose lint proves the repo's own docs contain no live slop: it skips code fences, blockquotes, inline code and quoted mentions, then asserts zero violations. To test the skill itself, run the model runner described under [Evaluation](#evaluation). It needs credentials, so it is not part of CI.
+A separate CI job checks the plugin and marketplace manifests with `claude plugin validate`. None of these exercises a model. The self-test proves the checker agrees with the hand-written known-good outputs, nothing more. The prose lint proves the repo's own docs contain no live slop: it skips code fences, blockquotes, inline code and quoted mentions, then asserts zero violations. To test the skill itself, run the model runner described under [Evaluation](#evaluation). It needs credentials, so it is not part of CI.
 
 You can also validate the skill with the checker from Anthropic's [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator) skill:
 
@@ -307,7 +308,7 @@ AI tells drift. "Delve" and "tapestry" marked 2023-era output; "it's not just X,
 
 The skill follows the standard agent-skill layout (`SKILL.md` plus lazily loaded `references/`), so it works in any runtime that discovers skills by folder:
 
-- **Claude Code**: tested; install via skills.sh or copy into your skills directory.
+- **Claude Code**: tested; install the [Claude Code plugin](#claude-code-plugin), install via skills.sh, or copy `skills/better-writing/` into your skills directory.
 - **OpenAI-compatible clients**: [agents/openai.yaml](./skills/better-writing/agents/openai.yaml) provides display metadata and allows implicit invocation.
 - **Other runtimes**: anything that reads `SKILL.md` frontmatter will pick it up; the references are plain Markdown loaded on demand.
 
@@ -315,7 +316,7 @@ The skill lives in `skills/better-writing/`, the `skills/<name>/` layout that sk
 
 ## Releases
 
-Releases follow [semantic versioning](https://semver.org/) and are cut by [release-please](https://github.com/googleapis/release-please) from the conventional commit history. It keeps a release pull request open on `main` that collects merged commits, bumps `metadata.version` in `skills/better-writing/SKILL.md` and `version` in `skills/better-writing/agents/openai.yaml`, and drafts the notes. Merging that pull request tags `vX.Y.Z` and publishes a [GitHub Release](https://github.com/forjd/better-writing/releases). Watch the repo for releases to hear when the catalogue changes.
+Releases follow [semantic versioning](https://semver.org/) and are cut by [release-please](https://github.com/googleapis/release-please) from the conventional commit history. It keeps a release pull request open on `main` that collects merged commits, bumps the version in `.release-please-manifest.json`, `skills/better-writing/SKILL.md`, `skills/better-writing/agents/openai.yaml`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` and the pinned clone command in this README, and drafts the notes. Merging that pull request tags `vX.Y.Z` and publishes a [GitHub Release](https://github.com/forjd/better-writing/releases). Watch the repo for releases to hear when the catalogue changes.
 
 The skill has no API, so a major version means one of these:
 

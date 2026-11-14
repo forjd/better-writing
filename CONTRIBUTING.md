@@ -23,6 +23,8 @@ python3 evals/run_evals.py --all evals/examples  # checker self-test against the
 python3 -m unittest discover -s tests            # unit tests for the scripts and the eval statistics
 ```
 
+CI also checks the plugin and marketplace manifests with `claude plugin validate`. The Claude Code version it uses is pinned in [.github/tools/package.json](./.github/tools/package.json), and Dependabot opens a pull request to bump it once a month, at least a week after each release. Do not install that package; it exists only to hold the pin.
+
 If you touched `SKILL.md` or anything in `references/`, run the evals with a real model before and after the change:
 
 ```bash
@@ -36,6 +38,10 @@ Say in the pull request what changed between the two reports, and read the rewri
 - Use a [conventional commit](https://www.conventionalcommits.org/) title, since release-please sets the version from it: `feat:` for new patterns, checks, or fixtures, `fix:` for corrections, and `feat!:` or a `BREAKING CHANGE:` footer for anything listed under [Releases](./README.md#releases).
 - Do not edit version numbers by hand. release-please bumps them.
 - Write new prose in British English with sentence-case headings. The repo's own docs follow the catalogue.
+
+## Files for the maintainer's agent runs
+
+`CLAUDE.md` and `scripts/issue-worktree.sh` are for the maintainer's automated agent runs, which share one checkout of the repo. Each run gets its own git worktree, so concurrent runs do not overwrite each other. Neither file applies to a clone that only one person or agent uses at a time. If several agents work in your clone at once, give each one its own `git worktree`. The script exits unless `PAPERCLIP_WORKSPACE_CWD` and `PAPERCLIP_AGENT_ID` are set.
 
 ## Reporting problems
 
