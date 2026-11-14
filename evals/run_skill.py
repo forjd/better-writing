@@ -864,8 +864,13 @@ def interval_text(lo, hi, count, sign=True, clamped=False):
     clamped interval says so: near 0 or 1 the symmetric t interval runs
     past the possible range, and the cut bound is approximate.
     """
+    if count == 0:
+        return "(no interval: no fixtures)"
     if count < 2:
         return "(no interval: one fixture)"
+    # paired_mean_diff_interval already returns lo == hi for a spread under
+    # 1e-9; this catches the same case for a caller that built lo and hi
+    # another way. Rate data cannot produce a spread near that threshold.
     if math.isclose(lo, hi, abs_tol=1e-9):
         return f"(no interval: all {count} fixtures have the same value)"
     fmt = "+.2f" if sign else ".2f"
@@ -883,13 +888,13 @@ def print_summary(summary):
         count = sum(1 for v in summary["fixtures"].values() if v[arm]["n"])
         print(f"overall {arm}: {o['pass']}/{o['n']} = {o['rate']:.2f} "
               f"({reps} rep(s) x {overall['n_fixtures']} fixtures), "
-              f"mean fixture rate {o['fixture_mean']:.2f} "
-              f"{interval_text(lo, hi, count, sign=False, clamped=o['ci95_clamped'])}")
+              f"mean fixture rate {o.get('fixture_mean', o['rate']):.2f} "
+              f"{interval_text(lo, hi, count, sign=False, clamped=o.get('ci95_clamped', False))}")
     if "paired_mean_diff" in overall:
         lo, hi = overall["paired_ci95"]
         print(f"paired mean diff (progressive minus always-on): "
               f"{overall['paired_mean_diff']:+.2f} "
-              f"{interval_text(lo, hi, overall['n_fixtures'], clamped=overall['paired_ci95_clamped'])}")
+              f"{interval_text(lo, hi, overall['n_fixtures'], clamped=overall.get('paired_ci95_clamped', False))}")
         print("per-fixture progressive minus always-on:")
         for name in sorted(summary["fixtures"]):
             entry = summary["fixtures"][name]

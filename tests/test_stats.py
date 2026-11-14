@@ -155,6 +155,8 @@ class ClusteredOverallTest(unittest.TestCase):
                          "(no interval: all 22 fixtures have the same value)")
         self.assertEqual(run_skill.interval_text(0.2, 0.4, 1),
                          "(no interval: one fixture)")
+        self.assertEqual(run_skill.interval_text(0.0, 0.0, 0),
+                         "(no interval: no fixtures)")
         self.assertEqual(run_skill.interval_text(-0.1, 0.2, 5),
                          "[-0.10, +0.20] (95% t over 5 fixtures)")
         self.assertEqual(run_skill.interval_text(0.8, 1.0, 5, sign=False,
