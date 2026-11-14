@@ -343,9 +343,12 @@ def paired_mean_diff_interval(diffs):
 def strip_preamble(text):
     """Remove fences and leading preamble so only the rewrite remains."""
     t = text.strip()
-    # Strip markdown fences if the model wrapped the rewrite.
-    t = re.sub(r"^```(?:json|markdown|md|text)?\s*\n", "", t)
-    t = re.sub(r"\n```\s*$", "", t).strip()
+    # Strip markdown fences if the model wrapped the rewrite. Drop a trailing
+    # fence only when a leading one went too: a rewrite that ends with a real
+    # code block keeps its closing fence (issue #74).
+    unwrapped = re.sub(r"^```(?:json|markdown|md|text)?\s*\n", "", t)
+    if unwrapped != t:
+        t = re.sub(r"\n```\s*$", "", unwrapped).strip()
     lines = t.splitlines()
     # Drop leading preamble lines ("Here is the rewrite:", "Sure, ...:", etc.).
     # Only colon-terminated lines match, so a legitimate opener such as

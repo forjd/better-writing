@@ -124,6 +124,19 @@ class ReplyParsingTest(unittest.TestCase):
         text = "Here's the rewrite:\n```markdown\nBody text.\n```"
         self.assertEqual(run_skill.strip_preamble(text), "Body text.\n")
 
+    def test_strip_preamble_drops_wrapping_fence(self):
+        text = "```markdown\n# Install\n\nRun it.\n```"
+        self.assertEqual(run_skill.strip_preamble(text), "# Install\n\nRun it.\n")
+
+    def test_strip_preamble_keeps_closing_fence_of_code_block(self):
+        text = "# Install\n\nRun this:\n\n```bash\nnpm i\n```\n"
+        self.assertEqual(run_skill.strip_preamble(text), text)
+
+    def test_strip_preamble_keeps_code_block_after_preamble(self):
+        text = "Here's the rewrite:\nRun this:\n\n```bash\nnpm i\n```"
+        self.assertEqual(run_skill.strip_preamble(text),
+                         "Run this:\n\n```bash\nnpm i\n```\n")
+
 
 if __name__ == "__main__":
     unittest.main()
