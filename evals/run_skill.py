@@ -337,11 +337,23 @@ def paired_mean_diff_interval(diffs):
     if len(diffs) < 2:
         return (avg, avg, avg)
     spread = statistics.stdev(diffs)
-    if spread == 0:
+    # Changes that are equal on paper can differ in the last bit (0.6 - 0.4
+    # against 0.8 - 0.6), so a spread this small counts as none.
+    if spread < 1e-9:
         return (avg, avg, avg)
     t = _T95.get(len(diffs) - 1, 1.96)
     half = t * spread / math.sqrt(len(diffs))
     return (avg, avg - half, avg + half)
+
+
+# Recorded beside each arm's overall ci95, since summaries written before
+# issue #72 hold a pooled Wilson interval under the same key.
+CI95_METHOD = "t over per-fixture rates"
+
+
+def clamp_interval(lo, hi, low, high):
+    """Cut an interval to [low, high]; return (lo, hi, whether it was cut)."""
+    return (max(low, lo), min(high, hi), lo < low or hi > high)
 
 
 def strip_preamble(text):
@@ -666,33 +678,42 @@ def build_summary(model, judge_model, no_judge, arms, repeats, split,
         # interval over every run comes out too narrow.
         rates = [v[arm]["rate"] for v in fixtures.values() if v[arm]["n"]]
         mean, lo, hi = paired_mean_diff_interval(rates)
+        lo, hi, clamped = clamp_interval(lo, hi, 0.0, 1.0)
         overall[arm] = {"pass": total_pass, "n": total_n,
                         "rate": total_pass / total_n if total_n else 0.0,
                         "fixture_mean": mean,
-                        "ci95": [max(0.0, lo), min(1.0, hi)]}
+                        "ci95": [lo, hi], "ci95_method": CI95_METHOD,
+                        "ci95_clamped": clamped}
     overall["n_fixtures"] = len(fixtures)
     if "always-on" in overall and "progressive" in overall:
         diffs = [fixtures[n]["diff_progressive_minus_always_on"]
                  for n in fixtures]
         avg, lo, hi = paired_mean_diff_interval(diffs)
+        lo, hi, clamped = clamp_interval(lo, hi, -1.0, 1.0)
         overall["paired_mean_diff"] = avg
         overall["paired_ci95"] = [lo, hi]
+        overall["paired_ci95_clamped"] = clamped
     return {"model": model, "judge_model": None if no_judge else judge_model,
             "no_judge": no_judge, "arms": list(arms), "repeats": repeats,
             "split": split, **run_metadata(), "fixtures": fixtures,
             "overall": overall}
 
 
-def interval_text(lo, hi, count, sign=True):
+def interval_text(lo, hi, count, sign=True, clamped=False):
     """Format a 95% t interval over `count` fixtures.
 
     A zero-width interval means one fixture or identical values, which says
-    nothing about the spread, so it prints as "no interval" instead.
+    nothing about the spread, so it prints as "no interval" instead. A
+    clamped interval says so: near 0 or 1 the symmetric t interval runs
+    past the possible range, and the cut bound is approximate.
     """
-    if count < 2 or lo == hi:
-        return f"(no interval: {count} fixture(s), all with the same value)"
+    if count < 2:
+        return "(no interval: one fixture)"
+    if math.isclose(lo, hi, abs_tol=1e-9):
+        return f"(no interval: all {count} fixtures have the same value)"
     fmt = "+.2f" if sign else ".2f"
-    return f"[{lo:{fmt}}, {hi:{fmt}}] (95% t over {count} fixtures)"
+    note = ", clamped to the possible range" if clamped else ""
+    return f"[{lo:{fmt}}, {hi:{fmt}}] (95% t over {count} fixtures{note})"
 
 
 def print_summary(summary):
@@ -705,13 +726,13 @@ def print_summary(summary):
         count = sum(1 for v in summary["fixtures"].values() if v[arm]["n"])
         print(f"overall {arm}: {o['pass']}/{o['n']} = {o['rate']:.2f} "
               f"({reps} rep(s) x {overall['n_fixtures']} fixtures), "
-              f"mean fixture rate {o.get('fixture_mean', o['rate']):.2f} "
-              f"{interval_text(lo, hi, count, sign=False)}")
+              f"mean fixture rate {o['fixture_mean']:.2f} "
+              f"{interval_text(lo, hi, count, sign=False, clamped=o['ci95_clamped'])}")
     if "paired_mean_diff" in overall:
         lo, hi = overall["paired_ci95"]
         print(f"paired mean diff (progressive minus always-on): "
               f"{overall['paired_mean_diff']:+.2f} "
-              f"{interval_text(lo, hi, overall['n_fixtures'])}")
+              f"{interval_text(lo, hi, overall['n_fixtures'], clamped=overall['paired_ci95_clamped'])}")
         print("per-fixture progressive minus always-on:")
         for name in sorted(summary["fixtures"]):
             entry = summary["fixtures"][name]
@@ -735,8 +756,9 @@ def load_summary(path):
 def print_baseline_diff(summary, baseline):
     """Print per-fixture pass-rate changes against a saved summary.
 
-    Each change carries a Newcombe 95% interval, so a one-repeat wobble
-    does not read as a regression. Settings that make two runs
+    Each fixture's change carries a Newcombe 95% interval, so a one-repeat
+    wobble does not read as a regression. The overall line is the mean of
+    the per-fixture changes with a t interval over fixtures. Settings that make two runs
     incomparable (model, judge, repeats) are printed as warnings first.
     """
     print(f"against baseline: {baseline.get('model')}, skill "
@@ -781,9 +803,10 @@ def print_baseline_diff(summary, baseline):
         new_pass, new_n, old_pass, old_n = totals
         if diffs:
             avg, lo, hi = paired_mean_diff_interval(diffs)
+            lo, hi, clamped = clamp_interval(lo, hi, -1.0, 1.0)
             print(f"  overall, shared fixtures: {old_pass}/{old_n} -> "
                   f"{new_pass}/{new_n}, mean change {avg:+.2f} "
-                  f"{interval_text(lo, hi, len(diffs))}")
+                  f"{interval_text(lo, hi, len(diffs), clamped=clamped)}")
 
 
 def main():
