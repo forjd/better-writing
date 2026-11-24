@@ -66,7 +66,7 @@
     },
     {
       "id": "rewrite-exec-summary",
-      "prompt": "This executive summary sounds like ChatGPT wrote it. Make it sound human:\n\nIn an ever-evolving market, Q3 marked a pivotal moment for our journey. Revenue grew 12% to £4.1m, underscoring our unwavering commitment to customer success."
+      "prompt": "Tighten this executive summary before it goes to the board:\n\nIn an ever-evolving market, Q3 marked a pivotal moment for our journey. Revenue grew 12% to £4.1m, underscoring our unwavering commitment to customer success."
     },
     {
       "id": "polish-translated-copy",
@@ -164,7 +164,7 @@
     },
     {
       "id": "tldr-article",
-      "prompt": "Give me a two-sentence TL;DR of this article:\n\nThe city council voted on Tuesday to extend the late-night bus service on routes 4 and 9 until March. Ridership on both routes rose by a third after the trial began in September, and the council will review the cost again in February."
+      "prompt": "Give me a one-sentence TL;DR of this article:\n\nThe city council voted on Tuesday to extend the late-night bus service on routes 4 and 9 until March. The trial began in September after night-shift workers at the hospital asked for a way home. Ridership on both routes rose by a third during the trial. The extension costs about £180,000, which comes from the transport reserve. Councillors will review the cost again in February, when the next budget is set."
     }
   ]
 }
