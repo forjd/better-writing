@@ -4,7 +4,9 @@ The pattern lists in `references/` are a living catalogue, not a fixed rulebook.
 
 ## 2026-11-24, short UI strings in the description
 
-- `SKILL.md`: the `description` names short UI strings, such as a label, button, or tooltip with a spelling, grammar, or wording problem, and says the skill is not for summarising or translating text. On `claude-opus-5` with three repeats, the trigger eval went from 41/45 should-trigger and 4/66 should-not runs to 45/45 and 0/66. The misses were `button-label-grammar` (0/3) and `ui-label-spelling` (2/3). The false triggers were `summarise-article-bullets` (3/3) and `translate-marketing-copy` (1/3) (#94).
+- `SKILL.md`: the `description` names short UI strings, such as a label, button, or tooltip with a spelling, grammar, or wording problem, and says the skill is not for condensing a text into a summary or translating it into another language. On `claude-opus-5` with three repeats, the trigger eval went from 47/54 should-trigger and 5/69 should-not runs to 54/54 and 0/69. The clear changes were `button-label-grammar` (0/3 to 3/3), `menu-item-typo` (0/3 to 3/3) and `summarise-article-bullets` (3/3 to 0/3). The numbers are in-sample, because the wording was written against these prompts (#94).
+- `evals/triggers.json`: three should-trigger prompts (`menu-item-typo`, `rewrite-exec-summary`, `polish-translated-copy`) and one should-not prompt (`tldr-article`) at the edges of the new wording. A request to rewrite an existing summary or to polish a translation should still trigger (#94).
+- `evals/README.md`: the October trigger numbers are dated, and the November paragraph names the CLI version, since the same description gave different numbers in the two months.
 
 ## 2026-11-14, eval and repo fixes
 
