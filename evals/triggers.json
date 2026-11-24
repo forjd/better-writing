@@ -59,6 +59,18 @@
     {
       "id": "tooltip-wordy",
       "prompt": "This tooltip is too wordy. Cut it down: \"Click this button in order to be able to download a copy of your invoice as a PDF file.\""
+    },
+    {
+      "id": "menu-item-typo",
+      "prompt": "Fix the typo in this menu item: \"Prefrences\""
+    },
+    {
+      "id": "rewrite-exec-summary",
+      "prompt": "Tighten this executive summary before it goes to the board:\n\nIn an ever-evolving market, Q3 marked a pivotal moment for our journey. Revenue grew 12% to £4.1m, underscoring our unwavering commitment to customer success."
+    },
+    {
+      "id": "polish-translated-copy",
+      "prompt": "This product copy was machine-translated from German and reads stiffly. Make it sound natural in English without changing what it says:\n\nThe Kettle Pro is with 1.7 litres capacity equipped and boils the water in under three minutes. After the boiling it switches itself automatically off."
     }
   ],
   "should_not_trigger": [
@@ -149,6 +161,10 @@
     {
       "id": "lorem-ipsum",
       "prompt": "Give me two paragraphs of placeholder text for a blog post mockup. Lorem ipsum is fine."
+    },
+    {
+      "id": "tldr-article",
+      "prompt": "Give me a one-sentence TL;DR of this article:\n\nThe city council voted on Tuesday to extend the late-night bus service on routes 4 and 9 until March. The trial began in September after night-shift workers at the hospital asked for a way home. Ridership on both routes rose by a third during the trial. The extension costs about £180,000, which comes from the transport reserve. Councillors will review the cost again in February, when the next budget is set."
     }
   ]
 }
