@@ -2,6 +2,10 @@
 
 The pattern lists in `references/` are a living catalogue, not a fixed rulebook. AI writing tells drift as models change, so additions, changes, and retirements are dated here. When a tell fades from current model output, mark it as legacy in the reference rather than deleting it, so the skill still catches older drafts.
 
+## 2026-11-24, short UI strings in the description
+
+- `SKILL.md`: the `description` names short UI strings, such as a label, button, or tooltip with a spelling, grammar, or wording problem, and says the skill is not for summarising or translating text. On `claude-opus-5` with three repeats, the trigger eval went from 41/45 should-trigger and 4/66 should-not runs to 45/45 and 0/66. The misses were `button-label-grammar` (0/3) and `ui-label-spelling` (2/3). The false triggers were `summarise-article-bullets` (3/3) and `translate-marketing-copy` (1/3).
+
 ## 2026-11-14, eval and repo fixes
 
 - `evals/run_skill.py`: a fence comes off a reply only when it wraps the whole reply. A rewrite that starts or ends with a real code block keeps its fences (#83, issue #74).

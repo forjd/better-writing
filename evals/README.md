@@ -118,6 +118,8 @@ The runner prints both sets with Wilson 95% intervals and writes them, with per-
 
 Run it before and after any change to the `description` line. The first run, on `claude-opus-5` with three repeats, triggered on 30 of 30 should-trigger runs and 0 of 30 should-not runs. Swapping the description for an unrelated one (CSV conversion) dropped recall to 0 of 6, so the measurement does respond to the description. With the boundary prompts added, one run on the same model and repeats gave 38 of 45 should-trigger runs and 0 of 66 should-not runs. All seven misses were short edits to a UI string (`ui-label-spelling` 0/3, `button-label-grammar` 0/3, `tooltip-wordy` 2/3), so recall now has room to show an improvement. The false-trigger rate still sits at zero, even for the keyword traps, so on that set a change can only show up as a regression.
 
+On 24 November 2026 the same description, model and repeats gave different numbers: 41 of 45 should-trigger runs (`button-label-grammar` 0/3, `ui-label-spelling` 2/3) and 4 of 66 should-not runs (`summarise-article-bullets` 3/3, `translate-marketing-copy` 1/3). The description now names short UI strings, such as a label, button, or tooltip with a spelling, grammar, or wording problem, and says the skill is not for summarising or translating text. The next run gave 45 of 45 and 0 of 66. Both rates are at their limits again, so on this set a later change can show up only as a regression. Because the numbers moved with no change to the description, run the current description again before you compare a new one with it.
+
 ## Why detector scores are not a check
 
 Do not add an AI-detector score to this harness.
